@@ -7,6 +7,9 @@
 import ParticleBurst from '../../fx/ParticleBurst.js'
 import ShockwaveRing from '../../fx/ShockwaveRing.js'
 import ArcaneOrbitBurst from '../../fx/ArcaneOrbitBurst.js'
+import ParticleVortex from '../../fx/ParticleVortex.js'
+import SparkTrail from '../../fx/SparkTrail.js'
+import EmberRise from '../../fx/EmberRise.js'
 
 export default class FxController {
     constructor(fxCanvas) {
@@ -106,6 +109,57 @@ export default class FxController {
             speed: 120,
             duration: 0.5,
             size: 3.4
+        }))
+    }
+
+    /**
+     * Effet de pioche / absorption (vortex aspirant).
+     */
+    fxDraw(target) {
+        const { x, y } = this._centerOf(target)
+        this._canvas.spawn(new ParticleVortex({
+            x, y,
+            colors: ['#38bdf8', '#818cf8', '#e0f2fe', '#ffffff'],
+            count: 28,
+            radius: 80,
+            duration: 0.8
+        }))
+    }
+
+    /**
+     * Effet de projectile d'un élément source vers un élément cible.
+     */
+    fxProjectile(source, target) {
+        const src = this._centerOf(source)
+        const dst = this._centerOf(target)
+        this._canvas.spawn(new SparkTrail({
+            x0: src.x, y0: src.y,
+            x1: dst.x, y1: dst.y,
+            color: '#f59e0b',
+            duration: 0.4,
+            sparkLife: 0.25
+        }))
+    }
+
+    /**
+     * Effet de brûlure / feu sur une cible.
+     */
+    fxBurn(target) {
+        const { x, y } = this._centerOf(target)
+        this._canvas.spawn(new EmberRise({
+            x, y,
+            count: 22,
+            spread: 25,
+            riseSpeed: 65,
+            duration: 1.0
+        }))
+        this._canvas.spawn(new ShockwaveRing({
+            x, y,
+            color: '#ef4444',
+            maxRadius: 50,
+            duration: 0.35,
+            rings: 1,
+            lineWidth: 2
         }))
     }
 }
