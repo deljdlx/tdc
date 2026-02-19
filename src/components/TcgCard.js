@@ -19,7 +19,8 @@ TEMPLATE.innerHTML = `
 <style>
     :host {
         display: inline-block;
-        width: var(--card-width, 130px);
+        width: var(--card-width, 100px);
+        height: calc(var(--card-width, 100px) * 1.2);
         user-select: none;
         font-family: 'Segoe UI', system-ui, sans-serif;
     }
@@ -28,6 +29,9 @@ TEMPLATE.innerHTML = `
 
     .frame {
         position: relative;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
         border-radius: 8px;
         overflow: hidden;
         background: linear-gradient(170deg, #1e2a4a 0%, #0d1528 100%);
@@ -143,21 +147,18 @@ TEMPLATE.innerHTML = `
     .art {
         position: relative;
         width: 100%;
-        aspect-ratio: 5 / 3;
+        flex: 1;
+        min-height: 0;
         overflow: hidden;
-        background: #080c18;
-    }
-
-    .art img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
+        background: #080c18 center / cover;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
         opacity: 0;
         transition: opacity 0.4s ease;
     }
 
-    .art img.loaded {
+    .art.loaded {
         opacity: 1;
     }
 
@@ -174,8 +175,8 @@ TEMPLATE.innerHTML = `
     /* ---- NAME ---- */
 
     .name {
-        padding: 5px 8px 4px;
-        font-size: 11px;
+        padding: 2px 4px 2px;
+        font-size: 8px;
         font-weight: 700;
         color: #f0c040;
         text-align: center;
@@ -185,6 +186,7 @@ TEMPLATE.innerHTML = `
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        flex-shrink: 0;
     }
 
     .spell .name {
@@ -194,28 +196,31 @@ TEMPLATE.innerHTML = `
     /* ---- TYPE LINE ---- */
 
     .type-line {
-        padding: 2px 8px;
-        font-size: 8px;
+        padding: 1px 4px;
+        font-size: 6px;
         color: #6b7fa0;
         text-align: center;
         text-transform: uppercase;
-        letter-spacing: 1.5px;
+        letter-spacing: 0.5px;
         border-top: 1px solid rgba(255, 255, 255, 0.04);
+        flex-shrink: 0;
     }
 
     /* ---- BODY (effect text) ---- */
 
     .body {
-        padding: 4px 8px 2px;
-        min-height: 16px;
+        padding: 1px 4px 1px;
+        min-height: 0;
+        font-size: 6px;
+        flex-shrink: 0;
     }
 
     .effect {
-        font-size: 9.5px;
+        font-size: 6px;
         color: #fbbf24;
         text-align: center;
         font-style: italic;
-        line-height: 1.3;
+        line-height: 1.2;
     }
 
     .effect:empty {
@@ -227,7 +232,9 @@ TEMPLATE.innerHTML = `
     .stats {
         display: flex;
         justify-content: space-between;
-        padding: 0 5px 5px;
+        padding: 1px 3px 1px;
+        gap: 2px;
+        flex-shrink: 0;
     }
 
     .stats:empty {
@@ -235,13 +242,13 @@ TEMPLATE.innerHTML = `
     }
 
     .stat {
-        width: 22px;
-        height: 22px;
-        border-radius: 4px;
+        width: 16px;
+        height: 16px;
+        border-radius: 2px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 13px;
+        font-size: 9px;
         font-weight: 800;
         color: white;
     }
@@ -287,9 +294,7 @@ TEMPLATE.innerHTML = `
 
 <div class="frame">
     <div class="cost"></div>
-    <div class="art">
-        <img alt="" />
-    </div>
+    <div class="art"></div>
     <div class="name"></div>
     <div class="type-line"></div>
     <div class="body">
@@ -325,17 +330,13 @@ export default class TcgCard extends HTMLElement {
         this._els = {
             frame: this.shadowRoot.querySelector('.frame'),
             cost: this.shadowRoot.querySelector('.cost'),
-            art: this.shadowRoot.querySelector('.art img'),
+            art: this.shadowRoot.querySelector('.art'),
             name: this.shadowRoot.querySelector('.name'),
             typeLine: this.shadowRoot.querySelector('.type-line'),
             effect: this.shadowRoot.querySelector('.effect'),
             stats: this.shadowRoot.querySelector('.stats'),
             status: this.shadowRoot.querySelector('.status-overlay'),
         }
-
-        this._els.art.addEventListener('load', () => {
-            this._els.art.classList.add('loaded')
-        })
     }
 
     attributeChangedCallback() {
@@ -359,8 +360,14 @@ export default class TcgCard extends HTMLElement {
         // Art (ne recharge que si definition-id change)
         if (defId && defId !== this._loadedArtId) {
             this._els.art.classList.remove('loaded')
-            this._els.art.src = `${PICSUM}/${defId}/240/160`
-            this._els.art.alt = name
+            const imageUrl = `${PICSUM}/${defId}/240/160`
+            // Charger l'image en background et tracker le load
+            const img = new Image()
+            img.onload = () => {
+                this._els.art.classList.add('loaded')
+            }
+            img.src = imageUrl
+            this._els.art.style.backgroundImage = `url(${imageUrl})`
             this._loadedArtId = defId
         }
 

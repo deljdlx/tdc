@@ -24,8 +24,8 @@ TEMPLATE.innerHTML = `
 
     .zone {
         display: flex;
-        gap: 8px;
-        padding: 10px 10px 10px 10px;
+        gap: var(--card-gap, 8px);
+        padding: var(--zone-padding, 10px);
         min-height: 60px;
         flex-wrap: wrap;
         align-items: flex-start;

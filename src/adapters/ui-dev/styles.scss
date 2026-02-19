@@ -19,10 +19,67 @@ $border: #334466;
 
 $tab-bar-height: 52px;
 
+// =====================
+// BREAKPOINTS
+// =====================
+
+$mobile-sm: 320px;
+$mobile-md: 640px;
+$tablet: 1024px;
+$desktop: 1280px;
+
+@mixin mobile-sm {
+    @media (min-width: $mobile-sm) { @content; }
+}
+
+@mixin mobile-md {
+    @media (min-width: $mobile-md) { @content; }
+}
+
+@mixin tablet {
+    @media (min-width: $tablet) { @content; }
+}
+
+@mixin desktop {
+    @media (min-width: $desktop) { @content; }
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+// Tailles de cartes responsive via CSS variables
+:root {
+    // Mobile petit écran
+    --card-width: 80px;
+    --card-gap: 6px;
+    --zone-padding: 8px;
+}
+
+@include mobile-md {
+    :root {
+        --card-width: 90px;
+        --card-gap: 8px;
+        --zone-padding: 10px;
+    }
+}
+
+@include tablet {
+    :root {
+        --card-width: 100px;
+        --card-gap: 10px;
+        --zone-padding: 12px;
+    }
+}
+
+@include desktop {
+    :root {
+        --card-width: 110px;
+        --card-gap: 12px;
+        --zone-padding: 14px;
+    }
 }
 
 body {
@@ -111,6 +168,18 @@ body {
     }
 }
 
+@include mobile-md {
+    .panel {
+        padding: 10px;
+    }
+}
+
+@include tablet {
+    .panel {
+        padding: 12px;
+    }
+}
+
 // =====================
 // CONTROLS
 // =====================
@@ -121,6 +190,13 @@ body {
     align-items: center;
     padding: 8px 0;
     flex-wrap: wrap;
+}
+
+@include mobile-md {
+    .controls {
+        gap: 6px;
+        padding: 6px 0;
+    }
 }
 
 .btn {
@@ -134,6 +210,13 @@ body {
     &:disabled {
         opacity: 0.4;
         cursor: default;
+    }
+}
+
+@include mobile-md {
+    .btn {
+        padding: 5px 12px;
+        font-size: 12px;
     }
 }
 
@@ -178,6 +261,15 @@ body {
 
     strong {
         color: $gold;
+    }
+}
+
+@include mobile-md {
+    .status-bar {
+        gap: 10px;
+        padding: 5px 10px;
+        margin: 6px 0;
+        font-size: 12px;
     }
 }
 
