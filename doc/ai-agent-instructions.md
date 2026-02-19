@@ -35,7 +35,18 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 3. Executer `npx eslint src tests`.
 4. Corriger les erreurs avant de conclure.
 
-## 5. Documentation
+## 5. Branch Safety (tous agents)
+
+1. Aucun agent ne doit changer la branche active du working tree de l'utilisateur.
+2. Interdit de `git checkout <autre-branche>` dans le working tree principal pour merge/rebase/cherry-pick.
+3. Pour toute operation qui deplace HEAD (creation de branche, merge, rebase), utiliser un worktree isole.
+4. Si aucun worktree isole n'est disponible, l'agent doit demander avant de continuer.
+5. Le working tree principal est accessible en lecture/ecriture pour les edits de code uniquement.
+6. Chaque agent definit son propre chemin worktree dans son fichier d'instructions specifique.
+7. Convention de nommage des branches: `<agent>/<description>` (ex: `claude/fix-drag-drop`, `codex/add-tests`, `copilot/refactor-ui`).
+8. Un agent ne travaille que dans ses propres branches. Interdit d'editer ou merger une branche d'un autre agent.
+
+## 6. Documentation
 
 1. Toute evolution de stack doit mettre a jour `doc/stack.md`.
 2. Toute nouvelle regle de style doit etre ajoutee a `doc/ai-code-style.md`.

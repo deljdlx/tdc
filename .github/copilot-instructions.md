@@ -1,35 +1,37 @@
-# GitHub Copilot Instructions
+# Instructions Copilot
 
-## CRITICAL RULE (BLOCKING)
+## Regle critique (bloquante)
 
-`git push` is strictly forbidden.
-If a push seems necessary, Copilot must stop and ask first.
+`git push` est strictement interdit.
+Si un push semble necessaire, Copilot doit s'arreter et demander avant toute action.
 
-## BEFORE EVERY TASK (Mandatory)
+## Avant chaque tache (obligatoire)
 
-⚠️ **YOU MUST read these files FIRST at the start of every task:**
+**Lire ces fichiers EN PREMIER au debut de chaque tache:**
 
 1. `doc/ai-agent-instructions.md`
 2. `doc/ai-code-style.md`
-3. Reference `doc/prompts/` and `doc/stack.md` as needed
+3. Consulter `doc/prompts/` et `doc/stack.md` si necessaire
 
-These are the **source of truth** for:
+Ces fichiers sont la **source de verite** pour:
 
-- code style
-- naming conventions
-- contribution quality bar
-- validation steps
-- anti-patterns to avoid
+- le style de code
+- les conventions de nommage
+- le niveau de qualite attendu
+- les etapes de validation
+- les anti-patterns a eviter
 
-Then at the start of every chat session, you must confirm that you have read and understand these instructions. You can say something like "I have read and understand the instructions in `doc/ai-agent-instructions.md` and `doc/ai-code-style.md` and will follow them for this task."
+Au debut de chaque session, confirmer la lecture de ces instructions.
 
-## Mandatory Shared Instruction Set
+## Tronc commun obligatoire
 
-1. Read `doc/ai-agent-instructions.md`
-2. Read `doc/ai-code-style.md`
+Lire et appliquer en priorite:
 
-Treat these two files as the source of truth for:
+1. `doc/ai-agent-instructions.md`
+2. `doc/ai-code-style.md`
 
-- coding style
-- validation steps
-- contribution quality bar
+## Worktree Copilot
+
+Les regles de branch safety sont definies dans `doc/ai-agent-instructions.md` (section 5).
+
+Chemin worktree isole de Copilot: `/tmp/tgc-copilot-worktree`.

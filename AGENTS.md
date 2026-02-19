@@ -39,18 +39,8 @@ These files are the source of truth for:
 1. `doc/prompts/` for engine/domain conventions.
 2. `doc/stack.md` for stack and scripts.
 
-## Codex Branch Safety (Mandatory)
+## Codex Worktree
 
-These rules apply specifically to Codex.
+Branch safety rules are defined in `doc/ai-agent-instructions.md` (section 5).
 
-1. Codex must not change the user's active branch for merge/rebase/cherry-pick operations.
-2. Codex must not run `git checkout <other-branch>` in the user's active working tree to perform merges.
-3. For any merge into `main` (or other integration branch), Codex must use a separate git worktree or separate clone.
-4. If a safe isolated worktree is not available, Codex must ask before proceeding.
-
-## Codex Worktree Mode (Mandatory)
-
-1. Codex must perform branch creation, integration, and merge operations in a dedicated isolated worktree.
-2. Default isolated worktree path for this repo: `/tmp/tgc-codex-worktree`.
-3. The user's active working tree is read/write for code edits only, not for branch-switching workflows.
-4. If Codex needs to run Git operations that could move HEAD, Codex must run them from the isolated worktree first.
+Codex isolated worktree path: `/tmp/tgc-codex-worktree`.

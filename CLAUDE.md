@@ -17,6 +17,12 @@ Lire et appliquer en priorite:
 1. `doc/prompts/` pour la spec metier du moteur.
 2. `doc/stack.md` pour la stack technique.
 
+## Worktree Claude
+
+Les regles de branch safety sont definies dans `doc/ai-agent-instructions.md` (section 5).
+
+Chemin worktree isole de Claude: `/tmp/tgc-claude-worktree`.
+
 ## Specifique Claude
 
 1. Toute reponse et tout patch doivent rester alignes avec les deux fichiers communs ci-dessus.
