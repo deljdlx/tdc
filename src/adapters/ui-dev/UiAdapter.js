@@ -553,13 +553,31 @@ export default class UiAdapter {
     /**
      * Phase 1 : vol du ghost vers la position cible.
      * Anime left/top/width/height, aplatit le tilt, masque shine/shadow.
+     * 
+     * Note : compensation de décalage lors du redimensionnement.
+     * Quand width diminue en gardant left fixe, le centre se décale.
+     * On compense en ajustant left pour que le centre arrive au bon endroit.
      */
     _flyToTarget(ghost, scene, shine, shadow, targetRect) {
         const ease = '0.25s cubic-bezier(0.2,0,0.2,1)'
 
+        // Sauvegarder la position viewport actuelle du ghost
+        const currentRect = ghost.getBoundingClientRect()
+        const currentW = currentRect.width
+        const currentCenterX = currentRect.left + currentW / 2
+
+        // Calculer où le centre du ghost doit arriver
+        const targetCenterX = targetRect.left + targetRect.width / 2
+
+        // Quand on redimensionne from currentW to targetW en gardant left fixe,
+        // le centre se décale de (targetW - currentW) / 2 vers la droite.
+        // Donc on doit ajuster left pour compenser ce décalage.
+        const widthDelta = (targetRect.width - currentW) / 2
+        const compensatedLeft = targetRect.left - widthDelta
+
         ghost.style.transition = ['left', 'top', 'width', 'height', 'perspective']
             .map(p => `${p} ${ease}`).join(', ')
-        ghost.style.left = `${targetRect.left}px`
+        ghost.style.left = `${compensatedLeft}px`
         ghost.style.top = `${targetRect.top}px`
         ghost.style.width = `${targetRect.width}px`
         ghost.style.height = `${targetRect.height}px`
