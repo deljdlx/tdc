@@ -119,6 +119,8 @@ export default class UiAdapter {
     render() {
         if (!this._engine) return
 
+        this._dragDropManager.resetDropTargets()
+
         const state = this._engine.state
         const activePlayer = state.turnState.activePlayerId
         const playerIds = Object.keys(state.players)
@@ -256,6 +258,29 @@ export default class UiAdapter {
     }
 
     /**
+     * Anime le landing du ghost après un drop réussi.
+     *
+     * @param {HTMLElement|null} targetEl
+     * @param {string|null} cardId
+     * @returns {Promise<void>}
+     */
+    async _animateGhostLanding(targetEl, cardId) {
+        if (!targetEl || !cardId) return
+
+        const ghostData = this._dragDropManager.getLastDragGhostData()
+        if (!ghostData || !ghostData.ghost) return
+
+        const { ghost, scene, shine, shadow } = ghostData
+        if (!ghost.parentNode) return
+
+        const targetRect = targetEl.getBoundingClientRect()
+        this._ghostAnimator.animateFlying(ghost, scene, shine, shadow, targetRect)
+
+        await new Promise(r => setTimeout(r, 250))
+        await this._ghostAnimator.animateBounceAndReveal(ghost, targetEl)
+    }
+
+    /**
      * Registre drop target pour joueur ennemi (attaque directe + sorts offensifs).
      */
     _registerEnemyPlayerDropTarget(hud, state, playerId) {
@@ -318,6 +343,11 @@ export default class UiAdapter {
                     cardId: drag.cardId
                 }))
                 this._engine.runUntilIdle()
+
+                // Animer le landing du ghost après le drop
+                this.render()
+                const targetCard = boardZone.querySelector(`[data-card-id="${drag.cardId}"]`)
+                this._animateGhostLanding(targetCard, drag.cardId)
             }
         )
     }

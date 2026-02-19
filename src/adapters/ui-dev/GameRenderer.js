@@ -12,10 +12,10 @@ export default class GameRenderer {
      * Crée l'UI complète du jeu.
      *
      * @param {Object} state - State du moteur
-     * @param {Object} uiState - État de l'UI
+     * @param {Object} _uiState - État de l'UI
      * @returns {HTMLElement} Div panel
      */
-    renderGame(state, uiState) {
+    renderGame(state, _uiState) {
         const panel = document.createElement('div')
         panel.className = 'panel active'
 

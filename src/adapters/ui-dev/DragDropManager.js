@@ -27,6 +27,7 @@ export default class DragDropManager {
         this._inputState = null      // {source, el, dragInfo, startX, startY, active}
         this._dragState = null
         this._dropTargets = []
+        this._lastGhostData = null   // Stockage temporaire pour post-drop
 
         // Bindings
         this._onMouseMove = this._handleDragMove.bind(this, 'mouse')
@@ -99,6 +100,17 @@ export default class DragDropManager {
      */
     resetDropTargets() {
         this._dropTargets = []
+    }
+
+    /**
+     * Récupère l'état du dernier drag (pour animation post-drop).
+     * Utilisé par UiAdapter après un render pour animer le ghost landing.
+     */
+    getLastDragGhostData() {
+        if (!this._lastGhostData) return null
+        const data = this._lastGhostData
+        this._lastGhostData = null
+        return data
     }
 
     /**
@@ -216,7 +228,16 @@ export default class DragDropManager {
             this._clearDropHints()
 
             if (target && this._dragState && target.acceptFn(this._dragState)) {
-                // Drop accepté
+                // Drop accepté - sauvegarder les infos du ghost pour animation post-render
+                this._lastGhostData = {
+                    ghost: s.ghost,
+                    scene: s.ghostState?.ghostScene,
+                    shine: s.ghostState?.ghostShine,
+                    shadow: s.ghostState?.ghostShadow,
+                    cardId: this._dragState.cardId,
+                    isCreature: this._dragState.cardType === 'creature'
+                }
+
                 target.dropFn(this._dragState, target.el)
 
                 if (s.ghost && this._onDragEnd) {
