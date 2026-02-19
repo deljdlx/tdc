@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
-import Engine, { StepStatus } from '../../../src/core/engine/Engine.js'
+import Engine from '../../../src/core/engine/Engine.js'
 import TriggerEngine from '../../../src/core/effects/TriggerEngine.js'
 import ReplacementPipeline from '../../../src/core/effects/ReplacementPipeline.js'
 import Resolver from '../../../src/core/effects/Resolver.js'

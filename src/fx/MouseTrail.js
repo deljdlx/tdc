@@ -148,6 +148,83 @@ export default class MouseTrail {
             glowAlpha: 0.15,
             ribbon: true,
             ribbonWidth: 2
+        },
+        GALAXY: {
+            colors: ['#1e1b4b', '#5b21b6', '#7c3aed', '#c4b5fd', '#f5f3ff'],
+            maxSize: 6.5,
+            minSize: 0.9,
+            lifetime: 0.65,
+            glow: true,
+            glowRadius: 4.5,
+            glowAlpha: 0.28,
+            ribbon: true,
+            ribbonWidth: 3
+        },
+        RAINBOW: {
+            colors: ['#ef4444', '#f97316', '#fbbf24', '#84cc16', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899'],
+            maxSize: 5.5,
+            minSize: 0.8,
+            lifetime: 0.58,
+            glow: true,
+            glowRadius: 3.5,
+            glowAlpha: 0.26,
+            ribbon: true,
+            ribbonWidth: 2.8
+        },
+        GOLD: {
+            colors: ['#78350f', '#a16207', '#ca8a04', '#fbbf24', '#fef3c7'],
+            maxSize: 6,
+            minSize: 1,
+            lifetime: 0.5,
+            glow: true,
+            glowRadius: 3.8,
+            glowAlpha: 0.32,
+            ribbon: true,
+            ribbonWidth: 2.6
+        },
+        COSMIC: {
+            colors: ['#831843', '#be185d', '#ec4899', '#f9a8d4', '#fce7f3'],
+            maxSize: 5.8,
+            minSize: 0.7,
+            lifetime: 0.6,
+            glow: true,
+            glowRadius: 4.2,
+            glowAlpha: 0.3,
+            ribbon: true,
+            ribbonWidth: 2.4
+        },
+        LASER: {
+            colors: ['#064e3b', '#059669', '#10b981', '#6ee7b7'],
+            maxSize: 3.5,
+            minSize: 0.4,
+            lifetime: 0.32,
+            glow: true,
+            glowRadius: 5,
+            glowAlpha: 0.38,
+            ribbon: true,
+            ribbonWidth: 1.8
+        },
+        EMBER: {
+            colors: ['#450a0a', '#991b1b', '#dc2626', '#f87171', '#fecaca'],
+            maxSize: 6.5,
+            minSize: 1.2,
+            lifetime: 0.62,
+            glow: true,
+            glowRadius: 3.4,
+            glowAlpha: 0.24,
+            ribbon: true,
+            ribbonWidth: 3.2
+        },
+        CRYSTAL: {
+            colors: ['#f0f9ff', '#e0f2fe', '#bae6fd', '#7dd3fc', '#38bdf8'],
+            maxSize: 4.8,
+            minSize: 0.6,
+            lifetime: 0.48,
+            glow: true,
+            glowRadius: 4,
+            glowAlpha: 0.18,
+            ribbon: true,
+            ribbonWidth: 2
         }
     }
 
@@ -155,11 +232,14 @@ export default class MouseTrail {
      * Collections thématiques de presets.
      */
     static COLLECTIONS = Object.freeze({
-        SHOWCASE: ['AURORA', 'MAGIC', 'FIRE', 'ICE', 'ELECTRIC', 'POISON', 'NEON', 'BLOOD', 'SHADOW'],
-        ELEMENTAL: ['FIRE', 'ICE', 'ELECTRIC', 'POISON'],
-        ARENA: ['MAGIC', 'BLOOD', 'SHADOW', 'FIRE'],
-        MINIMAL: ['SUBTLE', 'NEON'],
-        NATURE: ['AURORA', 'ICE', 'POISON']
+        SHOWCASE: ['AURORA', 'MAGIC', 'FIRE', 'ICE', 'ELECTRIC', 'POISON', 'NEON', 'BLOOD', 'SHADOW', 'GALAXY', 'RAINBOW', 'COSMIC'],
+        ELEMENTAL: ['FIRE', 'ICE', 'ELECTRIC', 'POISON', 'EMBER'],
+        ARENA: ['MAGIC', 'BLOOD', 'SHADOW', 'FIRE', 'LASER'],
+        MINIMAL: ['SUBTLE', 'NEON', 'LASER'],
+        NATURE: ['AURORA', 'ICE', 'POISON', 'CRYSTAL'],
+        COSMIC: ['GALAXY', 'COSMIC', 'MAGIC', 'AURORA'],
+        LUXURY: ['GOLD', 'CRYSTAL', 'RAINBOW'],
+        VIBRANT: ['RAINBOW', 'NEON', 'ELECTRIC', 'COSMIC']
     })
 
     /**
