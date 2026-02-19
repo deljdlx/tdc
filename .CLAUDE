@@ -1,79 +1,22 @@
 # Instructions Claude — Moteur TCG/JDR (tgc)
 
-## Principes fondamentaux
+## Tronc commun obligatoire
 
-> **La compréhensibilité du code > all**
->
-> Un développeur noob doit pouvoir comprendre le code en le lisant.
-> Chaque fichier doit être auto-explicatif. Privilégier la clarté à la concision.
+Lire et appliquer en priorite:
 
-> **Mobile first**
->
-> Toute fonctionnalité UI/UX doit fonctionner sur mobile (tactile) en priorité.
-> Le desktop est un bonus, pas l'inverse. Penser touch events avant mouse events.
+1. `doc/ai-agent-instructions.md`
+2. `doc/ai-code-style.md`
 
-## Architecture
+## References projet
 
-> Voir `doc/prompts/` pour la spécification complète du moteur.
-> - `prompt0-datamodel.md` : entités, state, zones, visibilité, sérialisation
-> - `prompt0-conventions.md` : tests, patches, events, erreurs, nommage
-> - `prompt1.md` → `prompt4.md` : spécification incrémentale du moteur
+1. `doc/prompts/` pour la spec metier du moteur.
+2. `doc/stack.md` pour la stack technique.
 
-## Documentation technique
+## Specifique Claude
 
-> Voir `doc/stack.md` pour la stack technique (Vite, Sass, Vitest, scripts npm).
->
-> **Maintenir `doc/stack.md` à jour** : toute modification de la stack (ajout/suppression de dépendance, changement de config, nouveau script npm, réorganisation de fichiers) doit être répercutée dans ce fichier.
+1. Toute reponse et tout patch doivent rester alignes avec les deux fichiers communs ci-dessus.
+2. Pour Mermaid, utiliser le theme clair:
 
----
-
-## Conventions de code
-
-### Style PHP8-like
-```js
-class MyClass {
-    /**
-     * @type {string}
-     */
-    _privateField;
-
-    constructor(dependency) {
-        this._privateField = null;
-        this._dependency = dependency;
-    }
-
-    get privateField() {
-        return this._privateField;
-    }
-}
-```
-
-### Nommage
-- Classes : `PascalCase`
-- Méthodes/variables : `camelCase`
-- Propriétés privées : `_prefixUnderscore`
-- Fichiers : `PascalCase.js` pour classes, `camelCase.js` pour utilitaires
-
-### Commentaires obligatoires
-1. **En-tête de fichier** : rôle du module
-2. **Relations complexes** : schéma ASCII si nécessaire
-3. **Pourquoi, pas quoi** : expliquer les décisions, pas paraphraser le code
-4. **JSDoc** : pour chaque classe/méthode/propriété
-
-### Diagrammes Mermaid
-Toujours utiliser le thème clair avec cette directive en première ligne :
-```
+```txt
 %%{init: {'theme': 'default'}}%%
 ```
-
----
-
-## Vérification obligatoire
-
-> **Après toute modification de fichier `.js`, lancer `npx eslint <fichiers modifiés>` et corriger les erreurs avant de considérer la tâche terminée.**
-
-- Lancer ESLint sur chaque fichier JS créé ou modifié
-- Les **erreurs** doivent être corrigées immédiatement
-- Les **warnings** sur du code existant (non modifié) peuvent être ignorés
-
----
