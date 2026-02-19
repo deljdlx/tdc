@@ -4,170 +4,87 @@
  * Interface simple pour déclencher des effets sans connaître les détails.
  */
 
-import FxCanvas from '../../fx/FxCanvas.js'
 import ParticleBurst from '../../fx/ParticleBurst.js'
 import ShockwaveRing from '../../fx/ShockwaveRing.js'
-import MouseTrail from '../../fx/MouseTrail.js'
 
 export default class FxController {
-    constructor(canvasElement) {
-        this.canvas = new FxCanvas(canvasElement)
-        this.mouseTrail = new MouseTrail(canvasElement)
-        this.subscriptions = []
+    constructor(fxCanvas) {
+        this._canvas = fxCanvas
     }
 
     /**
-     * Démarre l'animation de la souris.
+     * Retourne le centre viewport d'un élément.
      */
-    startMouseTrail(domElement) {
-        this.mouseTrail.attach(domElement)
-    }
-
-    /**
-     * Arrête l'animation de la souris.
-     */
-    stopMouseTrail() {
-        this.mouseTrail.detach()
+    _centerOf(element) {
+        const r = element.getBoundingClientRect()
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 }
     }
 
     /**
      * Effet d'attaque.
      */
-    async fxAttack(fromCard, toCard) {
-        const fromRect = fromCard?.getBoundingClientRect() ?? { x: 200, y: 200 }
-        const toRect = toCard?.getBoundingClientRect() ?? { x: 800, y: 200 }
-
-        const centerFrom = {
-            x: fromRect.left + fromRect.width / 2,
-            y: fromRect.top + fromRect.height / 2
-        }
-        const centerTo = {
-            x: toRect.left + toRect.width / 2,
-            y: toRect.top + toRect.height / 2
-        }
-
-        // Burst from attacker
-        this.canvas.add(new ParticleBurst(centerFrom, {
-            color: '#ff6b6b',
-            angle: Math.atan2(centerTo.y - centerFrom.y, centerTo.x - centerFrom.x),
-            count: 12,
-            duration: 500
+    fxAttack(target) {
+        const { x, y } = this._centerOf(target)
+        this._canvas.spawn(new ShockwaveRing({
+            x, y,
+            color: '#e94560',
+            maxRadius: 70,
+            duration: 0.4,
+            rings: 2,
+            lineWidth: 4
         }))
-
-        // Shockwave at defender
-        await this._delay(100)
-        this.canvas.add(new ShockwaveRing(centerTo, {
-            color: '#ff6b6b',
-            duration: 600
+        this._canvas.spawn(new ParticleBurst({
+            x, y,
+            colors: ['#e94560', '#ff7043', '#f0c040', '#ffffff'],
+            count: 35,
+            speed: 250,
+            duration: 0.6,
+            size: 6
         }))
     }
 
     /**
      * Effet de sort.
      */
-    async fxSpell(fromCard, toCard) {
-        const fromRect = fromCard?.getBoundingClientRect() ?? { x: 200, y: 200 }
-        const toRect = toCard?.getBoundingClientRect() ?? { x: 800, y: 200 }
-
-        const centerFrom = {
-            x: fromRect.left + fromRect.width / 2,
-            y: fromRect.top + fromRect.height / 2
-        }
-        const centerTo = {
-            x: toRect.left + toRect.width / 2,
-            y: toRect.top + toRect.height / 2
-        }
-
-        // Burst from spell source
-        this.canvas.add(new ParticleBurst(centerFrom, {
-            color: '#4dabf7',
-            angle: Math.atan2(centerTo.y - centerFrom.y, centerTo.x - centerFrom.x),
-            count: 16,
-            duration: 400
+    fxSpell(target) {
+        const { x, y } = this._centerOf(target)
+        this._canvas.spawn(new ShockwaveRing({
+            x, y,
+            color: '#a78bfa',
+            maxRadius: 85,
+            duration: 0.5,
+            rings: 3
         }))
-
-        await this._delay(80)
-        this.canvas.add(new ShockwaveRing(centerTo, {
-            color: '#4dabf7',
-            duration: 500
+        this._canvas.spawn(new ParticleBurst({
+            x, y,
+            colors: ['#a78bfa', '#818cf8', '#c084fc', '#ffffff'],
+            count: 28,
+            speed: 180,
+            duration: 0.7,
+            size: 5
         }))
     }
 
     /**
      * Effet de guérison.
      */
-    async fxHeal(targetCard) {
-        const rect = targetCard?.getBoundingClientRect() ?? { x: 400, y: 300 }
-        const center = {
-            x: rect.left + rect.width / 2,
-            y: rect.top + rect.height / 2
-        }
-
-        this.canvas.add(new ParticleBurst(center, {
-            color: '#51cf66',
-            angle: Math.PI / 2, // Vers le haut
-            count: 8,
-            duration: 600
+    fxHeal(target) {
+        const { x, y } = this._centerOf(target)
+        this._canvas.spawn(new ShockwaveRing({
+            x, y,
+            color: '#4ade80',
+            maxRadius: 100,
+            duration: 0.6,
+            rings: 2,
+            lineWidth: 2
         }))
-    }
-
-    /**
-     * Effet de mort.
-     */
-    async fxDeath(targetCard) {
-        const rect = targetCard?.getBoundingClientRect() ?? { x: 400, y: 300 }
-        const center = {
-            x: rect.left + rect.width / 2,
-            y: rect.top + rect.height / 2
-        }
-
-        this.canvas.add(new ParticleBurst(center, {
-            color: '#868e96',
-            count: 20,
-            duration: 800
+        this._canvas.spawn(new ParticleBurst({
+            x, y,
+            colors: ['#4ade80', '#86efac', '#fbbf24', '#ffffff'],
+            count: 22,
+            speed: 140,
+            duration: 0.8,
+            size: 4
         }))
-
-        await this._delay(200)
-        this.canvas.add(new ShockwaveRing(center, {
-            color: '#868e96',
-            duration: 700
-        }))
-    }
-
-    /**
-     * Subscribe aux événements du moteur.
-     */
-    subscribeToEngine(eventBus) {
-        const subscription = eventBus.subscribe((event) => {
-            this._handleEngineEvent(event)
-        })
-        this.subscriptions.push(subscription)
-        return subscription
-    }
-
-    /**
-     * Traite les événements du moteur.
-     */
-    _handleEngineEvent(event) {
-        // À intégrer avec la logique du jeu
-        // Par exemple:
-        // if (event.type === 'CreatureAttacked') { ... }
-    }
-
-    /**
-     * Helper de délai.
-     */
-    _delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms))
-    }
-
-    /**
-     * Nettoie les ressources.
-     */
-    destroy() {
-        this.subscriptions.forEach(unsub => unsub?.())
-        this.subscriptions = []
-        this.canvas?.destroy?.()
-        this.mouseTrail?.detach?.()
     }
 }
