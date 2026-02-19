@@ -74,6 +74,15 @@ export default class UiAdapter {
     /** @type {MouseTrail|null} */
     _mouseTrail;
 
+    /** @type {string[]} Collection de presets pour le trail souris */
+    _mouseTrailPresetNames;
+
+    /** @type {number} Curseur de rotation des presets */
+    _mouseTrailPresetIndex;
+
+    /** @type {string|null} Preset forcé si défini */
+    _forcedMouseTrailPreset;
+
     /** @type {Object|null} État du drag souris ou tactile (pré-seuil + actif) */
     _inputState;
 
@@ -89,6 +98,9 @@ export default class UiAdapter {
         this._engine = null
         this._fx = new FxCanvas(rootElement, { fullscreen: true })
         this._mouseTrail = null
+        this._mouseTrailPresetNames = [...MouseTrail.COLLECTIONS.SHOWCASE]
+        this._mouseTrailPresetIndex = 0
+        this._forcedMouseTrailPreset = null
         this._dragState = null
         this._dropTargets = []
         this._inputState = null
@@ -97,7 +109,7 @@ export default class UiAdapter {
 
         document.addEventListener('mousemove', (e) => {
             if (!this._mouseTrail || !this._mouseTrail.isAlive()) {
-                this._mouseTrail = new MouseTrail(MouseTrail.PRESETS.MAGIC)
+                this._mouseTrail = new MouseTrail(this._nextMouseTrailPreset())
                 this._fx.spawn(this._mouseTrail)
             }
             this._mouseTrail.addPoint(e.clientX, e.clientY)
@@ -147,6 +159,20 @@ export default class UiAdapter {
         })
 
         this.render()
+    }
+
+    /**
+     * Force un preset du trail souris (nom de preset MouseTrail) ou null pour rotation auto.
+     *
+     * @param {string|null} presetName
+     */
+    setMouseTrailPreset(presetName) {
+        if (presetName === null) {
+            this._forcedMouseTrailPreset = null
+            return
+        }
+        MouseTrail.getPreset(presetName)
+        this._forcedMouseTrailPreset = presetName
     }
 
     /**
@@ -1009,5 +1035,24 @@ export default class UiAdapter {
 
     _cardsInZone(state, zoneId) {
         return Object.values(state.cards).filter(c => c.zoneId === zoneId)
+    }
+
+    /**
+     * Retourne le prochain preset de trail souris.
+     *
+     * @returns {string}
+     */
+    _nextMouseTrailPreset() {
+        if (this._forcedMouseTrailPreset) {
+            return this._forcedMouseTrailPreset
+        }
+        if (this._mouseTrailPresetNames.length === 0) {
+            return 'MAGIC'
+        }
+        const presetName = this._mouseTrailPresetNames[
+            this._mouseTrailPresetIndex % this._mouseTrailPresetNames.length
+        ]
+        this._mouseTrailPresetIndex += 1
+        return presetName
     }
 }

@@ -83,14 +83,101 @@ export default class MouseTrail {
             glow: false,
             ribbon: true,
             ribbonWidth: 1
+        },
+        ICE: {
+            colors: ['#dbeafe', '#93c5fd', '#38bdf8', '#0ea5e9'],
+            maxSize: 5,
+            minSize: 0.8,
+            lifetime: 0.5,
+            glow: true,
+            glowRadius: 3.2,
+            glowAlpha: 0.2,
+            ribbon: true,
+            ribbonWidth: 2
+        },
+        POISON: {
+            colors: ['#84cc16', '#22c55e', '#16a34a', '#14532d'],
+            maxSize: 5,
+            minSize: 0.8,
+            lifetime: 0.55,
+            glow: true,
+            glowRadius: 3,
+            glowAlpha: 0.22,
+            ribbon: true,
+            ribbonWidth: 2
+        },
+        ELECTRIC: {
+            colors: ['#fef08a', '#fde047', '#facc15', '#38bdf8'],
+            maxSize: 4.5,
+            minSize: 0.6,
+            lifetime: 0.35,
+            glow: true,
+            glowRadius: 4.2,
+            glowAlpha: 0.34,
+            ribbon: false
+        },
+        BLOOD: {
+            colors: ['#7f1d1d', '#b91c1c', '#ef4444', '#fecaca'],
+            maxSize: 6,
+            minSize: 0.8,
+            lifetime: 0.48,
+            glow: true,
+            glowRadius: 2.7,
+            glowAlpha: 0.2,
+            ribbon: true,
+            ribbonWidth: 2.5
+        },
+        SHADOW: {
+            colors: ['#0f172a', '#1e293b', '#334155', '#64748b'],
+            maxSize: 5,
+            minSize: 0.7,
+            lifetime: 0.52,
+            glow: true,
+            glowRadius: 2.2,
+            glowAlpha: 0.15,
+            ribbon: true,
+            ribbonWidth: 2
         }
+    }
+
+    /**
+     * Collections thématiques de presets.
+     */
+    static COLLECTIONS = Object.freeze({
+        SHOWCASE: ['MAGIC', 'FIRE', 'ICE', 'ELECTRIC', 'POISON', 'NEON', 'BLOOD', 'SHADOW'],
+        ELEMENTAL: ['FIRE', 'ICE', 'ELECTRIC', 'POISON'],
+        ARENA: ['MAGIC', 'BLOOD', 'SHADOW', 'FIRE'],
+        MINIMAL: ['SUBTLE', 'NEON']
+    })
+
+    /**
+     * Retourne tous les noms de presets disponibles.
+     *
+     * @returns {string[]}
+     */
+    static listPresetNames() {
+        return Object.keys(MouseTrail.PRESETS)
+    }
+
+    /**
+     * Résout un preset par nom.
+     *
+     * @param {string} name
+     * @returns {Object}
+     */
+    static getPreset(name) {
+        const preset = MouseTrail.PRESETS[name]
+        if (!preset) {
+            throw new Error(`Unknown MouseTrail preset "${name}"`)
+        }
+        return { ...preset, colors: [...preset.colors] }
     }
 
     /** @type {Object[]} Points du trail avec position et âge */
     _points
 
     /**
-     * @param {Object}   [options]
+     * @param {Object|string}   [options]
      * @param {number}   [options.maxPoints=60]    - Nombre max de points conservés
      * @param {number}   [options.lifetime=0.5]    - Durée de vie d'un point (secondes)
      * @param {string[]} [options.colors]          - Palette hex (cyclée le long du trail)
@@ -102,18 +189,21 @@ export default class MouseTrail {
      * @param {boolean}  [options.ribbon=true]      - Relier les points par une ligne lissée
      * @param {number}   [options.ribbonWidth=2]   - Épaisseur max du ruban
      */
-    constructor({
-        maxPoints = 60,
-        lifetime = 0.5,
-        colors = ['#e94560', '#f0c040', '#a78bfa', '#22d3ee'],
-        minSize = 1,
-        maxSize = 5,
-        glow = true,
-        glowRadius = 2.5,
-        glowAlpha = 0.15,
-        ribbon = true,
-        ribbonWidth = 2
-    } = {}) {
+    constructor(options = {}) {
+        const resolvedOptions = MouseTrail._resolveOptions(options)
+        const {
+            maxPoints = 60,
+            lifetime = 0.5,
+            colors = ['#e94560', '#f0c040', '#a78bfa', '#22d3ee'],
+            minSize = 1,
+            maxSize = 5,
+            glow = true,
+            glowRadius = 2.5,
+            glowAlpha = 0.15,
+            ribbon = true,
+            ribbonWidth = 2
+        } = resolvedOptions
+
         this._maxPoints = maxPoints
         this._lifetime = lifetime
         this._colors = colors.map(hexToRgb)
@@ -125,6 +215,21 @@ export default class MouseTrail {
         this._ribbon = ribbon
         this._ribbonWidth = ribbonWidth
         this._points = []
+    }
+
+    /**
+     * @param {Object|string} options
+     * @returns {Object}
+     */
+    static _resolveOptions(options) {
+        if (typeof options === 'string') {
+            return MouseTrail.getPreset(options)
+        }
+        if (options?.preset) {
+            const preset = MouseTrail.getPreset(options.preset)
+            return { ...preset, ...options, preset: undefined }
+        }
+        return options ?? {}
     }
 
     /**
