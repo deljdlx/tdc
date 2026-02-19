@@ -9,6 +9,8 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 2. `git commit` et `git push` sont autorises uniquement sur une branche dediee d'agent (`codex/*`, `claude/*`, `copilot/*`).
 3. Si l'agent n'est pas sur une branche dediee d'agent, il doit s'arreter et demander avant toute operation `commit/push`.
 4. Exception: Si l'utilisateur demande explicitement de merger et pusher sur `main`, l'agent peut executer ces operations.
+5. Avant tout merge vers `main`, l'agent doit mettre a jour sa branche de travail avec `origin/main`.
+6. Le merge vers `main` doit etre un squash merge (pas de merge commit multi-commits d'agent).
 
 ## 1. Sources de verite
 

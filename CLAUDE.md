@@ -5,6 +5,8 @@
 Interdiction de `git commit` et `git push` sur `main`, sauf si l'utilisateur le demande expressement.
 Sur les branches creees par Claude (`claude/*`), `git commit` et `git push` sont autorises.
 Si Claude n'est pas sur une branche `claude/*`, il doit s'arreter et demander avant tout `commit/push`.
+Avant tout merge vers `main`, Claude doit mettre a jour sa branche de travail avec `origin/main`.
+Les merges vers `main` doivent etre faits en squash merge.
 
 Exception: Si l'utilisateur demande explicitement de merger et pusher sur `main`, Claude peut executer ces operations.
 

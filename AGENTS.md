@@ -1,59 +1,61 @@
-# Codex Instructions
+# Instructions Codex
 
-## CRITICAL RULE (BLOCKING)
+## REGLE CRITIQUE (BLOQUANTE)
 
-Never run `git commit` or `git push` on `main`, unless the user explicitly requests it.
-On agent-created branches (for Codex: `codex/*`), `git commit` and `git push` are allowed.
-If not on an agent-created branch, stop and ask before any `commit/push`.
+Ne jamais executer `git commit` ou `git push` sur `main`, sauf si l'utilisateur le demande explicitement.
+Sur les branches creees par l'agent (pour Codex: `codex/*`), `git commit` et `git push` sont autorises.
+Si l'agent n'est pas sur une branche creee pour lui, il doit s'arreter et demander avant toute operation `commit/push`.
+Avant tout merge vers `main`, mettre a jour la branche de travail avec `origin/main`.
+Les merges vers `main` doivent etre faits en squash merge.
 
-Exception: If the user explicitly asks to merge and push to `main`, the agent can execute these operations.
+Exception: si l'utilisateur demande explicitement de merger et de pousser sur `main`, l'agent peut executer ces operations.
 
-## ⚠️ BEFORE EVERY TASK (Mandatory)
+## ⚠️ AVANT CHAQUE TACHE (OBLIGATOIRE)
 
-**YOU MUST read these files FIRST at the start of every task:**
-
-1. `doc/ai-agent-instructions.md`
-2. `doc/ai-code-style.md`
-3. Reference `doc/prompts/` and `doc/stack.md` as needed
-
-These are the **source of truth** for:
-
-- code style
-- naming conventions
-- contribution quality bar
-- validation and completion checks
-- anti-patterns to avoid
-
-## Mandatory Shared Instruction Set
-
-Read and apply, in this order:
+**TU DOIS lire ces fichiers EN PREMIER au debut de chaque tache:**
 
 1. `doc/ai-agent-instructions.md`
 2. `doc/ai-code-style.md`
+3. Consulter `doc/prompts/` et `doc/stack.md` si necessaire
 
-These files are the source of truth for:
+Ces fichiers sont la **source de verite** pour:
 
-- code style
-- contribution quality bar
-- validation and completion checks
+- le style de code
+- les conventions de nommage
+- le niveau de qualite attendu des contributions
+- les verifications de validation et de completion
+- les anti-patterns a eviter
 
-## Project References
+## Tronc Commun Obligatoire
 
-1. `doc/prompts/` for engine/domain conventions.
-2. `doc/stack.md` for stack and scripts.
+Lire et appliquer, dans cet ordre:
 
-## Codex Worktree
+1. `doc/ai-agent-instructions.md`
+2. `doc/ai-code-style.md`
 
-Branch safety rules are defined in `doc/ai-agent-instructions.md` (section 5).
+Ces fichiers sont la source de verite pour:
 
-Codex isolated worktree path: `/tmp/tgc-codex-worktree`.
+- le style de code
+- le niveau de qualite attendu des contributions
+- les verifications de validation et de completion
 
-Changes made inside this `/tmp` Codex worktree do not require prior user validation.
+## References Projet
 
-## Autonomy Trigger
+1. `doc/prompts/` pour les conventions moteur/metier.
+2. `doc/stack.md` pour la stack et les scripts.
 
-If the user asks for "en autonomie" (or equivalent wording), Codex must:
+## Worktree Codex
 
-1. Work only in `/tmp/tgc-codex-worktree`.
-2. Use a dedicated Codex branch named `codex/<description>`.
-3. Avoid any code modification in the user's main worktree.
+Les regles de securite des branches sont definies dans `doc/ai-agent-instructions.md` (section 5).
+
+Chemin du worktree isole Codex: `/tmp/tgc-codex-worktree`.
+
+Les modifications effectuees dans ce worktree Codex sous `/tmp` ne necessitent pas de validation prealable de l'utilisateur.
+
+## Declencheur Autonomie
+
+Si l'utilisateur demande "en autonomie" (ou formulation equivalente), Codex doit:
+
+1. Travailler uniquement dans `/tmp/tgc-codex-worktree`.
+2. Utiliser une branche dediee nommee `codex/<description>`.
+3. Eviter toute modification de code dans le worktree principal de l'utilisateur.
