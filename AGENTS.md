@@ -17,3 +17,12 @@ These files are the source of truth for:
 
 1. `doc/prompts/` for engine/domain conventions.
 2. `doc/stack.md` for stack and scripts.
+
+## Codex Branch Safety (Mandatory)
+
+These rules apply specifically to Codex.
+
+1. Codex must not change the user's active branch for merge/rebase/cherry-pick operations.
+2. Codex must not run `git checkout <other-branch>` in the user's active working tree to perform merges.
+3. For any merge into `main` (or other integration branch), Codex must use a separate git worktree or separate clone.
+4. If a safe isolated worktree is not available, Codex must ask before proceeding.
