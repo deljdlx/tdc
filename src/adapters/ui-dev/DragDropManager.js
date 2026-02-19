@@ -29,12 +29,6 @@ export default class DragDropManager {
         this._dropTargets = []
         this._lastGhostData = null   // Stockage temporaire pour post-drop
 
-        // Bindings
-        this._onMouseMove = this._handleDragMove.bind(this, 'mouse')
-        this._onMouseUp = this._handleDragEnd.bind(this, 'mouse')
-        this._onTouchMove = this._handleDragMove.bind(this, 'touch')
-        this._onTouchEnd = this._handleDragEnd.bind(this, 'touch')
-
         // Listeners callbacks
         this._onDragStart = null
         this._onDragMove = null
@@ -45,20 +39,38 @@ export default class DragDropManager {
      * Initialise les listeners globaux.
      */
     init() {
-        document.addEventListener('mousemove', this._onMouseMove)
-        document.addEventListener('mouseup', this._onMouseUp)
-        document.addEventListener('touchmove', this._onTouchMove, { passive: false })
-        document.addEventListener('touchend', this._onTouchEnd)
+        const handleMouseMove = (e) => this._handleDragMove('mouse', e.clientX, e.clientY)
+        const handleMouseUp = (e) => this._handleDragEnd('mouse', e.clientX, e.clientY)
+        const handleTouchMove = (e) => {
+            const touch = e.touches[0]
+            if (touch) this._handleDragMove('touch', touch.clientX, touch.clientY)
+        }
+        const handleTouchEnd = (e) => {
+            const touch = e.changedTouches[0]
+            if (touch) this._handleDragEnd('touch', touch.clientX, touch.clientY)
+        }
+
+        document.addEventListener('mousemove', handleMouseMove)
+        document.addEventListener('mouseup', handleMouseUp)
+        document.addEventListener('touchmove', handleTouchMove, { passive: false })
+        document.addEventListener('touchend', handleTouchEnd)
+
+        // Sauvegarder pour cleanup
+        this._unsubscribe = () => {
+            document.removeEventListener('mousemove', handleMouseMove)
+            document.removeEventListener('mouseup', handleMouseUp)
+            document.removeEventListener('touchmove', handleTouchMove)
+            document.removeEventListener('touchend', handleTouchEnd)
+        }
     }
 
     /**
      * Nettoie les listeners.
      */
     destroy() {
-        document.removeEventListener('mousemove', this._onMouseMove)
-        document.removeEventListener('mouseup', this._onMouseUp)
-        document.removeEventListener('touchmove', this._onTouchMove)
-        document.removeEventListener('touchend', this._onTouchEnd)
+        if (this._unsubscribe) {
+            this._unsubscribe()
+        }
     }
 
     /**

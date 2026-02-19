@@ -305,6 +305,8 @@ export default class UiAdapter {
                     }))
                 }
                 this._engine.runUntilIdle()
+                this._consumeGhost()
+                this.render()
             }
         )
     }
@@ -326,6 +328,8 @@ export default class UiAdapter {
                     targetId: playerId
                 }))
                 this._engine.runUntilIdle()
+                this._consumeGhost()
+                this.render()
             }
         )
     }
@@ -344,6 +348,8 @@ export default class UiAdapter {
                 }))
                 this._engine.runUntilIdle()
                 this.render()
+                const newCard = this._root.querySelector(`[data-card-id="${drag.cardId}"]`)
+                this._animateGhostLanding(newCard, drag.cardId)
             }
         )
     }
@@ -405,6 +411,8 @@ export default class UiAdapter {
                         }))
                     }
                     this._engine.runUntilIdle()
+                    this._consumeGhost()
+                    this.render()
                 }
             )
         }
@@ -486,6 +494,11 @@ export default class UiAdapter {
 
         this._engine = engine2
         this.render()
+    }
+
+    _consumeGhost() {
+        const ghostData = this._dragDropManager.getLastDragGhostData()
+        if (ghostData?.ghost?.parentNode) ghostData.ghost.remove()
     }
 
     _el(tag, className = '') {
