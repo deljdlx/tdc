@@ -57,6 +57,12 @@ export default class UiAdapter {
     /** @type {MouseTrail|null} */
     _mouseTrail
 
+    /** @type {boolean} */
+    _mouseTrailEnabled
+
+    /** @type {string} */
+    _mouseTrailPreset
+
     /** @type {string} */
     _activePanel
 
@@ -72,6 +78,8 @@ export default class UiAdapter {
         this._dragDropManager = new DragDropManager()
         this._ghostAnimator = new GhostAnimator()
         this._mouseTrail = null
+        this._mouseTrailEnabled = true
+        this._mouseTrailPreset = 'AURORA'
         this._activePanel = 'game'
         this._landingCardId = null
 
@@ -84,8 +92,10 @@ export default class UiAdapter {
      */
     _setupMouseTrail() {
         document.addEventListener('mousemove', (e) => {
+            if (!this._mouseTrailEnabled) return
+
             if (!this._mouseTrail || !this._mouseTrail.isAlive()) {
-                this._mouseTrail = new MouseTrail(MouseTrail.PRESETS.AURORA)
+                this._mouseTrail = new MouseTrail(MouseTrail.getPreset(this._mouseTrailPreset))
                 this._fx.spawn(this._mouseTrail)
             }
             this._mouseTrail.addPoint(e.clientX, e.clientY)
@@ -152,6 +162,10 @@ export default class UiAdapter {
         logPanel.appendChild(this._renderEventLog())
         this._root.appendChild(logPanel)
 
+        const trailPanel = this._el('div', `panel${this._activePanel === 'trail' ? ' active' : ''}`)
+        trailPanel.appendChild(this._renderTrailSettings())
+        this._root.appendChild(trailPanel)
+
         this._root.appendChild(this._renderTabBar())
     }
 
@@ -159,7 +173,8 @@ export default class UiAdapter {
         const bar = this._el('nav', 'tab-bar')
         const tabs = [
             { id: 'game', icon: '⚔', label: 'Game' },
-            { id: 'log', icon: '📋', label: 'Log' }
+            { id: 'log', icon: '📋', label: 'Log' },
+            { id: 'trail', icon: '✨', label: 'Trail FX' }
         ]
 
         for (const tab of tabs) {
@@ -469,6 +484,57 @@ export default class UiAdapter {
         }
         container.appendChild(list)
         list.scrollTop = list.scrollHeight
+        return container
+    }
+
+    _renderTrailSettings() {
+        const container = this._el('div', 'trail-settings')
+        const title = this._el('h2', 'trail-title')
+        title.textContent = 'Mouse Trail'
+        container.appendChild(title)
+
+        const subtitle = this._el('p', 'trail-subtitle')
+        subtitle.textContent = 'Configure visual presets and runtime activation.'
+        container.appendChild(subtitle)
+
+        const toggleRow = this._el('label', 'trail-row')
+        const toggleInput = this._el('input')
+        toggleInput.type = 'checkbox'
+        toggleInput.checked = this._mouseTrailEnabled
+        toggleInput.addEventListener('change', () => {
+            this._mouseTrailEnabled = toggleInput.checked
+            if (!this._mouseTrailEnabled) {
+                this._mouseTrail = null
+            }
+            this.render()
+        })
+
+        const toggleText = this._el('span')
+        toggleText.textContent = 'Enable mouse trail'
+        toggleRow.append(toggleInput, toggleText)
+        container.appendChild(toggleRow)
+
+        const presetRow = this._el('label', 'trail-row trail-row-column')
+        const presetLabel = this._el('span')
+        presetLabel.textContent = 'Preset'
+        const presetSelect = this._el('select', 'trail-select')
+        const presetNames = MouseTrail.listPresetNames()
+        for (const presetName of presetNames) {
+            const option = this._el('option')
+            option.value = presetName
+            option.textContent = presetName
+            option.selected = presetName === this._mouseTrailPreset
+            presetSelect.appendChild(option)
+        }
+        presetSelect.addEventListener('change', () => {
+            this._mouseTrailPreset = presetSelect.value
+            this._mouseTrail = null
+            this.render()
+        })
+
+        presetRow.append(presetLabel, presetSelect)
+        container.appendChild(presetRow)
+
         return container
     }
 

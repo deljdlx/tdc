@@ -433,3 +433,51 @@ body::before {
         color: $text;
     }
 }
+
+// =====================
+// TRAIL SETTINGS
+// =====================
+
+.trail-settings {
+    border: 1px solid $border;
+    border-radius: 4px;
+    background: $bg-mid;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.trail-title {
+    font-size: 18px;
+    color: $gold;
+}
+
+.trail-subtitle {
+    font-size: 12px;
+    color: $text-dim;
+}
+
+.trail-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: $text;
+}
+
+.trail-row-column {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.trail-select {
+    width: 100%;
+    max-width: 320px;
+    border: 1px solid $border;
+    border-radius: 4px;
+    padding: 7px 9px;
+    background: $bg-card;
+    color: $text;
+}
