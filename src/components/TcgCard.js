@@ -402,7 +402,7 @@ export default class TcgCard extends HTMLElement {
             this._els.art.classList.remove('loaded')
             const imageUrl = `${PICSUM}/${defId}/240/160`
             // Charger l'image en background et tracker le load
-            const img = new Image()
+            const img = new window.Image()
             img.onload = () => {
                 this._els.art.classList.add('loaded')
             }
