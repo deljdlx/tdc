@@ -2,13 +2,12 @@
 
 ## Regle critique (bloquante)
 
-Interdiction de `git commit` et `git push` sur `main`, sauf si l'utilisateur le demande expressement.
-Sur les branches creees par Copilot (`copilot/*`), `git commit` et `git push` sont autorises.
-Si Copilot n'est pas sur une branche `copilot/*`, il doit s'arreter et demander avant tout `commit/push`.
-Avant tout merge vers `main`, Copilot doit mettre a jour sa branche de travail avec `origin/main`.
-Les merges vers `main` doivent etre faits en squash merge.
+Voir `doc/ai-agent-instructions.md` section "Regles critiques" pour le tronc commun (commit/push/merge).
 
-Exception: Si l'utilisateur demande explicitement de merger et pusher sur `main`, Copilot peut executer ces operations.
+Resume agent-specifique:
+- Branches autorisees: `copilot/*` uniquement.
+- Merge vers `main`: via PR GitHub (`gh pr create` + `gh pr merge --squash`). Ne jamais merger localement.
+- Exception: Si l'utilisateur demande explicitement de merger et pusher sur `main`, Copilot peut executer ces operations.
 
 ## Avant chaque tache (obligatoire)
 

@@ -1,6 +1,6 @@
 # AI Agent Instructions (Shared)
 
-Ce fichier est le socle commun pour Claude et Copilot.
+Ce fichier est le socle commun pour tous les agents (Claude, Copilot, Codex).
 Objectif: mutualiser les regles communes et eviter les divergences.
 
 ## Regles critiques (bloquantes)
@@ -9,8 +9,10 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 2. `git commit` et `git push` sont autorises uniquement sur une branche dediee d'agent (`codex/*`, `claude/*`, `copilot/*`).
 3. Si l'agent n'est pas sur une branche dediee d'agent, il doit s'arreter et demander avant toute operation `commit/push`.
 4. Exception: Si l'utilisateur demande explicitement de merger et pusher sur `main`, l'agent peut executer ces operations.
-5. Avant tout merge vers `main`, l'agent doit mettre a jour sa branche de travail avec `origin/main`.
-6. Le merge vers `main` doit etre un squash merge (pas de merge commit multi-commits d'agent).
+5. Avant tout merge vers `main`, l'agent doit mettre a jour sa branche de travail avec `origin/main` (rebase).
+6. Le merge vers `main` passe par une **Pull Request** via `gh pr create`, puis squash merge via `gh pr merge --squash`.
+7. Ne jamais merger localement vers `main`. Toujours utiliser le workflow PR GitHub.
+8. Apres merge reussi de la PR, l'agent doit supprimer sa branche de travail locale (`git branch -d`). La branche remote est supprimee automatiquement par GitHub.
 
 ## 1. Sources de verite
 

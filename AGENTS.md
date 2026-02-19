@@ -2,13 +2,12 @@
 
 ## REGLE CRITIQUE (BLOQUANTE)
 
-Ne jamais executer `git commit` ou `git push` sur `main`, sauf si l'utilisateur le demande explicitement.
-Sur les branches creees par l'agent (pour Codex: `codex/*`), `git commit` et `git push` sont autorises.
-Si l'agent n'est pas sur une branche creee pour lui, il doit s'arreter et demander avant toute operation `commit/push`.
-Avant tout merge vers `main`, mettre a jour la branche de travail avec `origin/main`.
-Les merges vers `main` doivent etre faits en squash merge.
+Voir `doc/ai-agent-instructions.md` section "Regles critiques" pour le tronc commun (commit/push/merge).
 
-Exception: si l'utilisateur demande explicitement de merger et de pousser sur `main`, l'agent peut executer ces operations.
+Resume agent-specifique:
+- Branches autorisees: `codex/*` uniquement.
+- Merge vers `main`: via PR GitHub (`gh pr create` + `gh pr merge --squash`). Ne jamais merger localement.
+- Exception: si l'utilisateur demande explicitement de merger et de pousser sur `main`, l'agent peut executer ces operations.
 
 ## ⚠️ AVANT CHAQUE TACHE (OBLIGATOIRE)
 
