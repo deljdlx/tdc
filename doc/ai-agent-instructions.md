@@ -41,10 +41,14 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 2. Interdit de `git checkout <autre-branche>` dans le working tree principal pour merge/rebase/cherry-pick.
 3. Pour toute operation qui deplace HEAD (creation de branche, merge, rebase), utiliser un worktree isole.
 4. Si aucun worktree isole n'est disponible, l'agent doit demander avant de continuer.
-5. Le working tree principal est accessible en lecture/ecriture pour les edits de code uniquement.
+5. Le working tree principal est accessible en lecture/ecriture pour les edits de code uniquement, sauf demande explicite de mode autonome (voir regle 9).
 6. Chaque agent definit son propre chemin worktree dans son fichier d'instructions specifique.
 7. Convention de nommage des branches: `<agent>/<description>` (ex: `claude/fix-drag-drop`, `codex/add-tests`, `copilot/refactor-ui`).
 8. Un agent ne travaille que dans ses propres branches. Interdit d'editer ou merger une branche d'un autre agent.
+9. Si l'utilisateur demande "en autonomie" (ou formulation equivalente: "mode autonome", "travaille en autonome", "fais-le en autonomie"), l'agent DOIT travailler dans son worktree isole uniquement.
+10. En mode autonome, l'agent DOIT utiliser une branche dediee a son nom (`<agent>/<description>`) dans son worktree isole.
+11. En mode autonome, l'agent NE DOIT PAS modifier le working tree principal de l'utilisateur.
+12. Si le contexte courant n'est pas le worktree isole de l'agent lors d'une demande autonome, l'agent doit s'arreter et demander avant toute modification.
 
 ## 6. Documentation
 

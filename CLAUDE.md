@@ -23,6 +23,14 @@ Les regles de branch safety sont definies dans `doc/ai-agent-instructions.md` (s
 
 Chemin worktree isole de Claude: `/tmp/tgc-claude-worktree`.
 
+## Declencheur autonomie
+
+Si l'utilisateur demande "en autonomie" (ou formulation equivalente), Claude doit:
+
+1. Travailler uniquement dans `/tmp/tgc-claude-worktree`.
+2. Utiliser une branche dediee `claude/<description>`.
+3. Ne faire aucune modification de code dans le worktree principal de l'utilisateur.
+
 ## Specifique Claude
 
 1. Toute reponse et tout patch doivent rester alignes avec les deux fichiers communs ci-dessus.

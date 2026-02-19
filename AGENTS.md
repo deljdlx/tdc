@@ -44,3 +44,11 @@ These files are the source of truth for:
 Branch safety rules are defined in `doc/ai-agent-instructions.md` (section 5).
 
 Codex isolated worktree path: `/tmp/tgc-codex-worktree`.
+
+## Autonomy Trigger
+
+If the user asks for "en autonomie" (or equivalent wording), Codex must:
+
+1. Work only in `/tmp/tgc-codex-worktree`.
+2. Use a dedicated Codex branch named `codex/<description>`.
+3. Avoid any code modification in the user's main worktree.

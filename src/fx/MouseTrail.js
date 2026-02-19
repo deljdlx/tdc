@@ -43,6 +43,17 @@ export default class MouseTrail {
      * Usage : new MouseTrail(MouseTrail.PRESETS.FIRE)
      */
     static PRESETS = {
+        AURORA: {
+            colors: ['#0ea5e9', '#22d3ee', '#34d399', '#a7f3d0'],
+            maxSize: 5.5,
+            minSize: 0.7,
+            lifetime: 0.6,
+            glow: true,
+            glowRadius: 3.6,
+            glowAlpha: 0.24,
+            ribbon: true,
+            ribbonWidth: 2.5
+        },
         FIRE: {
             colors: ['#ff4500', '#ff6a00', '#f0c040', '#fff176'],
             maxSize: 7,
@@ -144,10 +155,11 @@ export default class MouseTrail {
      * Collections thématiques de presets.
      */
     static COLLECTIONS = Object.freeze({
-        SHOWCASE: ['MAGIC', 'FIRE', 'ICE', 'ELECTRIC', 'POISON', 'NEON', 'BLOOD', 'SHADOW'],
+        SHOWCASE: ['AURORA', 'MAGIC', 'FIRE', 'ICE', 'ELECTRIC', 'POISON', 'NEON', 'BLOOD', 'SHADOW'],
         ELEMENTAL: ['FIRE', 'ICE', 'ELECTRIC', 'POISON'],
         ARENA: ['MAGIC', 'BLOOD', 'SHADOW', 'FIRE'],
-        MINIMAL: ['SUBTLE', 'NEON']
+        MINIMAL: ['SUBTLE', 'NEON'],
+        NATURE: ['AURORA', 'ICE', 'POISON']
     })
 
     /**

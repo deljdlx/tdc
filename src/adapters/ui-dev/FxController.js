@@ -6,6 +6,7 @@
 
 import ParticleBurst from '../../fx/ParticleBurst.js'
 import ShockwaveRing from '../../fx/ShockwaveRing.js'
+import ArcaneOrbitBurst from '../../fx/ArcaneOrbitBurst.js'
 
 export default class FxController {
     constructor(fxCanvas) {
@@ -85,6 +86,26 @@ export default class FxController {
             speed: 140,
             duration: 0.8,
             size: 4
+        }))
+    }
+
+    /**
+     * Effet d'invocation de créature.
+     */
+    fxSummon(target) {
+        const { x, y } = this._centerOf(target)
+        this._canvas.spawn(new ArcaneOrbitBurst({
+            x, y,
+            count: 20,
+            duration: 0.8
+        }))
+        this._canvas.spawn(new ParticleBurst({
+            x, y,
+            colors: ['#7c3aed', '#a78bfa', '#22d3ee', '#ffffff'],
+            count: 18,
+            speed: 120,
+            duration: 0.5,
+            size: 3.4
         }))
     }
 }

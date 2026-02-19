@@ -20,7 +20,7 @@ TEMPLATE.innerHTML = `
     :host {
         display: inline-block;
         width: var(--card-width, 100px);
-        height: calc(var(--card-width, 100px) * 1.2);
+        height: calc(var(--card-width, 100px) * 1.4);
         user-select: none;
         font-family: 'Segoe UI', system-ui, sans-serif;
     }
@@ -32,27 +32,42 @@ TEMPLATE.innerHTML = `
         display: flex;
         flex-direction: column;
         height: 100%;
-        border-radius: 8px;
+        border-radius: 10px;
         overflow: hidden;
-        background: linear-gradient(170deg, #1e2a4a 0%, #0d1528 100%);
-        border: 2px solid #2a3a5c;
+        background: linear-gradient(170deg, #1b2845 0%, #0c1222 50%, #141e33 100%);
+        border: 2px solid #3a4d6e;
         transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
         cursor: default;
+    }
+
+    .frame::before {
+        content: '';
+        position: absolute;
+        inset: 2px;
+        border-radius: 7px;
+        border: 1px solid rgba(255, 215, 0, 0.08);
+        pointer-events: none;
+        z-index: 1;
     }
 
     .frame::after {
         content: '';
         position: absolute;
         inset: 0;
-        border-radius: 6px;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.06),
-                    inset 0 -2px 6px rgba(0,0,0,0.4);
+        border-radius: 8px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08),
+                    inset 0 -3px 8px rgba(0,0,0,0.5);
         pointer-events: none;
+        z-index: 1;
     }
 
     .frame.spell {
-        background: linear-gradient(170deg, #241a4a 0%, #110d28 100%);
-        border-color: #3a2a6c;
+        background: linear-gradient(170deg, #2a1848 0%, #130d2a 50%, #1c1435 100%);
+        border-color: #4a3578;
+    }
+
+    .frame.spell::before {
+        border-color: rgba(180, 130, 255, 0.1);
     }
 
     /* ---- STATES ---- */
@@ -124,36 +139,54 @@ TEMPLATE.innerHTML = `
 
     .cost {
         position: absolute;
-        top: 5px;
-        left: 5px;
-        width: 24px;
-        height: 24px;
-        background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+        top: 4px;
+        left: 4px;
+        width: 22px;
+        height: 22px;
+        background: radial-gradient(circle at 35% 35%, #93c5fd 0%, #3b82f6 50%, #1d4ed8 100%);
         color: white;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 800;
-        z-index: 2;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        border: 1.5px solid rgba(255, 255, 255, 0.2);
+        z-index: 3;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6),
+                    0 0 4px rgba(59, 130, 246, 0.4),
+                    inset 0 -2px 3px rgba(0, 0, 0, 0.3);
+        border: 1.5px solid rgba(255, 255, 255, 0.25);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    }
+
+    .spell .cost {
+        background: radial-gradient(circle at 35% 35%, #d8b4fe 0%, #a855f7 50%, #7c3aed 100%);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6),
+                    0 0 4px rgba(168, 85, 247, 0.4),
+                    inset 0 -2px 3px rgba(0, 0, 0, 0.3);
     }
 
     /* ---- ART ---- */
 
-    .art {
+    .art-wrap {
         position: relative;
-        width: 100%;
+        margin: 5px 5px 0;
         flex: 1;
         min-height: 0;
+        border-radius: 4px;
         overflow: hidden;
-        background: #080c18 center / cover;
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
+        border: 1px solid rgba(255, 215, 0, 0.12);
+        box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
+    }
+
+    .spell .art-wrap {
+        border-color: rgba(180, 130, 255, 0.15);
+    }
+
+    .art {
+        position: absolute;
+        inset: 0;
+        background: #080c18 center / cover no-repeat;
         opacity: 0;
         transition: opacity 0.4s ease;
     }
@@ -167,22 +200,27 @@ TEMPLATE.innerHTML = `
         position: absolute;
         inset: 0;
         background:
-            linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 40%),
-            linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.5) 100%);
+            linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%),
+            linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.5) 100%);
         pointer-events: none;
     }
 
-    /* ---- NAME ---- */
+    /* ---- NAME BANNER ---- */
 
     .name {
-        padding: 2px 4px 2px;
-        font-size: 8px;
+        padding: 3px 6px;
+        font-size: 8.5px;
         font-weight: 700;
-        color: #f0c040;
+        color: #f5d060;
         text-align: center;
-        letter-spacing: 0.3px;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-        background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 100%);
+        letter-spacing: 0.4px;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+        background: linear-gradient(180deg,
+            rgba(20, 30, 50, 0.85) 0%,
+            rgba(15, 22, 40, 0.95) 50%,
+            rgba(20, 30, 50, 0.85) 100%);
+        border-top: 1px solid rgba(255, 215, 0, 0.12);
+        border-bottom: 1px solid rgba(255, 215, 0, 0.08);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -190,37 +228,37 @@ TEMPLATE.innerHTML = `
     }
 
     .spell .name {
-        color: #c4b5fd;
+        color: #d4bfff;
+        border-top-color: rgba(180, 130, 255, 0.15);
+        border-bottom-color: rgba(180, 130, 255, 0.08);
     }
 
     /* ---- TYPE LINE ---- */
 
     .type-line {
-        padding: 1px 4px;
-        font-size: 6px;
-        color: #6b7fa0;
+        padding: 1px 6px 2px;
+        font-size: 6.5px;
+        color: #7b8fac;
         text-align: center;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
-        border-top: 1px solid rgba(255, 255, 255, 0.04);
+        letter-spacing: 0.8px;
         flex-shrink: 0;
     }
 
     /* ---- BODY (effect text) ---- */
 
     .body {
-        padding: 1px 4px 1px;
+        padding: 1px 6px 2px;
         min-height: 0;
-        font-size: 6px;
         flex-shrink: 0;
     }
 
     .effect {
-        font-size: 6px;
+        font-size: 7px;
         color: #fbbf24;
         text-align: center;
         font-style: italic;
-        line-height: 1.2;
+        line-height: 1.3;
     }
 
     .effect:empty {
@@ -232,7 +270,7 @@ TEMPLATE.innerHTML = `
     .stats {
         display: flex;
         justify-content: space-between;
-        padding: 1px 3px 1px;
+        padding: 0 4px 4px;
         gap: 2px;
         flex-shrink: 0;
     }
@@ -242,41 +280,43 @@ TEMPLATE.innerHTML = `
     }
 
     .stat {
-        width: 16px;
-        height: 16px;
-        border-radius: 2px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 9px;
+        font-size: 10px;
         font-weight: 800;
         color: white;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        border: 1.5px solid rgba(255, 255, 255, 0.2);
     }
 
     .power {
-        background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
-        box-shadow: 0 2px 4px rgba(239, 68, 68, 0.35),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        background: radial-gradient(circle at 35% 35%, #f87171 0%, #ef4444 50%, #b91c1c 100%);
+        box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4),
+                    inset 0 -2px 3px rgba(0, 0, 0, 0.25);
     }
 
     .hp {
-        background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
-        box-shadow: 0 2px 4px rgba(34, 197, 94, 0.35),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        background: radial-gradient(circle at 35% 35%, #4ade80 0%, #22c55e 50%, #15803d 100%);
+        box-shadow: 0 2px 5px rgba(34, 197, 94, 0.4),
+                    inset 0 -2px 3px rgba(0, 0, 0, 0.25);
     }
 
     /* ---- STATUS OVERLAY ---- */
 
     .status-overlay {
         position: absolute;
-        bottom: 28px;
+        bottom: 32px;
         right: 6px;
         font-size: 10px;
         font-weight: 600;
         padding: 1px 5px;
         border-radius: 3px;
-        background: rgba(0, 0, 0, 0.6);
-        z-index: 2;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 3;
     }
 
     .status-overlay:empty {
@@ -294,7 +334,7 @@ TEMPLATE.innerHTML = `
 
 <div class="frame">
     <div class="cost"></div>
-    <div class="art"></div>
+    <div class="art-wrap"><div class="art"></div></div>
     <div class="name"></div>
     <div class="type-line"></div>
     <div class="body">

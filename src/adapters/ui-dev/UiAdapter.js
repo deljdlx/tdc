@@ -85,7 +85,7 @@ export default class UiAdapter {
     _setupMouseTrail() {
         document.addEventListener('mousemove', (e) => {
             if (!this._mouseTrail || !this._mouseTrail.isAlive()) {
-                this._mouseTrail = new MouseTrail(MouseTrail.PRESETS.MAGIC)
+                this._mouseTrail = new MouseTrail(MouseTrail.PRESETS.AURORA)
                 this._fx.spawn(this._mouseTrail)
             }
             this._mouseTrail.addPoint(e.clientX, e.clientY)
@@ -349,6 +349,7 @@ export default class UiAdapter {
                 this._engine.runUntilIdle()
                 this.render()
                 const newCard = this._root.querySelector(`[data-card-id="${drag.cardId}"]`)
+                if (newCard) this._fxController.fxSummon(newCard)
                 this._animateGhostLanding(newCard, drag.cardId)
             }
         )

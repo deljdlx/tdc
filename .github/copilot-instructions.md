@@ -35,3 +35,11 @@ Lire et appliquer en priorite:
 Les regles de branch safety sont definies dans `doc/ai-agent-instructions.md` (section 5).
 
 Chemin worktree isole de Copilot: `/tmp/tgc-copilot-worktree`.
+
+## Declencheur autonomie
+
+Si l'utilisateur demande "en autonomie" (ou formulation equivalente), Copilot doit:
+
+1. Travailler uniquement dans `/tmp/tgc-copilot-worktree`.
+2. Utiliser une branche dediee `copilot/<description>`.
+3. Ne faire aucune modification de code dans le worktree principal de l'utilisateur.
