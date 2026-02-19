@@ -118,8 +118,13 @@ body {
     right: 0;
     height: $tab-bar-height;
     display: flex;
-    background: color.adjust($bg-mid, $lightness: -4%);
-    border-top: 1px solid $border;
+    background: linear-gradient(
+        to bottom,
+        color.adjust($bg-mid, $lightness: -2%),
+        color.adjust($bg-mid, $lightness: -6%)
+    );
+    border-top: 1px solid rgba($gold, 0.1);
+    box-shadow: 0 -2px 12px rgba(black, 0.4);
     z-index: 200;
 }
 
@@ -134,17 +139,32 @@ body {
     background: none;
     color: $text-dim;
     font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: color 0.2s, background 0.2s;
+    transition: color 0.2s, background 0.2s, text-shadow 0.2s;
+    position: relative;
 
     &:hover {
-        background: rgba(white, 0.03);
+        background: rgba(white, 0.04);
+        color: color.adjust($text-dim, $lightness: 12%);
     }
 
     &.active {
         color: $gold;
+        text-shadow: 0 0 8px rgba($gold, 0.4);
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, $gold, transparent);
+            border-radius: 0 0 2px 2px;
+        }
     }
 }
 
@@ -200,42 +220,82 @@ body {
 }
 
 .btn {
-    padding: 6px 16px;
-    border: none;
-    border-radius: 4px;
+    padding: 8px 20px;
+    border: 1px solid rgba(white, 0.15);
+    border-bottom: 2px solid rgba(black, 0.4);
+    border-radius: 6px;
     cursor: pointer;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    text-shadow: 0 1px 2px rgba(black, 0.5);
+    position: relative;
+    transition: transform 0.1s, box-shadow 0.2s, filter 0.2s;
+
+    &:active:not(:disabled) {
+        transform: translateY(1px);
+        border-bottom-width: 1px;
+    }
 
     &:disabled {
-        opacity: 0.4;
+        opacity: 0.35;
         cursor: default;
+        filter: grayscale(0.5);
     }
 }
 
 @include mobile-md {
     .btn {
-        padding: 5px 12px;
+        padding: 7px 14px;
         font-size: 12px;
     }
 }
 
 .btn-primary {
-    background: $accent;
+    background: linear-gradient(
+        to bottom,
+        color.adjust($accent, $lightness: 12%) 0%,
+        $accent 40%,
+        color.adjust($accent, $lightness: -8%) 100%
+    );
     color: white;
+    border-color: color.adjust($accent, $lightness: -15%);
+    border-top-color: color.adjust($accent, $lightness: 8%);
+    box-shadow:
+        0 0 8px rgba($accent, 0.3),
+        inset 0 1px 0 rgba(white, 0.2);
 
     &:hover:not(:disabled) {
-        background: color.adjust($accent, $lightness: -10%);
+        box-shadow:
+            0 0 14px rgba($accent, 0.5),
+            0 0 24px rgba($accent, 0.2),
+            inset 0 1px 0 rgba(white, 0.25);
+        filter: brightness(1.1);
     }
 }
 
 .btn-secondary {
-    background: $bg-card;
+    background: linear-gradient(
+        to bottom,
+        color.adjust($bg-card, $lightness: 6%) 0%,
+        $bg-card 40%,
+        color.adjust($bg-card, $lightness: -4%) 100%
+    );
     color: $text;
-    border: 1px solid $border;
+    border-color: color.adjust($bg-card, $lightness: -8%);
+    border-top-color: color.adjust($bg-card, $lightness: 12%);
+    box-shadow:
+        0 0 4px rgba($bg-card, 0.3),
+        inset 0 1px 0 rgba(white, 0.08);
 
     &:hover:not(:disabled) {
-        background: color.adjust($bg-card, $lightness: 5%);
+        box-shadow:
+            0 0 10px rgba($gold, 0.15),
+            0 0 20px rgba($bg-card, 0.3),
+            inset 0 1px 0 rgba(white, 0.12);
+        border-top-color: rgba($gold, 0.3);
+        filter: brightness(1.15);
     }
 }
 
@@ -279,12 +339,25 @@ body {
 
 .game-over-banner {
     padding: 12px;
-    background: $accent;
+    background: linear-gradient(
+        to bottom,
+        color.adjust($accent, $lightness: 8%),
+        $accent,
+        color.adjust($accent, $lightness: -6%)
+    );
     color: white;
     text-align: center;
     font-weight: 700;
     font-size: 16px;
-    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-shadow: 0 2px 4px rgba(black, 0.5);
+    border-radius: 6px;
+    border: 1px solid color.adjust($accent, $lightness: -12%);
+    border-top-color: color.adjust($accent, $lightness: 10%);
+    box-shadow:
+        0 0 16px rgba($accent, 0.3),
+        inset 0 1px 0 rgba(white, 0.15);
     margin-bottom: 8px;
 }
 
