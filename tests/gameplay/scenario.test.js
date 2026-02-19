@@ -4,7 +4,6 @@
 
 import { describe, it, expect } from 'vitest'
 import { createGame, startGame } from '../../src/gameplay/setup.js'
-import StartGameCommand from '../../src/gameplay/commands/StartGameCommand.js'
 import PlayCreatureCommand from '../../src/gameplay/commands/PlayCreatureCommand.js'
 import PlaySpellCommand from '../../src/gameplay/commands/PlaySpellCommand.js'
 import AttackCommand from '../../src/gameplay/commands/AttackCommand.js'
