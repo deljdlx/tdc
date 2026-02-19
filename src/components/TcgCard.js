@@ -386,12 +386,20 @@ export default class TcgCard extends HTMLElement {
     /** @type {string} Dernier definition-id chargé (évite rechargement image inutile) */
     _loadedArtId
 
+    /** @type {number|null} Timer pour la détection du long press */
+    _longPressTimer
+
+    /** @type {boolean} Indique si un drag a démarré (annule le long press) */
+    _dragStarted
+
     constructor() {
         super()
         this.attachShadow({ mode: 'open' })
         this.shadowRoot.appendChild(TEMPLATE.content.cloneNode(true))
 
         this._loadedArtId = ''
+        this._longPressTimer = null
+        this._dragStarted = false
         this._els = {
             frame: this.shadowRoot.querySelector('.frame'),
             cost: this.shadowRoot.querySelector('.cost'),
@@ -402,6 +410,51 @@ export default class TcgCard extends HTMLElement {
             stats: this.shadowRoot.querySelector('.stats'),
             status: this.shadowRoot.querySelector('.status-overlay'),
         }
+
+        this._setupInspectListeners()
+    }
+
+    /**
+     * Configure les listeners pour l'inspection de carte :
+     * - Clic droit (contextmenu) → dispatch card-inspect
+     * - Appui long (touchstart/touchend) → dispatch card-inspect
+     */
+    _setupInspectListeners() {
+        this.addEventListener('contextmenu', (e) => {
+            e.preventDefault()
+            this._dispatchInspect()
+        })
+
+        this.addEventListener('touchstart', () => {
+            this._dragStarted = false
+            this._longPressTimer = setTimeout(() => {
+                if (!this._dragStarted) this._dispatchInspect()
+                this._longPressTimer = null
+            }, 500)
+        }, { passive: true })
+
+        this.addEventListener('touchmove', () => {
+            this._dragStarted = true
+            this._cancelLongPress()
+        }, { passive: true })
+
+        this.addEventListener('touchend', () => this._cancelLongPress())
+        this.addEventListener('touchcancel', () => this._cancelLongPress())
+    }
+
+    _cancelLongPress() {
+        if (this._longPressTimer !== null) {
+            clearTimeout(this._longPressTimer)
+            this._longPressTimer = null
+        }
+    }
+
+    _dispatchInspect() {
+        this.dispatchEvent(new CustomEvent('card-inspect', {
+            bubbles: true,
+            composed: true,
+            detail: { cardId: this.getAttribute('data-card-id') }
+        }))
     }
 
     attributeChangedCallback() {

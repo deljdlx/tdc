@@ -26,6 +26,7 @@ import FxController from './FxController.js'
 import '../../components/TcgCard.js'
 import '../../components/CardZone.js'
 import '../../components/PlayerHud.js'
+import CardModal from '../../components/CardModal.js'
 
 const EFFECT_TEXT = {
     DEAL_DAMAGE: (v) => `Deal ${v} damage`,
@@ -63,6 +64,9 @@ export default class UiAdapter {
     /** @type {string|null} */
     _landingCardId
 
+    /** @type {CardModal} */
+    _cardModal
+
     constructor(rootElement) {
         this._root = rootElement
         this._eventLog = []
@@ -74,9 +78,51 @@ export default class UiAdapter {
         this._mouseTrail = null
         this._activePanel = 'game'
         this._landingCardId = null
+        this._cardModal = this._createCardModal()
 
         this._setupMouseTrail()
+        this._setupCardInspect()
         this._dragDropManager.init()
+    }
+
+    /**
+     * Crée et attache la modale d'inspection à document.body.
+     * Vit en dehors de #app pour ne pas être effacée par render().
+     */
+    _createCardModal() {
+        const modal = new CardModal()
+        document.body.appendChild(modal)
+        return modal
+    }
+
+    /**
+     * Écoute l'événement card-inspect (long press / clic droit) sur les cartes.
+     */
+    _setupCardInspect() {
+        this._root.addEventListener('card-inspect', (e) => {
+            const cardId = e.detail?.cardId
+            if (!cardId || !this._engine) return
+
+            const card = this._engine.state.cards[cardId]
+            if (!card) return
+
+            const def = getCardDefinition(card.definitionId)
+            this._cardModal.open({
+                name: def?.name ?? card.definitionId,
+                type: card.attributes.type,
+                cost: card.attributes.cost,
+                definitionId: card.definitionId,
+                power: card.attributes.power,
+                hp: card.attributes.hp,
+                effect: card.attributes.effect,
+                effectValue: def?.effectPayload?.amount,
+                summoningSickness: card.attributes.summoningSickness,
+                hasAttacked: card.attributes.hasAttacked,
+                canAttack: !card.attributes.summoningSickness &&
+                    !card.attributes.hasAttacked &&
+                    card.zoneId?.startsWith('board_'),
+            })
+        })
     }
 
     /**
