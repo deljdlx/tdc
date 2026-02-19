@@ -343,11 +343,7 @@ export default class UiAdapter {
                     cardId: drag.cardId
                 }))
                 this._engine.runUntilIdle()
-
-                // Animer le landing du ghost après le drop
                 this.render()
-                const targetCard = boardZone.querySelector(`[data-card-id="${drag.cardId}"]`)
-                this._animateGhostLanding(targetCard, drag.cardId)
             }
         )
     }

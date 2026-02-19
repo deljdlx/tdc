@@ -71,15 +71,23 @@ export default class DragDropManager {
         el.style.cursor = 'grab'
 
         el.addEventListener('mousedown', (e) => {
-            if (e.button !== 0) return
-            e.preventDefault()
-            this._startDrag(e.clientX, e.clientY, 'mouse', el, dragInfo)
+            try {
+                if (e.button !== 0) return
+                e.preventDefault()
+                this._startDrag(e.clientX, e.clientY, 'mouse', el, dragInfo)
+            } catch (err) {
+                console.error('Drag error on mousedown:', err)
+            }
         })
 
         el.addEventListener('touchstart', (e) => {
-            if (e.touches.length !== 1) return
-            const touch = e.touches[0]
-            this._startDrag(touch.clientX, touch.clientY, 'touch', el, dragInfo)
+            try {
+                if (e.touches.length !== 1) return
+                const touch = e.touches[0]
+                this._startDrag(touch.clientX, touch.clientY, 'touch', el, dragInfo)
+            } catch (err) {
+                console.error('Drag error on touchstart:', err)
+            }
         }, { passive: true })
     }
 
@@ -187,31 +195,36 @@ export default class DragDropManager {
      * Active le drag réel (crée le ghost).
      */
     _activateDrag(s, x, y) {
-        s.active = true
-        this._dragState = s.dragInfo
-        s.el.classList.add('dragging')
-        s.prevX = x
-        s.prevY = y
+        try {
+            s.active = true
+            this._dragState = s.dragInfo
+            s.el.classList.add('dragging')
+            s.prevX = x
+            s.prevY = y
 
-        // Créer le ghost et récupérer son state
-        const ghostData = this._ghostAnimator.createDragGhost(s.el, x, y)
-        Object.assign(s, ghostData, {
-            ghostState: {
-                ghostScene: ghostData.scene,
-                ghostShine: ghostData.shine,
-                ghostShadow: ghostData.shadow,
-                tiltX: 0,
-                tiltY: 0
-            },
-            ghostW: ghostData.cardW,
-            ghostH: ghostData.cardH
-        })
+            // Créer le ghost et récupérer son state
+            const ghostData = this._ghostAnimator.createDragGhost(s.el, x, y)
+            Object.assign(s, ghostData, {
+                ghostState: {
+                    ghostScene: ghostData.scene,
+                    ghostShine: ghostData.shine,
+                    ghostShadow: ghostData.shadow,
+                    tiltX: 0,
+                    tiltY: 0
+                },
+                ghostW: ghostData.cardW,
+                ghostH: ghostData.cardH
+            })
 
-        // Afficher les drop hints
-        this._showDropHints()
+            // Afficher les drop hints
+            this._showDropHints()
 
-        if (this._onDragStart) {
-            this._onDragStart(s.dragInfo, ghostData)
+            if (this._onDragStart) {
+                this._onDragStart(s.dragInfo, ghostData)
+            }
+        } catch (err) {
+            console.error('Error activating drag:', err)
+            s.active = false
         }
     }
 
