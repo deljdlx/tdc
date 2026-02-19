@@ -412,7 +412,8 @@ export default class UiAdapter {
             pointer-events: none;
             z-index: 10000;
             perspective: 180px;
-            will-change: left, top;
+            transform: scale(1);
+            will-change: left, top, transform;
         `
 
         const scene = document.createElement('div')
@@ -552,46 +553,47 @@ export default class UiAdapter {
 
     /**
      * Phase 1 : vol du ghost vers la position cible.
-     * Anime left/top/width/height, aplatit le tilt, masque shine/shadow.
+     * Anime left/top via transform scale pour éviter téléporation.
      * 
-     * Note : compensation de décalage lors du redimensionnement.
-     * Quand width diminue en gardant left fixe, le centre se décale.
-     * On compense en ajustant left pour que le centre arrive au bon endroit.
+     * Au lieu de changer width/height lors du vol,
+     * on utilise transform: scale() qui préserve le centre.
      */
     _flyToTarget(ghost, scene, shine, shadow, targetRect) {
         const ease = '0.25s cubic-bezier(0.2,0,0.2,1)'
 
-        // Sauvegarder la position viewport actuelle du ghost
+        // Récupérer les dimensions actuelles du ghost
         const currentRect = ghost.getBoundingClientRect()
         const currentW = currentRect.width
+        const currentH = currentRect.height
+
+        // Calculer le scale factor pour la carte finale
+        const scaleW = targetRect.width / currentW
+        const scaleH = targetRect.height / currentH
+        const scale = Math.max(scaleW, scaleH)
+
+        // Calculer la position du centre du ghost actuellement
         const currentCenterX = currentRect.left + currentW / 2
+        const currentCenterY = currentRect.top + currentH / 2
 
-        // Calculer où le centre du ghost doit arriver
+        // Calculer où le centre doit arriver
         const targetCenterX = targetRect.left + targetRect.width / 2
+        const targetCenterY = targetRect.top + targetRect.height / 2
 
-        // Quand on redimensionne from currentW to targetW en gardant left fixe,
-        // le centre se décale de (targetW - currentW) / 2 vers la droite.
-        // Donc on doit ajuster left pour compenser ce décalage.
-        const widthDelta = (targetRect.width - currentW) / 2
-        const compensatedLeft = targetRect.left - widthDelta
+        // Calculer les offsets pour centrer le scale
+        const offsetX = targetCenterX - currentCenterX
+        const offsetY = targetCenterY - currentCenterY
 
-        ghost.style.transition = ['left', 'top', 'width', 'height', 'perspective']
+        ghost.style.transition = ['left', 'top', 'transform', 'perspective']
             .map(p => `${p} ${ease}`).join(', ')
-        ghost.style.left = `${compensatedLeft}px`
-        ghost.style.top = `${targetRect.top}px`
-        ghost.style.width = `${targetRect.width}px`
-        ghost.style.height = `${targetRect.height}px`
+        
+        // Animer vers la position finale avec scale
+        ghost.style.left = `${currentRect.left + offsetX}px`
+        ghost.style.top = `${currentRect.top + offsetY}px`
+        ghost.style.transform = `scale(${scale})`
         ghost.style.perspective = '9999px'
 
-        scene.style.transition = `transform ${ease}, width ${ease}, height ${ease}`
+        scene.style.transition = `transform ${ease}`
         scene.style.transform = 'rotateX(0deg) rotateY(0deg)'
-        scene.style.width = `${targetRect.width}px`
-        scene.style.height = `${targetRect.height}px`
-
-        const ghostCard = scene.querySelector('tcg-card')
-        if (ghostCard) {
-            ghostCard.style.setProperty('--card-width', `${targetRect.width}px`)
-        }
 
         shine.style.transition = 'opacity 0.2s'
         shine.style.opacity = '0'
