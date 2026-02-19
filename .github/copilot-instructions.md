@@ -1,5 +1,10 @@
 # GitHub Copilot Instructions
 
+## CRITICAL RULE (BLOCKING)
+
+`git push` is strictly forbidden.
+If a push seems necessary, Copilot must stop and ask first.
+
 ## BEFORE EVERY TASK (Mandatory)
 
 ⚠️ **YOU MUST read these files FIRST at the start of every task:**

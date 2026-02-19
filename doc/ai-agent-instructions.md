@@ -3,6 +3,11 @@
 Ce fichier est le socle commun pour Claude et Copilot.
 Objectif: mutualiser les regles communes et eviter les divergences.
 
+## Regles critiques (bloquantes)
+
+1. `git push` est strictement interdit pour tous les agents.
+2. Si un push semble necessaire, l'agent doit s'arreter et demander explicitement.
+
 ## 1. Sources de verite
 
 1. Lire `doc/ai-code-style.md` avant toute modification de code.
