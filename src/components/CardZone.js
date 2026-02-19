@@ -26,7 +26,7 @@ TEMPLATE.innerHTML = `
         display: flex;
         gap: var(--card-gap, 8px);
         padding: var(--zone-padding, 10px);
-        min-height: calc(var(--card-width, 100px) * 1.2);
+        min-height: 60px;
         flex-wrap: wrap;
         align-items: flex-start;
         position: relative;
