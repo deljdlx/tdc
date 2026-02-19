@@ -2,8 +2,11 @@
 
 ## Regle critique (bloquante)
 
-`git push` est strictement interdit.
-Si un push semble necessaire, Claude doit s'arreter et demander avant toute action.
+Interdiction de `git commit` et `git push` sur `main`, sauf si l'utilisateur le demande expressement.
+Sur les branches creees par Claude (`claude/*`), `git commit` et `git push` sont autorises.
+Si Claude n'est pas sur une branche `claude/*`, il doit s'arreter et demander avant tout `commit/push`.
+
+Exception: Si l'utilisateur demande explicitement de merger et pusher sur `main`, Claude peut executer ces operations.
 
 ## Tronc commun obligatoire
 
@@ -22,6 +25,8 @@ Lire et appliquer en priorite:
 Les regles de branch safety sont definies dans `doc/ai-agent-instructions.md` (section 5).
 
 Chemin worktree isole de Claude: `/tmp/tgc-claude-worktree`.
+
+Les modifications dans ce worktree Claude sous `/tmp` ne necessitent pas de validation prealable de l'utilisateur.
 
 ## Declencheur autonomie
 

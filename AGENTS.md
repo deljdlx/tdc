@@ -2,8 +2,11 @@
 
 ## CRITICAL RULE (BLOCKING)
 
-`git push` is strictly forbidden.
-If a push seems necessary, Codex must stop and ask first.
+Never run `git commit` or `git push` on `main`, unless the user explicitly requests it.
+On agent-created branches (for Codex: `codex/*`), `git commit` and `git push` are allowed.
+If not on an agent-created branch, stop and ask before any `commit/push`.
+
+Exception: If the user explicitly asks to merge and push to `main`, the agent can execute these operations.
 
 ## ⚠️ BEFORE EVERY TASK (Mandatory)
 
@@ -44,6 +47,8 @@ These files are the source of truth for:
 Branch safety rules are defined in `doc/ai-agent-instructions.md` (section 5).
 
 Codex isolated worktree path: `/tmp/tgc-codex-worktree`.
+
+Changes made inside this `/tmp` Codex worktree do not require prior user validation.
 
 ## Autonomy Trigger
 

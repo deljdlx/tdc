@@ -2,8 +2,11 @@
 
 ## Regle critique (bloquante)
 
-`git push` est strictement interdit.
-Si un push semble necessaire, Copilot doit s'arreter et demander avant toute action.
+Interdiction de `git commit` et `git push` sur `main`, sauf si l'utilisateur le demande expressement.
+Sur les branches creees par Copilot (`copilot/*`), `git commit` et `git push` sont autorises.
+Si Copilot n'est pas sur une branche `copilot/*`, il doit s'arreter et demander avant tout `commit/push`.
+
+Exception: Si l'utilisateur demande explicitement de merger et pusher sur `main`, Copilot peut executer ces operations.
 
 ## Avant chaque tache (obligatoire)
 
@@ -35,6 +38,8 @@ Lire et appliquer en priorite:
 Les regles de branch safety sont definies dans `doc/ai-agent-instructions.md` (section 5).
 
 Chemin worktree isole de Copilot: `/tmp/tgc-copilot-worktree`.
+
+Les modifications dans ce worktree Copilot sous `/tmp` ne necessitent pas de validation prealable de l'utilisateur.
 
 ## Declencheur autonomie
 

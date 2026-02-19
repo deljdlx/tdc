@@ -5,8 +5,10 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 
 ## Regles critiques (bloquantes)
 
-1. `git push` est strictement interdit pour tous les agents.
-2. Si un push semble necessaire, l'agent doit s'arreter et demander explicitement.
+1. Interdiction de `git commit` et `git push` sur la branche `main`, sauf si l'utilisateur le demande expressement.
+2. `git commit` et `git push` sont autorises uniquement sur une branche dediee d'agent (`codex/*`, `claude/*`, `copilot/*`).
+3. Si l'agent n'est pas sur une branche dediee d'agent, il doit s'arreter et demander avant toute operation `commit/push`.
+4. Exception: Si l'utilisateur demande explicitement de merger et pusher sur `main`, l'agent peut executer ces operations.
 
 ## 1. Sources de verite
 
@@ -49,6 +51,7 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 10. En mode autonome, l'agent DOIT utiliser une branche dediee a son nom (`<agent>/<description>`) dans son worktree isole.
 11. En mode autonome, l'agent NE DOIT PAS modifier le working tree principal de l'utilisateur.
 12. Si le contexte courant n'est pas le worktree isole de l'agent lors d'une demande autonome, l'agent doit s'arreter et demander avant toute modification.
+13. Les modifications de code dans les worktrees isoles des agents sous `/tmp` ne necessitent pas de validation prealable de l'utilisateur.
 
 ## 6. Documentation
 
