@@ -1,5 +1,21 @@
 # Codex Instructions
 
+## ⚠️ BEFORE EVERY TASK (Mandatory)
+
+**YOU MUST read these files FIRST at the start of every task:**
+
+1. `doc/ai-agent-instructions.md`
+2. `doc/ai-code-style.md`
+3. Reference `doc/prompts/` and `doc/stack.md` as needed
+
+These are the **source of truth** for:
+
+- code style
+- naming conventions
+- contribution quality bar
+- validation and completion checks
+- anti-patterns to avoid
+
 ## Mandatory Shared Instruction Set
 
 Read and apply, in this order:
