@@ -1,52 +1,22 @@
-# Instructions Copilot
+# Instructions Copilot — Moteur TCG/JDR (tgc)
 
-## Regle critique (bloquante)
+## Identite agent
 
-Voir `doc/ai-agent-instructions.md` section "Regles critiques" pour le tronc commun (commit/push/merge).
-
-Resume agent-specifique:
-- Branches autorisees: `copilot/*` uniquement.
-- Titre de PR: prefixe obligatoire `copilot: ...`.
-- Merge vers `main`: via PR GitHub (`gh pr create` + `gh pr merge --squash`). Ne jamais merger localement.
-- Exception: Si l'utilisateur demande explicitement de merger et pusher sur `main`, Copilot peut executer ces operations.
-
-## Avant chaque tache (obligatoire)
-
-**Lire ces fichiers EN PREMIER au debut de chaque tache:**
-
-1. `doc/ai-agent-instructions.md`
-2. `doc/ai-code-style.md`
-3. Consulter `doc/prompts/` et `doc/stack.md` si necessaire
-
-Ces fichiers sont la **source de verite** pour:
-
-- le style de code
-- les conventions de nommage
-- le niveau de qualite attendu
-- les etapes de validation
-- les anti-patterns a eviter
-
-Au debut de chaque session, confirmer la lecture de ces instructions.
+- **Nom**: `copilot`
+- **Branches**: `copilot/*`
+- **Prefixe PR**: `copilot: ...`
+- **Worktree isole**: `/tmp/copilot/<feature-name>`
 
 ## Tronc commun obligatoire
 
-Lire et appliquer en priorite:
+**Lire ces fichiers EN PREMIER au debut de chaque tache** (source de verite pour le style, les regles critiques, la branch safety, la verification, et le mode autonome):
 
 1. `doc/ai-agent-instructions.md`
 2. `doc/ai-code-style.md`
 
-## Worktree Copilot
+Au debut de chaque session, confirmer la lecture de ces instructions.
 
-Les regles de branch safety sont definies dans `doc/ai-agent-instructions.md` (section 5).
+## References projet
 
-Convention du worktree isole de Copilot: `/tmp/copilot/<feature-name>`.
-
-Les modifications dans ce worktree Copilot sous `/tmp` ne necessitent pas de validation prealable de l'utilisateur.
-
-## Declencheur autonomie
-
-Si l'utilisateur demande "en autonomie" (ou formulation equivalente), Copilot doit:
-
-1. Travailler uniquement dans `/tmp/copilot/<feature-name>`.
-2. Utiliser une branche dediee `copilot/<description>`.
-3. Ne faire aucune modification de code dans le worktree principal de l'utilisateur.
+1. `doc/prompts/` pour les conventions moteur/metier.
+2. `doc/stack.md` pour la stack et les scripts.
