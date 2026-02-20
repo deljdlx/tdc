@@ -43,22 +43,25 @@ TEMPLATE.innerHTML = `
     :host {
         display: flex;
         flex-direction: column;
-        border: 2px solid #2a3a5c;
-        border-radius: 6px;
+        border: 1px solid #2b3f5c;
+        border-radius: 12px;
         overflow: visible;
         background:
-            linear-gradient(180deg, rgba(20, 30, 55, 0.95) 0%, rgba(10, 16, 32, 0.98) 100%);
-        transition: border-color 0.3s, box-shadow 0.3s;
-        font-family: 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
+            linear-gradient(170deg, rgba(20, 30, 55, 0.95) 0%, rgba(10, 16, 32, 0.98) 100%);
+        box-shadow:
+            0 10px 24px rgba(6, 10, 20, 0.45),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+        font-family: 'Source Sans 3', 'Trebuchet MS', sans-serif;
         position: relative;
     }
 
     :host::before {
         content: '';
         position: absolute;
-        inset: 0;
-        border-radius: 4px;
-        border: 1px solid rgba(255, 255, 255, 0.04);
+        inset: -1px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
         pointer-events: none;
     }
 
@@ -67,18 +70,19 @@ TEMPLATE.innerHTML = `
     }
 
     :host([active]) {
-        border-color: #c8962c;
+        border-color: #f2c14e;
         box-shadow:
-            0 0 8px rgba(200, 150, 44, 0.25),
-            0 0 20px rgba(200, 150, 44, 0.08),
-            inset 0 0 12px rgba(200, 150, 44, 0.04);
+            0 0 18px rgba(242, 193, 78, 0.18),
+            0 10px 26px rgba(6, 10, 20, 0.45),
+            inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        transform: translateY(-1px);
     }
 
     :host([active])::after {
         content: '';
         position: absolute;
         inset: -2px;
-        border-radius: 6px;
+        border-radius: 12px;
         border: 1px solid rgba(242, 193, 78, 0.3);
         animation: border-pulse 2.5s ease-in-out infinite;
         pointer-events: none;
@@ -100,14 +104,14 @@ TEMPLATE.innerHTML = `
         display: flex;
         align-items: center;
         gap: 10px;
-        padding: 6px 10px;
+        padding: 8px 12px;
         cursor: pointer;
         background:
             linear-gradient(180deg,
-                rgba(255, 255, 255, 0.04) 0%,
-                rgba(255, 255, 255, 0.01) 40%,
+                rgba(255, 255, 255, 0.06) 0%,
+                rgba(255, 255, 255, 0.01) 45%,
                 transparent 100%);
-        transition: background 0.15s;
+        transition: background 0.2s, box-shadow 0.2s;
         position: relative;
     }
 
@@ -121,16 +125,13 @@ TEMPLATE.innerHTML = `
         background: linear-gradient(
             90deg,
             transparent,
-            rgba(100, 140, 200, 0.15),
+            rgba(100, 140, 200, 0.2),
             transparent
         );
     }
 
     .header:hover {
-        background:
-            linear-gradient(180deg,
-                rgba(255, 255, 255, 0.06) 0%,
-                rgba(255, 255, 255, 0.02) 100%);
+        box-shadow: inset 0 0 12px rgba(242, 193, 78, 0.08);
     }
 
     /* ---- PORTRAIT ---- */
@@ -138,7 +139,7 @@ TEMPLATE.innerHTML = `
     .portrait {
         width: 36px;
         height: 36px;
-        border-radius: 4px;
+        border-radius: 6px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -336,6 +337,8 @@ TEMPLATE.innerHTML = `
         flex-direction: column;
         gap: 2px;
         margin-left: auto;
+        font-size: 11px;
+        color: #5e7394;
         flex-shrink: 0;
     }
 
@@ -377,6 +380,7 @@ TEMPLATE.innerHTML = `
     .content {
         display: flex;
         flex-direction: column;
+        padding: 4px;
     }
 
     :host([mirrored]) .content {
