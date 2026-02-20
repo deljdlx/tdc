@@ -181,7 +181,7 @@ TEMPLATE.innerHTML = `
         flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: 6px;
         min-width: 0;
     }
 
@@ -196,8 +196,8 @@ TEMPLATE.innerHTML = `
     .name {
         font-family: 'Cinzel', 'Georgia', serif;
         font-weight: 600;
-        font-size: 12px;
-        color: #7b8fad;
+        font-size: 13px;
+        color: #c5d3e6;
         letter-spacing: 0.5px;
         text-transform: uppercase;
         transition: color 0.3s, text-shadow 0.3s;
@@ -237,10 +237,18 @@ TEMPLATE.innerHTML = `
         gap: 6px;
     }
 
+    .hp-label {
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: #7b8fad;
+    }
+
     .hp-bar-wrapper {
         flex: 1;
-        max-width: 120px;
-        height: 10px;
+        max-width: 140px;
+        height: 12px;
         background:
             linear-gradient(180deg, #080c18 0%, #0e1524 50%, #0a1020 100%);
         border-radius: 2px;
@@ -288,13 +296,13 @@ TEMPLATE.innerHTML = `
     }
 
     .hp-text {
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 700;
-        color: #ef4444;
-        min-width: 28px;
+        color: #ff9b9b;
+        min-width: 36px;
         text-align: right;
         font-variant-numeric: tabular-nums;
-        text-shadow: 0 0 4px rgba(239, 68, 68, 0.25);
+        text-shadow: 0 0 6px rgba(239, 68, 68, 0.25);
     }
 
     :host([low-hp]) .hp-bar-wrapper {
@@ -306,7 +314,31 @@ TEMPLATE.innerHTML = `
     .mana {
         display: flex;
         align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .mana-label {
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: #7b8fad;
+    }
+
+    .mana-gems {
+        display: flex;
+        align-items: center;
         gap: 3px;
+    }
+
+    .mana-text {
+        font-size: 11px;
+        font-weight: 700;
+        color: #9ad1ff;
+        font-variant-numeric: tabular-nums;
+        min-width: 28px;
+        text-align: right;
     }
 
     .mana-gem {
@@ -337,8 +369,8 @@ TEMPLATE.innerHTML = `
         flex-direction: column;
         gap: 2px;
         margin-left: auto;
-        font-size: 11px;
-        color: #5e7394;
+        font-size: 12px;
+        color: #6a7fa1;
         flex-shrink: 0;
     }
 
@@ -346,7 +378,7 @@ TEMPLATE.innerHTML = `
         display: flex;
         align-items: center;
         gap: 4px;
-        padding: 1px 6px;
+        padding: 2px 6px;
         border-radius: 2px;
         background: rgba(15, 22, 40, 0.6);
         border: 1px solid rgba(42, 58, 92, 0.4);
@@ -359,17 +391,17 @@ TEMPLATE.innerHTML = `
     }
 
     .counter-label {
-        font-size: 8px;
+        font-size: 9px;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        color: #4a5c7a;
+        color: #6c7f9e;
     }
 
     .counter-value {
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 700;
-        color: #8b9fc0;
+        color: #c4d2e8;
         font-variant-numeric: tabular-nums;
         min-width: 12px;
         text-align: right;
@@ -398,13 +430,18 @@ TEMPLATE.innerHTML = `
             <span class="active-badge">Turn</span>
         </div>
         <div class="hp">
+            <span class="hp-label">HP</span>
             <div class="hp-bar-wrapper">
                 <div class="hp-fill"></div>
                 <div class="hp-shimmer"></div>
             </div>
             <span class="hp-text"></span>
         </div>
-        <div class="mana"></div>
+        <div class="mana">
+            <span class="mana-label">Mana</span>
+            <div class="mana-gems"></div>
+            <span class="mana-text"></span>
+        </div>
     </div>
     <div class="counters">
         <div class="counter">
@@ -441,7 +478,8 @@ export default class PlayerHud extends HTMLElement {
             portraitLetter: this.shadowRoot.querySelector('.portrait-letter'),
             hpFill: this.shadowRoot.querySelector('.hp-fill'),
             hpText: this.shadowRoot.querySelector('.hp-text'),
-            mana: this.shadowRoot.querySelector('.mana'),
+            manaGems: this.shadowRoot.querySelector('.mana-gems'),
+            manaText: this.shadowRoot.querySelector('.mana-text'),
             deckVal: this.shadowRoot.querySelector('.deck-val'),
             graveVal: this.shadowRoot.querySelector('.grave-val')
         }
@@ -486,6 +524,7 @@ export default class PlayerHud extends HTMLElement {
 
         // Mana gems
         this._renderManaGems(mana, maxMana)
+        this._els.manaText.textContent = `${mana}/${maxMana}`
 
         // Counters
         this._els.deckVal.textContent = deckCount
@@ -496,7 +535,7 @@ export default class PlayerHud extends HTMLElement {
      * Génère les cristaux de mana (remplis + dépensés).
      */
     _renderManaGems(current, max) {
-        const container = this._els.mana
+        const container = this._els.manaGems
         container.innerHTML = ''
 
         for (let i = 0; i < max; i++) {
