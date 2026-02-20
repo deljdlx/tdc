@@ -5,8 +5,9 @@
 Voir `doc/ai-agent-instructions.md` section "Regles critiques" pour le tronc commun (commit/push/merge).
 
 Resume agent-specifique:
-- Branches autorisees: `codex/*` uniquement.
+- Branches autorisees: `codex/*` uniquement, au format `AGENT_NAME/FEATURE_NAME`.
 - Merge vers `main`: via PR GitHub (`gh pr create` + `gh pr merge --squash`). Ne jamais merger localement.
+- Si l'utilisateur demande de "publier le code" (ou equivalent): utiliser `gh` pour PR + squash merge vers `main`, depuis le worktree Codex uniquement.
 - Exception: si l'utilisateur demande explicitement de merger et de pousser sur `main`, l'agent peut executer ces operations.
 
 ## ⚠️ AVANT CHAQUE TACHE (OBLIGATOIRE)
@@ -56,5 +57,6 @@ Les modifications effectuees dans ce worktree Codex sous `/tmp` ne necessitent p
 Si l'utilisateur demande "en autonomie" (ou formulation equivalente), Codex doit:
 
 1. Travailler uniquement dans `/tmp/tgc-codex-worktree`.
-2. Utiliser une branche dediee nommee `codex/<description>`.
-3. Eviter toute modification de code dans le worktree principal de l'utilisateur.
+2. Utiliser une branche dediee nommee au format `AGENT_NAME/FEATURE_NAME` (pour Codex: `codex/<feature-name>`).
+3. Ne jamais intervenir dans le worktree principal de l'utilisateur (aucune modification de code, doc, config, ni operation git).
+4. Si l'utilisateur demande de publier, executer commit/push/PR/merge uniquement dans `/tmp/tgc-codex-worktree` via `gh` (PR + `--squash` vers `main`).
