@@ -5,6 +5,16 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-20
 
+### feat(ui): controles de parametres trail FX dans l'onglet Trail FX
+
+**Agent**: `claude` | **PR**: —
+
+Ajout d'un panneau "Parameters" dans l'onglet Trail FX permettant de
+configurer en temps reel: couleurs (color pickers), forme, duree,
+taille, intensite du glow et nombre de sparkles. Les surcharges se
+combinent avec le preset selectionne et se reinitialise au changement
+de preset ou via "Reset params".
+
 ### docs(agents): blinder les instructions pour le travail autonome concurrent
 
 **Agent**: `claude` | **PR**: —
