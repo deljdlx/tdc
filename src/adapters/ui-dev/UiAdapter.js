@@ -25,6 +25,7 @@ import GhostAnimator from './GhostAnimator.js'
 import FxController from './FxController.js'
 import '../../components/TcgCard.js'
 import '../../components/CardZone.js'
+import '../../components/PlayerLifeBar.js'
 import '../../components/PlayerHud.js'
 import CardModal from '../../components/CardModal.js'
 

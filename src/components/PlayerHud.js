@@ -23,20 +23,12 @@ TEMPLATE.innerHTML = `
         50% { opacity: 1; }
     }
 
-    @keyframes shimmer {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(200%); }
-    }
 
     @keyframes gem-sparkle {
         0%, 100% { filter: brightness(1); }
         50% { filter: brightness(1.4); }
     }
 
-    @keyframes low-hp-pulse {
-        0%, 100% { box-shadow: 0 0 4px rgba(239, 68, 68, 0.3); }
-        50% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.7); }
-    }
 
     /* ---- HOST ---- */
 
@@ -237,76 +229,8 @@ TEMPLATE.innerHTML = `
         gap: 6px;
     }
 
-    .hp-label {
-        font-size: 9px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.6px;
-        color: #7b8fad;
-    }
-
-    .hp-bar-wrapper {
+    .hp-bar {
         flex: 1;
-        max-width: 140px;
-        height: 12px;
-        background:
-            linear-gradient(180deg, #080c18 0%, #0e1524 50%, #0a1020 100%);
-        border-radius: 2px;
-        overflow: hidden;
-        border: 1px solid #1a2540;
-        box-shadow:
-            inset 0 1px 3px rgba(0, 0, 0, 0.6);
-        position: relative;
-    }
-
-    .hp-fill {
-        height: 100%;
-        border-radius: 1px;
-        transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s ease;
-        box-shadow: 0 0 6px var(--hp-glow, rgba(34, 197, 94, 0.3));
-        position: relative;
-        overflow: hidden;
-    }
-
-    .hp-fill::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 40%;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent);
-        border-radius: 1px 1px 0 0;
-    }
-
-    .hp-shimmer {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 40%;
-        height: 100%;
-        background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.08),
-            transparent
-        );
-        animation: shimmer 3s ease-in-out infinite;
-        pointer-events: none;
-    }
-
-    .hp-text {
-        font-size: 12px;
-        font-weight: 700;
-        color: #ff9b9b;
-        min-width: 36px;
-        text-align: right;
-        font-variant-numeric: tabular-nums;
-        text-shadow: 0 0 6px rgba(239, 68, 68, 0.25);
-    }
-
-    :host([low-hp]) .hp-bar-wrapper {
-        animation: low-hp-pulse 1.5s ease-in-out infinite;
     }
 
     /* ---- MANA ---- */
@@ -430,12 +354,7 @@ TEMPLATE.innerHTML = `
             <span class="active-badge">Turn</span>
         </div>
         <div class="hp">
-            <span class="hp-label">HP</span>
-            <div class="hp-bar-wrapper">
-                <div class="hp-fill"></div>
-                <div class="hp-shimmer"></div>
-            </div>
-            <span class="hp-text"></span>
+            <player-life-bar class="hp-bar" label="HP" size="sm" variant="arcade"></player-life-bar>
         </div>
         <div class="mana">
             <span class="mana-label">Mana</span>
@@ -476,8 +395,7 @@ export default class PlayerHud extends HTMLElement {
             header: this.shadowRoot.querySelector('.header'),
             name: this.shadowRoot.querySelector('.name'),
             portraitLetter: this.shadowRoot.querySelector('.portrait-letter'),
-            hpFill: this.shadowRoot.querySelector('.hp-fill'),
-            hpText: this.shadowRoot.querySelector('.hp-text'),
+            lifeBar: this.shadowRoot.querySelector('player-life-bar'),
             manaGems: this.shadowRoot.querySelector('.mana-gems'),
             manaText: this.shadowRoot.querySelector('.mana-text'),
             deckVal: this.shadowRoot.querySelector('.deck-val'),
@@ -509,18 +427,8 @@ export default class PlayerHud extends HTMLElement {
         this._els.name.textContent = name
 
         // HP bar
-        const hpPct = Math.max(0, Math.min(100, (hp / maxHp) * 100))
-        this._els.hpFill.style.width = `${hpPct}%`
-        this._els.hpFill.style.background = this._hpColor(hpPct)
-        this._els.hpFill.style.setProperty('--hp-glow', this._hpGlow(hpPct))
-        this._els.hpText.textContent = `${hp}/${maxHp}`
-
-        // Indicateur HP bas
-        if (hpPct <= 30 && hpPct > 0) {
-            this.setAttribute('low-hp', '')
-        } else {
-            this.removeAttribute('low-hp')
-        }
+        this._els.lifeBar.setAttribute('value', `${hp}`)
+        this._els.lifeBar.setAttribute('max', `${maxHp}`)
 
         // Mana gems
         this._renderManaGems(mana, maxMana)
@@ -548,20 +456,6 @@ export default class PlayerHud extends HTMLElement {
         }
     }
 
-    /**
-     * Couleur de la barre HP selon le pourcentage.
-     */
-    _hpColor(pct) {
-        if (pct > 60) return 'linear-gradient(90deg, #22c55e, #16a34a)'
-        if (pct > 30) return 'linear-gradient(90deg, #f59e0b, #d97706)'
-        return 'linear-gradient(90deg, #ef4444, #dc2626)'
-    }
-
-    _hpGlow(pct) {
-        if (pct > 60) return 'rgba(34, 197, 94, 0.3)'
-        if (pct > 30) return 'rgba(245, 158, 11, 0.3)'
-        return 'rgba(239, 68, 68, 0.4)'
-    }
 }
 
 customElements.define('player-hud', PlayerHud)
