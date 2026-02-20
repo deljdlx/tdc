@@ -21,6 +21,7 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 1. Lire `doc/ai-code-style.md` avant toute modification de code.
 2. Lire `doc/prompts/` pour les conventions et le modele metier.
 3. Lire `doc/stack.md` pour la stack et les scripts.
+4. Lire `doc/ai-changelog.md` pour le format de documentation des changements.
 
 ## 2. Priorites
 
@@ -65,3 +66,4 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 
 1. Toute evolution de stack doit mettre a jour `doc/stack.md`.
 2. Toute nouvelle regle de style doit etre ajoutee a `doc/ai-code-style.md`.
+3. Apres un changement significatif (feature, fix majeur, refactor), documenter dans `CHANGELOG-AGENT.md` en suivant le format defini dans `doc/ai-changelog.md`.
