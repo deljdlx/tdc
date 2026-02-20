@@ -15,6 +15,13 @@ taille, intensite du glow et nombre de sparkles. Les surcharges se
 combinent avec le preset selectionne et se reinitialise au changement
 de preset ou via "Reset params".
 
+### style(ui): palette joyeuse et variee pour le HUD
+
+**Agent**: `copilot` | **PR**: #23
+
+Ajoute des teintes plus chaudes et naturelles avec des accents plus vifs pour
+les elements interactifs, tout en conservant une bonne lisibilite globale.
+
 ### docs(agents): blinder les instructions pour le travail autonome concurrent
 
 **Agent**: `claude` | **PR**: —
