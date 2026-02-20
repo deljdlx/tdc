@@ -635,11 +635,16 @@ export default class UiAdapter {
 
         section.appendChild(this._renderTrailColorPickers())
         section.appendChild(this._renderTrailShapeSelect())
+        section.appendChild(this._renderTrailSlider('maxPoints', 'Particles', 10, 150, 5, ''))
         section.appendChild(this._renderTrailSlider('lifetime', 'Duration', 0.15, 1.5, 0.05, 's'))
-        section.appendChild(this._renderTrailSlider('maxSize', 'Size', 1, 15, 0.5, 'px'))
-        section.appendChild(this._renderTrailSlider('glowAlpha', 'Glow', 0, 0.5, 0.01, ''))
-        section.appendChild(this._renderTrailSlider('sparklesPerPoint', 'Sparkles', 0, 6, 1, ''))
+        section.appendChild(this._renderTrailSlider('minSize', 'Min size', 0.5, 5, 0.5, 'px'))
+        section.appendChild(this._renderTrailSlider('maxSize', 'Max size', 1, 15, 0.5, 'px'))
+        section.appendChild(this._renderTrailSlider('inertia', 'Inertia', 0, 1, 0.05, ''))
         section.appendChild(this._renderTrailSlider('spread', 'Spread', 0, 40, 1, 'px'))
+        section.appendChild(this._renderTrailSlider('glowAlpha', 'Glow', 0, 0.5, 0.01, ''))
+        section.appendChild(this._renderTrailSlider('ribbonWidth', 'Ribbon', 0.5, 6, 0.5, 'px'))
+        section.appendChild(this._renderTrailSlider('sparklesPerPoint', 'Sparkles', 0, 6, 1, ''))
+        section.appendChild(this._renderTrailSlider('sparkleSpeed', 'Sparkle speed', 10, 120, 5, ''))
 
         const resetBtn = this._el('button', 'btn btn-secondary btn-sm')
         resetBtn.textContent = 'Reset params'
