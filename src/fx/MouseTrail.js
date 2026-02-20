@@ -231,6 +231,7 @@ export default class MouseTrail {
      * @param {number}   [options.sparkleSize=1.6]  - Taille de base des sparkles
      * @param {string}   [options.shape='circle']  - Forme des particules (circle, square, star, diamond, triangle)
      * @param {number}   [options.spread=0]        - Dispersion aléatoire des points autour du curseur (px)
+     * @param {number}   [options.inertia=0]       - Inertie des particules (0 = statique, 1 = élan max)
      */
     constructor(options = {}) {
         const resolvedOptions = MouseTrail._resolveOptions(options)
@@ -250,7 +251,8 @@ export default class MouseTrail {
             sparkleSpeed = 55,
             sparkleSize = 1.6,
             shape = 'circle',
-            spread = 0
+            spread = 0,
+            inertia = 0
         } = resolvedOptions
 
         this._maxPoints = maxPoints
@@ -269,6 +271,9 @@ export default class MouseTrail {
         this._sparkleSize = sparkleSize
         this._shape = shape
         this._spread = spread
+        this._inertia = inertia
+        this._lastX = null
+        this._lastY = null
         this._points = []
         this._sparkles = []
     }
@@ -296,7 +301,15 @@ export default class MouseTrail {
      */
     addPoint(x, y) {
         const [px, py] = this._applySpread(x, y)
-        this._points.push({ x: px, y: py, age: 0 })
+        let vx = 0
+        let vy = 0
+        if (this._inertia > 0 && this._lastX !== null) {
+            vx = (x - this._lastX) * this._inertia
+            vy = (y - this._lastY) * this._inertia
+        }
+        this._lastX = x
+        this._lastY = y
+        this._points.push({ x: px, y: py, age: 0, vx, vy })
         this._emitSparkles(px, py)
         if (this._points.length > this._maxPoints) {
             this._points.shift()
@@ -327,6 +340,12 @@ export default class MouseTrail {
     update(dt) {
         for (const p of this._points) {
             p.age += dt
+            if (this._inertia > 0) {
+                p.x += p.vx * dt
+                p.y += p.vy * dt
+                p.vx *= 0.92
+                p.vy *= 0.92
+            }
         }
         this._points = this._points.filter(p => p.age < this._lifetime)
 

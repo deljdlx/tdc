@@ -5,6 +5,16 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-20
 
+### feat(fx): parametres complets et inertie pour le trail FX
+
+**Agent**: `claude` | **PR**: —
+
+Ajout de l'inertie au MouseTrail: les particules heritent de l'elan du
+curseur et derivent dans la direction du mouvement, ce qui donne un
+rendu organique et fluide. Exposition de tous les parametres restants
+dans l'onglet Trail FX (nombre de particules, taille min, epaisseur
+ruban, vitesse des sparkles) pour un controle complet de l'effet.
+
 ### feat(fx): parametre spread pour effet trail diffus et granulaire
 
 **Agent**: `claude` | **PR**: —
