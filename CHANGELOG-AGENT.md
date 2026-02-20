@@ -5,6 +5,17 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-20
 
+### docs(agents): blinder les instructions pour le travail autonome concurrent
+
+**Agent**: `claude` | **PR**: —
+
+Renforcement complet de la couche d'instructions multi-agents pour permettre
+le travail totalement autonome et concurrent. Ajout de 3 nouvelles sections
+au tronc commun: bootstrap autonome (procedure de demarrage step-by-step),
+travail concurrent multi-agents (sync, detection de conflits, isolation),
+gestion d'erreurs et recovery. Harmonisation des 3 fichiers agents sur la
+meme structure exacte.
+
 ### style(ui): palette champetre pour HUD et theme global
 
 **Agent**: `copilot` | **PR**: #19

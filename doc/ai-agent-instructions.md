@@ -64,6 +64,9 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 16. **Nettoyage du worktree entre deux taches**: avant de commencer une nouvelle feature dans le worktree fixe, l'agent doit:
     - S'assurer qu'il n'y a pas de changements non commites (`git status`). Si oui, demander a l'utilisateur.
     - Creer la nouvelle branche depuis `origin/main` a jour: `git fetch origin && git checkout -b AGENT_NAME/FEATURE_NAME origin/main`.
+17. **Rebase obligatoire avant push**: avant tout `git push`, toujours executer `git fetch origin && git rebase origin/main`. Si le rebase echoue (conflit), executer `git rebase --abort` et signaler a l'utilisateur.
+18. **Recovery HEAD detache**: si le worktree est en etat "detached HEAD", executer `git checkout -b AGENT_NAME/FEATURE_NAME` pour reattacher, ou `git checkout origin/main` pour repartir d'une base propre.
+19. En mode non-autonome, le working tree principal est en **lecture seule** sauf demande explicite de l'utilisateur. Toute modification de code se fait dans le worktree isole.
 
 ## 6. Documentation
 
@@ -94,7 +97,24 @@ npx eslint src tests
 Mettre a jour `CHANGELOG-AGENT.md` selon le format de `doc/ai-changelog.md`.
 Commiter le changelog avec le reste des changements.
 
-### Etape 3 — Push et PR
+### Etape 3 — Synchronisation avec main
+
+```bash
+git fetch origin
+git rebase origin/main
+```
+
+Si le rebase echoue (conflit), executer `git rebase --abort` et signaler a l'utilisateur. **Ne jamais forcer un push avec `--force` sans validation utilisateur.**
+
+### Etape 4 — Push et PR
+
+Verifier qu'aucune PR ouverte n'existe deja pour cette branche:
+
+```bash
+gh pr list --head AGENT_NAME/FEATURE_NAME
+```
+
+Si une PR existe deja, la mettre a jour avec un push au lieu d'en creer une nouvelle.
 
 ```bash
 git push -u origin AGENT_NAME/FEATURE_NAME
@@ -105,7 +125,7 @@ Le body de la PR doit contenir au minimum:
 - `## Summary` avec 1-3 bullet points
 - `## Test plan` avec les resultats de build/test/lint
 
-### Etape 4 — Merge
+### Etape 5 — Merge
 
 ```bash
 gh pr merge NUMBER --squash --delete-branch
@@ -113,10 +133,168 @@ gh pr merge NUMBER --squash --delete-branch
 
 `--delete-branch` supprime la branche remote automatiquement. **Ne pas** executer `git push origin --delete` ni `git fetch -p` apres: c'est redondant.
 
-### Etape 5 — Nettoyage local
+Si le merge echoue (conflit, checks en echec), ne pas retenter en boucle. Signaler a l'utilisateur avec le numero de PR et l'erreur exacte.
+
+### Etape 6 — Nettoyage local
 
 ```bash
+git checkout main
 git branch -d AGENT_NAME/FEATURE_NAME
 ```
 
-Supprimer la branche locale uniquement. Le worktree peut etre conserve ou supprime selon les besoins.
+Supprimer la branche locale uniquement. Le worktree reste en place pour la prochaine tache.
+
+## 8. Bootstrap autonome (procedure de demarrage)
+
+Quand un agent recoit une tache en mode autonome, il execute les etapes suivantes **dans cet ordre exact** avant de commencer le travail:
+
+### Etape 1 — Lecture des instructions
+
+1. Lire son fichier d'instructions specifique (`CLAUDE.md`, `AGENTS.md`, ou `.github/copilot-instructions.md`).
+2. Lire `doc/ai-agent-instructions.md` (ce fichier).
+3. Lire `doc/ai-code-style.md`.
+4. Confirmer la lecture de ces fichiers dans la reponse.
+
+### Etape 2 — Preparation du worktree
+
+```bash
+# Verifier que le worktree existe
+git worktree list
+```
+
+Si le worktree isole n'apparait pas dans la liste:
+
+```bash
+git worktree add /tmp/tgc-AGENT_NAME-worktree origin/main
+```
+
+Se placer dans le worktree:
+
+```bash
+cd /tmp/tgc-AGENT_NAME-worktree
+```
+
+### Etape 3 — Verification de l'etat du worktree
+
+```bash
+git status
+```
+
+**Changements non commites?** Stash les changements (`git stash`) ou demander a l'utilisateur si les changements semblent importants (fichiers de code modifies, pas juste des fichiers de build).
+
+**HEAD detache?** `git checkout origin/main` pour repartir d'une base propre.
+
+**Ancienne branche de l'agent encore presente?** La supprimer si elle a deja ete mergee:
+
+```bash
+git branch -d AGENT_NAME/ancienne-branche
+```
+
+### Etape 4 — Creation de la branche de travail
+
+```bash
+git fetch origin
+git checkout -b AGENT_NAME/FEATURE_NAME origin/main
+```
+
+### Etape 5 — Verification des dependances
+
+```bash
+# Si node_modules absent ou si package-lock.json a change depuis le dernier install
+npm install
+```
+
+### Etape 6 — Validation de l'environnement
+
+```bash
+npm run build
+```
+
+Si le build echoue a ce stade (avant toute modification), le probleme est sur `main`. Signaler a l'utilisateur et ne pas tenter de corriger.
+
+L'agent est pret a travailler.
+
+## 9. Travail concurrent multi-agents
+
+Plusieurs agents peuvent travailler simultanement sur le meme repo. Ces regles evitent les conflits:
+
+### 9.1 Synchronisation avec `origin/main`
+
+1. **Fetch obligatoire** avant: creation de branche, push, creation de PR, merge.
+2. **Rebase avant push**: `git fetch origin && git rebase origin/main` (cf. section 5 regle 17).
+3. Si `main` a avance pendant le travail de l'agent (un autre agent a merge), l'agent doit rebaser sa branche de travail sur le nouveau `origin/main` avant de continuer les verifications (build/test/lint).
+
+### 9.2 Detection de modifications concurrentes
+
+Avant de modifier un fichier critique partage (ex: `Engine.js`, `setup.js`, `UiAdapter.js`, `styles.scss`), l'agent doit verifier si un autre agent l'a modifie recemment:
+
+```bash
+git fetch origin
+git log --oneline origin/main -5 -- chemin/vers/fichier.js
+```
+
+Si le fichier a ete modifie dans les 5 derniers commits de `main`, l'agent doit:
+1. Lire la version actuelle sur `origin/main` avant de commencer ses modifications.
+2. Baser ses modifications sur la version la plus recente.
+
+### 9.3 Isolation stricte entre agents
+
+1. Un agent ne travaille que dans ses propres branches (`AGENT_NAME/*`).
+2. Un agent n'edite jamais une branche, PR, ou fichier de changelog d'un autre agent.
+3. Un agent ne commente pas et ne review pas les PRs d'un autre agent, sauf demande explicite de l'utilisateur.
+4. Si un agent detecte un probleme dans le code d'un autre agent (sur `main`), il le signale a l'utilisateur au lieu de le corriger lui-meme.
+
+### 9.4 Ordre de merge des PRs
+
+1. Premier arrive, premier merge (FIFO). Pas de priorite entre agents.
+2. Si deux PRs sont en conflit, le second agent doit rebaser apres le merge du premier.
+3. Le rebase est toujours prefere au merge commit.
+
+## 10. Gestion d'erreurs et recovery
+
+### 10.1 Build, test, ou lint en echec
+
+1. **Erreur dans le code de l'agent**: corriger et relancer les checks.
+2. **Erreur pre-existante** (deja presente sur `main`): signaler a l'utilisateur avec la commande exacte et la sortie d'erreur. Ne pas tenter de corriger du code qu'un autre agent ou l'utilisateur a ecrit.
+3. **Bloque apres 2 tentatives**: escalader a l'utilisateur avec un diagnostic complet:
+   - Commande executee
+   - Sortie d'erreur complete
+   - Fichier et ligne concernes
+   - Hypothese sur la cause
+
+### 10.2 Conflit lors du rebase
+
+```bash
+git rebase --abort
+```
+
+Signaler a l'utilisateur avec:
+- La branche source et la branche cible
+- Les fichiers en conflit (`git diff --name-only --diff-filter=U`)
+- Ne jamais resoudre un conflit de merge manuellement sans validation utilisateur
+
+### 10.3 Worktree corrompu ou inutilisable
+
+Si le worktree est dans un etat incoherent (`.git` corrompu, branche inexistante, erreurs git persistantes):
+
+```bash
+# Depuis le working tree principal
+git worktree remove /tmp/tgc-AGENT_NAME-worktree --force
+git worktree add /tmp/tgc-AGENT_NAME-worktree origin/main
+cd /tmp/tgc-AGENT_NAME-worktree
+npm install
+```
+
+### 10.4 Echec reseau (git fetch, git push, gh)
+
+1. Retenter une fois apres quelques secondes.
+2. Si l'echec persiste: signaler a l'utilisateur. Ne pas boucler indefiniment.
+
+### 10.5 Echec de merge de PR
+
+Si `gh pr merge` echoue:
+1. Verifier les checks CI: `gh pr checks NUMBER`
+2. Verifier les conflits: `gh pr view NUMBER`
+3. Si conflit: rebaser, re-pusher, et retenter le merge.
+4. Si checks en echec: corriger le code, re-pusher, attendre les checks, retenter.
+5. Si l'echec persiste apres 2 tentatives: signaler a l'utilisateur avec le numero de PR et l'erreur.
