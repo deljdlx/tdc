@@ -77,6 +77,9 @@ export default class UiAdapter {
     /** @type {string} Message de statut pour le panneau trail */
     _trailStatusMessage
 
+    /** @type {Object} Surcharges manuelles des paramètres du trail */
+    _mouseTrailOverrides
+
     constructor(rootElement) {
         this._root = rootElement
         this._eventLog = []
@@ -88,6 +91,7 @@ export default class UiAdapter {
         this._mouseTrail = null
         this._mouseTrailEnabled = true
         this._mouseTrailPreset = 'AURORA'
+        this._mouseTrailOverrides = {}
         this._activePanel = 'game'
         this._landingCardId = null
         this._cardModal = this._createCardModal()
@@ -146,7 +150,9 @@ export default class UiAdapter {
             if (!this._mouseTrailEnabled) return
 
             if (!this._mouseTrail || !this._mouseTrail.isAlive()) {
-                this._mouseTrail = new MouseTrail(MouseTrail.getPreset(this._mouseTrailPreset))
+                const preset = MouseTrail.getPreset(this._mouseTrailPreset)
+                const options = { ...preset, ...this._mouseTrailOverrides }
+                this._mouseTrail = new MouseTrail(options)
                 this._fx.spawn(this._mouseTrail)
             }
             this._mouseTrail.addPoint(e.clientX, e.clientY)
@@ -550,6 +556,7 @@ export default class UiAdapter {
 
         container.appendChild(this._renderTrailToggle())
         container.appendChild(this._renderTrailPresetSelect())
+        container.appendChild(this._renderTrailParamControls())
         container.appendChild(this._renderTrailJsonControls())
 
         if (this._trailStatusMessage) {
@@ -591,10 +598,144 @@ export default class UiAdapter {
         }
         select.addEventListener('change', () => {
             this._mouseTrailPreset = select.value
+            this._mouseTrailOverrides = {}
             this._mouseTrail = null
             this.render()
         })
         row.append(label, select)
+        return row
+    }
+
+    /**
+     * Applique une surcharge de paramètre et relance le trail.
+     */
+    _applyTrailOverride(key, value) {
+        this._mouseTrailOverrides[key] = value
+        this._mouseTrail = null
+    }
+
+    /**
+     * Résout la valeur effective d'un paramètre (override > preset).
+     */
+    _trailParam(key) {
+        if (key in this._mouseTrailOverrides) return this._mouseTrailOverrides[key]
+        const preset = MouseTrail.getPreset(this._mouseTrailPreset)
+        return preset[key]
+    }
+
+    /**
+     * Contrôles de réglage des paramètres du trail (couleurs, forme, durée, intensité).
+     */
+    _renderTrailParamControls() {
+        const section = this._el('div', 'trail-params')
+
+        const heading = this._el('h3', 'trail-params-heading')
+        heading.textContent = 'Parameters'
+        section.appendChild(heading)
+
+        section.appendChild(this._renderTrailColorPickers())
+        section.appendChild(this._renderTrailShapeSelect())
+        section.appendChild(this._renderTrailSlider('lifetime', 'Duration', 0.15, 1.5, 0.05, 's'))
+        section.appendChild(this._renderTrailSlider('maxSize', 'Size', 1, 15, 0.5, 'px'))
+        section.appendChild(this._renderTrailSlider('glowAlpha', 'Glow', 0, 0.5, 0.01, ''))
+        section.appendChild(this._renderTrailSlider('sparklesPerPoint', 'Sparkles', 0, 6, 1, ''))
+
+        const resetBtn = this._el('button', 'btn btn-secondary btn-sm')
+        resetBtn.textContent = 'Reset params'
+        resetBtn.addEventListener('click', () => {
+            this._mouseTrailOverrides = {}
+            this._mouseTrail = null
+            this.render()
+        })
+        section.appendChild(resetBtn)
+
+        return section
+    }
+
+    /**
+     * Sélecteurs de couleurs pour la palette du trail (4 slots).
+     */
+    _renderTrailColorPickers() {
+        const preset = MouseTrail.getPreset(this._mouseTrailPreset)
+        const colors = this._mouseTrailOverrides.colors ?? preset.colors
+        const row = this._el('div', 'trail-color-row')
+
+        const label = this._el('span', 'trail-param-label')
+        label.textContent = 'Colors'
+        row.appendChild(label)
+
+        const pickers = this._el('div', 'trail-color-pickers')
+        const slotCount = Math.min(colors.length, 6)
+
+        for (let i = 0; i < slotCount; i++) {
+            const input = this._el('input', 'trail-color-input')
+            input.type = 'color'
+            input.value = colors[i]
+            input.addEventListener('input', () => {
+                const updated = [...colors]
+                updated[i] = input.value
+                this._applyTrailOverride('colors', updated)
+            })
+            pickers.appendChild(input)
+        }
+        row.appendChild(pickers)
+        return row
+    }
+
+    /**
+     * Sélecteur de forme des particules.
+     */
+    _renderTrailShapeSelect() {
+        const shapes = ['circle', 'square', 'star', 'diamond', 'triangle']
+        const current = this._trailParam('shape') ?? 'circle'
+
+        const row = this._el('div', 'trail-param-row')
+        const label = this._el('span', 'trail-param-label')
+        label.textContent = 'Shape'
+
+        const select = this._el('select', 'trail-select')
+        for (const s of shapes) {
+            const opt = this._el('option')
+            opt.value = s
+            opt.textContent = s
+            opt.selected = s === current
+            select.appendChild(opt)
+        }
+        select.addEventListener('change', () => {
+            this._applyTrailOverride('shape', select.value)
+            this.render()
+        })
+
+        row.append(label, select)
+        return row
+    }
+
+    /**
+     * Slider générique pour un paramètre numérique du trail.
+     */
+    _renderTrailSlider(key, label, min, max, step, unit) {
+        const current = this._trailParam(key) ?? min
+        const row = this._el('div', 'trail-param-row')
+
+        const lbl = this._el('span', 'trail-param-label')
+        lbl.textContent = label
+
+        const value = this._el('span', 'trail-param-value')
+        value.textContent = `${current}${unit}`
+
+        const input = this._el('input', 'trail-slider')
+        input.type = 'range'
+        input.min = min
+        input.max = max
+        input.step = step
+        input.value = current
+        input.addEventListener('input', () => {
+            const v = Number(input.value)
+            value.textContent = `${v}${unit}`
+            this._applyTrailOverride(key, v)
+        })
+
+        row.append(lbl, input, value)
         return row
     }
 
