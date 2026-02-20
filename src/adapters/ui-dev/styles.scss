@@ -152,24 +152,66 @@ body::before {
     justify-content: center;
     gap: 3px;
     border: none;
-    background: none;
+    border-right: 1px solid rgba($gold, 0.08);
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(white, 0.04) 0%,
+            rgba(white, 0.01) 35%,
+            rgba(black, 0.18) 100%
+        );
     color: $text-dim;
     font-size: 10px;
     font-weight: 700;
+    font-family: 'Cinzel', 'Georgia', serif;
     letter-spacing: 0.8px;
     text-transform: uppercase;
     cursor: pointer;
-    transition: color 0.2s, background 0.2s, text-shadow 0.2s;
+    transition: color 0.2s, background 0.2s, text-shadow 0.2s, box-shadow 0.2s;
     position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, rgba($gold, 0) 0%, rgba($gold, 0.13) 48%, rgba($gold, 0) 100%);
+        transform: translateX(-120%);
+        transition: transform 0.35s ease;
+        pointer-events: none;
+    }
 
     &:hover {
-        background: rgba(white, 0.04);
+        background:
+            linear-gradient(
+                to bottom,
+                rgba(white, 0.08) 0%,
+                rgba(white, 0.02) 40%,
+                rgba(black, 0.2) 100%
+            );
         color: color.adjust($text-dim, $lightness: 12%);
+        box-shadow:
+            inset 0 1px 0 rgba(white, 0.08),
+            inset 0 -2px 0 rgba($gold, 0.15);
+
+        &::before {
+            transform: translateX(120%);
+        }
     }
 
     &.active {
         color: $gold;
-        text-shadow: 0 0 8px rgba($gold, 0.4);
+        text-shadow: 0 0 10px rgba($gold, 0.45);
+        background:
+            linear-gradient(
+                to bottom,
+                rgba($gold, 0.22) 0%,
+                rgba($gold, 0.08) 45%,
+                rgba($gold, 0.04) 100%
+            );
+        box-shadow:
+            inset 0 1px 0 rgba(white, 0.12),
+            inset 0 -2px 0 rgba($gold, 0.35);
 
         &::after {
             content: '';
@@ -243,9 +285,9 @@ body::before {
     cursor: pointer;
     font-size: 12px;
     font-weight: 700;
+    font-family: 'Cinzel', 'Georgia', serif;
     text-transform: uppercase;
     letter-spacing: 1px;
-    font-family: 'Cinzel', 'Georgia', serif;
     text-shadow: 0 1px 3px rgba(black, 0.65);
     position: relative;
     overflow: hidden;
@@ -263,6 +305,15 @@ body::before {
         pointer-events: none;
     }
 
+    &:hover:not(:disabled) {
+        transform: translateY(-1px);
+
+        &::before {
+            opacity: 0.9;
+            transform: translateY(4px);
+        }
+    }
+
     &:active:not(:disabled) {
         transform: translateY(2px) scale(0.98);
         border-bottom-width: 2px;
@@ -274,15 +325,6 @@ body::before {
         filter: grayscale(0.5);
     }
 
-    &:hover:not(:disabled) {
-        transform: translateY(-1px);
-
-        &::before {
-            opacity: 0.9;
-            transform: translateY(4px);
-        }
-    }
-
     &:focus-visible {
         outline: 2px solid rgba($gold, 0.6);
         outline-offset: 2px;
@@ -291,7 +333,7 @@ body::before {
 
 @include mobile-md {
     .btn {
-        padding: 7px 14px;
+        padding: 8px 16px;
         font-size: 12px;
     }
 }
