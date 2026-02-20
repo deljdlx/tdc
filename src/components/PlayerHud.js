@@ -16,15 +16,50 @@ const MAX_MANA_CAP = 10
 const TEMPLATE = document.createElement('template')
 TEMPLATE.innerHTML = `
 <style>
+    /* ---- KEYFRAMES ---- */
+
+    @keyframes border-pulse {
+        0%, 100% { opacity: 0.6; }
+        50% { opacity: 1; }
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(200%); }
+    }
+
+    @keyframes gem-sparkle {
+        0%, 100% { filter: brightness(1); }
+        50% { filter: brightness(1.4); }
+    }
+
+    @keyframes low-hp-pulse {
+        0%, 100% { box-shadow: 0 0 4px rgba(239, 68, 68, 0.3); }
+        50% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.7); }
+    }
+
+    /* ---- HOST ---- */
+
     :host {
         display: flex;
         flex-direction: column;
-        border: 1px solid #1e2e4a;
-        border-radius: 8px;
+        border: 2px solid #2a3a5c;
+        border-radius: 6px;
         overflow: visible;
-        background: #0d1321;
+        background:
+            linear-gradient(180deg, rgba(20, 30, 55, 0.95) 0%, rgba(10, 16, 32, 0.98) 100%);
         transition: border-color 0.3s, box-shadow 0.3s;
-        font-family: 'Segoe UI', system-ui, sans-serif;
+        font-family: 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
+        position: relative;
+    }
+
+    :host::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        pointer-events: none;
     }
 
     :host([mirrored]) {
@@ -32,8 +67,21 @@ TEMPLATE.innerHTML = `
     }
 
     :host([active]) {
-        border-color: #f0c040;
-        box-shadow: 0 0 10px rgba(240, 192, 64, 0.12);
+        border-color: #c8962c;
+        box-shadow:
+            0 0 8px rgba(200, 150, 44, 0.25),
+            0 0 20px rgba(200, 150, 44, 0.08),
+            inset 0 0 12px rgba(200, 150, 44, 0.04);
+    }
+
+    :host([active])::after {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: 6px;
+        border: 1px solid rgba(242, 193, 78, 0.3);
+        animation: border-pulse 2.5s ease-in-out infinite;
+        pointer-events: none;
     }
 
     :host([drop-hint]) {
@@ -51,30 +99,133 @@ TEMPLATE.innerHTML = `
     .header {
         display: flex;
         align-items: center;
-        gap: 14px;
-        padding: 8px 12px;
+        gap: 10px;
+        padding: 6px 10px;
         cursor: pointer;
-        background: linear-gradient(180deg, rgba(255,255,255,0.025) 0%, transparent 100%);
+        background:
+            linear-gradient(180deg,
+                rgba(255, 255, 255, 0.04) 0%,
+                rgba(255, 255, 255, 0.01) 40%,
+                transparent 100%);
         transition: background 0.15s;
+        position: relative;
+    }
+
+    .header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 8px;
+        right: 8px;
+        height: 1px;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(100, 140, 200, 0.15),
+            transparent
+        );
     }
 
     .header:hover {
-        background: rgba(255, 255, 255, 0.04);
+        background:
+            linear-gradient(180deg,
+                rgba(255, 255, 255, 0.06) 0%,
+                rgba(255, 255, 255, 0.02) 100%);
+    }
+
+    /* ---- PORTRAIT ---- */
+
+    .portrait {
+        width: 36px;
+        height: 36px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        background:
+            linear-gradient(145deg, #1a2844, #0e1728);
+        border: 2px solid #2a3a5c;
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.06),
+            inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+        position: relative;
+    }
+
+    :host([active]) .portrait {
+        border-color: #c8962c;
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.08),
+            inset 0 -2px 4px rgba(0, 0, 0, 0.3),
+            0 0 6px rgba(200, 150, 44, 0.2);
+    }
+
+    .portrait-letter {
+        font-family: 'Cinzel', 'Georgia', serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: #5a7099;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        line-height: 1;
+    }
+
+    :host([active]) .portrait-letter {
+        color: #f2c14e;
+        text-shadow: 0 0 8px rgba(242, 193, 78, 0.35);
+    }
+
+    /* ---- STATS COLUMN ---- */
+
+    .stats {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
     }
 
     /* ---- NAME ---- */
 
+    .name-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
     .name {
-        font-weight: 700;
-        font-size: 13px;
-        color: #6b7fa0;
-        min-width: 50px;
-        transition: color 0.3s;
+        font-family: 'Cinzel', 'Georgia', serif;
+        font-weight: 600;
+        font-size: 12px;
+        color: #7b8fad;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        transition: color 0.3s, text-shadow 0.3s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     :host([active]) .name {
-        color: #f0c040;
-        text-shadow: 0 0 8px rgba(240, 192, 64, 0.3);
+        color: #f2c14e;
+        text-shadow: 0 0 8px rgba(242, 193, 78, 0.3);
+    }
+
+    .active-badge {
+        display: none;
+        font-size: 7px;
+        color: #c8962c;
+        letter-spacing: 1px;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding: 1px 5px;
+        border: 1px solid rgba(200, 150, 44, 0.3);
+        border-radius: 2px;
+        background: rgba(200, 150, 44, 0.08);
+        white-space: nowrap;
+    }
+
+    :host([active]) .active-badge {
+        display: inline-block;
     }
 
     /* ---- HP ---- */
@@ -85,33 +236,68 @@ TEMPLATE.innerHTML = `
         gap: 6px;
     }
 
-    .hp-icon {
-        color: #ef4444;
-        font-size: 13px;
-        line-height: 1;
-    }
-
-    .hp-bar {
-        width: 80px;
-        height: 7px;
-        background: #111827;
-        border-radius: 4px;
+    .hp-bar-wrapper {
+        flex: 1;
+        max-width: 120px;
+        height: 10px;
+        background:
+            linear-gradient(180deg, #080c18 0%, #0e1524 50%, #0a1020 100%);
+        border-radius: 2px;
         overflow: hidden;
-        border: 1px solid rgba(255,255,255,0.04);
+        border: 1px solid #1a2540;
+        box-shadow:
+            inset 0 1px 3px rgba(0, 0, 0, 0.6);
+        position: relative;
     }
 
     .hp-fill {
         height: 100%;
-        border-radius: 3px;
-        transition: width 0.4s ease, background 0.4s ease;
-        box-shadow: 0 0 6px var(--hp-glow, rgba(34,197,94,0.3));
+        border-radius: 1px;
+        transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s ease;
+        box-shadow: 0 0 6px var(--hp-glow, rgba(34, 197, 94, 0.3));
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hp-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 40%;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent);
+        border-radius: 1px 1px 0 0;
+    }
+
+    .hp-shimmer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 40%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.08),
+            transparent
+        );
+        animation: shimmer 3s ease-in-out infinite;
+        pointer-events: none;
     }
 
     .hp-text {
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 700;
         color: #ef4444;
-        min-width: 20px;
+        min-width: 28px;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        text-shadow: 0 0 4px rgba(239, 68, 68, 0.25);
+    }
+
+    :host([low-hp]) .hp-bar-wrapper {
+        animation: low-hp-pulse 1.5s ease-in-out infinite;
     }
 
     /* ---- MANA ---- */
@@ -122,53 +308,68 @@ TEMPLATE.innerHTML = `
         gap: 3px;
     }
 
-    .mana-label {
-        color: #60a5fa;
-        font-size: 11px;
-        font-weight: 700;
-        margin-right: 2px;
-    }
-
     .mana-gem {
-        width: 9px;
-        height: 9px;
-        border-radius: 50%;
-        transition: background 0.25s, box-shadow 0.25s;
+        width: 10px;
+        height: 10px;
+        clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+        transition: background 0.3s, box-shadow 0.3s, filter 0.3s;
     }
 
     .mana-gem.filled {
-        background: linear-gradient(135deg, #60a5fa, #2563eb);
-        box-shadow: 0 0 5px rgba(96, 165, 250, 0.4);
+        background:
+            linear-gradient(145deg, #7dc4ff, #2563eb, #1a4fc7);
+        filter: drop-shadow(0 0 3px rgba(96, 165, 250, 0.5));
+        animation: gem-sparkle 3s ease-in-out infinite;
+        animation-delay: var(--gem-delay, 0s);
     }
 
     .mana-gem.spent {
-        background: #141c30;
-        border: 1px solid #1e2e4a;
+        background:
+            linear-gradient(145deg, #1a2240, #0e1628);
+        filter: drop-shadow(0 0 1px rgba(30, 46, 74, 0.3));
     }
 
     /* ---- COUNTERS ---- */
 
     .counters {
         display: flex;
-        gap: 10px;
+        flex-direction: column;
+        gap: 2px;
         margin-left: auto;
-        font-size: 11px;
-        color: #4a5c7a;
+        flex-shrink: 0;
     }
 
     .counter {
         display: flex;
         align-items: center;
-        gap: 3px;
+        gap: 4px;
+        padding: 1px 6px;
+        border-radius: 2px;
+        background: rgba(15, 22, 40, 0.6);
+        border: 1px solid rgba(42, 58, 92, 0.4);
+    }
+
+    .counter-icon {
+        font-size: 9px;
+        line-height: 1;
+        opacity: 0.7;
     }
 
     .counter-label {
-        font-weight: 400;
+        font-size: 8px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #4a5c7a;
     }
 
     .counter-value {
+        font-size: 11px;
         font-weight: 700;
-        color: #6b7fa0;
+        color: #8b9fc0;
+        font-variant-numeric: tabular-nums;
+        min-width: 12px;
+        text-align: right;
     }
 
     /* ---- CONTENT SLOT ---- */
@@ -184,23 +385,31 @@ TEMPLATE.innerHTML = `
 </style>
 
 <div class="header">
-    <span class="name"></span>
-    <div class="hp">
-        <span class="hp-icon">\u2665</span>
-        <div class="hp-bar">
-            <div class="hp-fill"></div>
-        </div>
-        <span class="hp-text"></span>
+    <div class="portrait">
+        <span class="portrait-letter"></span>
     </div>
-    <div class="mana">
-        <span class="mana-label">\u25C6</span>
+    <div class="stats">
+        <div class="name-row">
+            <span class="name"></span>
+            <span class="active-badge">Turn</span>
+        </div>
+        <div class="hp">
+            <div class="hp-bar-wrapper">
+                <div class="hp-fill"></div>
+                <div class="hp-shimmer"></div>
+            </div>
+            <span class="hp-text"></span>
+        </div>
+        <div class="mana"></div>
     </div>
     <div class="counters">
         <div class="counter">
+            <span class="counter-icon">\u2630</span>
             <span class="counter-label">Deck</span>
             <span class="counter-value deck-val"></span>
         </div>
         <div class="counter">
+            <span class="counter-icon">\u2620</span>
             <span class="counter-label">Grave</span>
             <span class="counter-value grave-val"></span>
         </div>
@@ -225,6 +434,7 @@ export default class PlayerHud extends HTMLElement {
         this._els = {
             header: this.shadowRoot.querySelector('.header'),
             name: this.shadowRoot.querySelector('.name'),
+            portraitLetter: this.shadowRoot.querySelector('.portrait-letter'),
             hpFill: this.shadowRoot.querySelector('.hp-fill'),
             hpText: this.shadowRoot.querySelector('.hp-text'),
             mana: this.shadowRoot.querySelector('.mana'),
@@ -250,6 +460,9 @@ export default class PlayerHud extends HTMLElement {
         const deckCount = this.getAttribute('deck-count') || '0'
         const graveCount = this.getAttribute('grave-count') || '0'
 
+        // Portrait
+        this._els.portraitLetter.textContent = name.charAt(0).toUpperCase()
+
         // Name
         this._els.name.textContent = name
 
@@ -258,7 +471,14 @@ export default class PlayerHud extends HTMLElement {
         this._els.hpFill.style.width = `${hpPct}%`
         this._els.hpFill.style.background = this._hpColor(hpPct)
         this._els.hpFill.style.setProperty('--hp-glow', this._hpGlow(hpPct))
-        this._els.hpText.textContent = hp
+        this._els.hpText.textContent = `${hp}/${maxHp}`
+
+        // Indicateur HP bas
+        if (hpPct <= 30 && hpPct > 0) {
+            this.setAttribute('low-hp', '')
+        } else {
+            this.removeAttribute('low-hp')
+        }
 
         // Mana gems
         this._renderManaGems(mana, maxMana)
@@ -273,14 +493,14 @@ export default class PlayerHud extends HTMLElement {
      */
     _renderManaGems(current, max) {
         const container = this._els.mana
-        // Garder le label, supprimer les gems existants
-        const label = container.querySelector('.mana-label')
         container.innerHTML = ''
-        container.appendChild(label)
 
         for (let i = 0; i < max; i++) {
             const gem = document.createElement('span')
             gem.className = i < current ? 'mana-gem filled' : 'mana-gem spent'
+            if (i < current) {
+                gem.style.setProperty('--gem-delay', `${i * 0.2}s`)
+            }
             container.appendChild(gem)
         }
     }
