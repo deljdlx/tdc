@@ -555,3 +555,19 @@ body::before {
     background: $bg-card;
     color: $text;
 }
+
+.trail-json-controls {
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-sm {
+    padding: 5px 12px;
+    font-size: 11px;
+}
+
+.trail-status {
+    font-size: 11px;
+    color: $gold;
+    padding: 4px 0;
+}
