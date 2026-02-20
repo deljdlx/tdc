@@ -5,7 +5,7 @@
 - **Nom**: `copilot`
 - **Branches**: `copilot/*`
 - **Prefixe PR**: `copilot: ...`
-- **Worktree isole**: `/tmp/copilot/<feature-name>`
+- **Worktree isole**: `/tmp/tgc-copilot-worktree` (fixe, reutilise entre les taches)
 
 ## Tronc commun obligatoire
 

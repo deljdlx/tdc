@@ -5,7 +5,7 @@
 - **Nom**: `claude`
 - **Branches**: `claude/*`
 - **Prefixe PR**: `claude: ...`
-- **Worktree isole**: `/tmp/claude/<feature-name>`
+- **Worktree isole**: `/tmp/tgc-claude-worktree` (fixe, reutilise entre les taches)
 
 ## Tronc commun obligatoire
 

@@ -13,8 +13,8 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 6. Le merge vers `main` passe par une **Pull Request** via `gh pr create`, puis squash merge via `gh pr merge --squash`.
 7. Le titre de la PR doit etre prefixe par le nom de l'agent (`codex: ...`, `claude: ...`, `copilot: ...`).
 8. Ne jamais merger localement vers `main`. Toujours utiliser le workflow PR GitHub.
-9. Apres merge reussi de la PR, l'agent doit supprimer sa branche de travail locale (`git branch -d`). La branche remote est supprimee automatiquement par GitHub.
-10. Si l'utilisateur demande de "publier le code" (ou formulation equivalente), l'agent doit utiliser `gh` pour creer la PR puis faire un squash merge vers `main` (`gh pr create` + `gh pr merge --squash`), sans merge local.
+9. Apres merge reussi de la PR, l'agent doit supprimer sa branche de travail locale (`git branch -d`). La branche remote est supprimee automatiquement par GitHub (via `--delete-branch`). Ne pas faire de `git push origin --delete` ni de `git fetch -p` manuellement.
+10. Si l'utilisateur demande de "publier le code" (ou formulation equivalente), suivre le **workflow de publication** (section 7).
 
 ## 1. Sources de verite
 
@@ -51,7 +51,7 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 3. Pour toute operation qui deplace HEAD (creation de branche, merge, rebase), utiliser un worktree isole.
 4. Si aucun worktree isole n'est disponible, l'agent doit demander avant de continuer.
 5. Le working tree principal est accessible en lecture/ecriture pour les edits de code uniquement, sauf demande explicite de mode autonome (voir regle 9).
-6. Chaque agent definit son chemin worktree selon la convention `/tmp/AGENT_NAME/FEATURE_NAME` dans son fichier d'instructions specifique.
+6. Chaque agent utilise un **worktree fixe unique** defini dans son fichier d'instructions specifique (ex: `/tmp/tgc-claude-worktree`). Ne pas creer un nouveau worktree par feature: reutiliser le meme worktree en changeant de branche entre les taches. Cela preserve `node_modules` et permet de lancer build/test/lint sans reinstallation.
 7. Convention de nommage des branches: `AGENT_NAME/FEATURE_NAME` (ex: `claude/fix-drag-drop`, `codex/add-tests`, `copilot/refactor-ui`).
 8. Convention de titre de PR: prefixer par `AGENT_NAME:` (ex: `claude: fix drag and drop`, `codex: improve button design`, `copilot: refactor ui adapter`).
 9. Un agent ne travaille que dans ses propres branches. Interdit d'editer ou merger une branche d'un autre agent.
@@ -61,6 +61,9 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 13. Si le contexte courant n'est pas le worktree isole de l'agent lors d'une demande autonome, l'agent doit s'arreter et demander avant toute modification.
 14. Les modifications de code dans les worktrees isoles des agents sous `/tmp` ne necessitent pas de validation prealable de l'utilisateur.
 15. Si l'utilisateur demande de "publier le code" en mode autonome, toutes les operations git/gh (commit, push, PR, merge) doivent etre executees uniquement depuis le worktree isole de l'agent.
+16. **Nettoyage du worktree entre deux taches**: avant de commencer une nouvelle feature dans le worktree fixe, l'agent doit:
+    - S'assurer qu'il n'y a pas de changements non commites (`git status`). Si oui, demander a l'utilisateur.
+    - Creer la nouvelle branche depuis `origin/main` a jour: `git fetch origin && git checkout -b AGENT_NAME/FEATURE_NAME origin/main`.
 
 ## 6. Documentation
 
@@ -69,3 +72,51 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 3. Documenter dans `CHANGELOG-AGENT.md` en suivant le format defini dans `doc/ai-changelog.md`:
    - **Obligatoire** quand l'utilisateur demande de "publier" (ou equivalent: "publish", "merge", "envoie la PR"). L'agent doit mettre a jour le changelog **avant** de creer la PR.
    - Recommande apres tout changement significatif (feature, fix majeur, refactor).
+
+## 7. Workflow de publication (obligatoire)
+
+Quand l'utilisateur demande de "publier", "publish", "merge", "envoie la PR" (ou formulation equivalente), l'agent doit executer les etapes suivantes **dans cet ordre exact**:
+
+### Etape 1 — Verification
+
+Si le worktree n'a pas `node_modules`, executer `npm install` d'abord.
+
+```bash
+npm run build
+npm test
+npx eslint src tests
+```
+
+**Si un check echoue, corriger avant de continuer. Ne jamais publier du code qui ne passe pas les checks.**
+
+### Etape 2 — Changelog
+
+Mettre a jour `CHANGELOG-AGENT.md` selon le format de `doc/ai-changelog.md`.
+Commiter le changelog avec le reste des changements.
+
+### Etape 3 — Push et PR
+
+```bash
+git push -u origin AGENT_NAME/FEATURE_NAME
+gh pr create --title "AGENT_NAME: description courte" --body "..."
+```
+
+Le body de la PR doit contenir au minimum:
+- `## Summary` avec 1-3 bullet points
+- `## Test plan` avec les resultats de build/test/lint
+
+### Etape 4 — Merge
+
+```bash
+gh pr merge NUMBER --squash --delete-branch
+```
+
+`--delete-branch` supprime la branche remote automatiquement. **Ne pas** executer `git push origin --delete` ni `git fetch -p` apres: c'est redondant.
+
+### Etape 5 — Nettoyage local
+
+```bash
+git branch -d AGENT_NAME/FEATURE_NAME
+```
+
+Supprimer la branche locale uniquement. Le worktree peut etre conserve ou supprime selon les besoins.
