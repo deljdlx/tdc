@@ -14,6 +14,9 @@ TEMPLATE.innerHTML = `
         --life-bar-font: 11px;
         --life-bar-color: #22c55e;
         --life-bar-glow: rgba(34, 197, 94, 0.35);
+        --life-pulse-duration: 2.6s;
+        --life-pulse-strength: 0.15;
+        --life-shimmer-duration: 3.2s;
         --life-bar-bg: #0b1120;
         --life-bar-frame: #1d2945;
         --life-bar-label: #7b8fad;
@@ -63,7 +66,9 @@ TEMPLATE.innerHTML = `
         border: 1px solid var(--life-bar-frame);
         box-shadow:
             inset 0 1px 2px rgba(0, 0, 0, 0.65),
-            0 0 8px rgba(8, 14, 28, 0.45);
+            0 0 8px rgba(8, 14, 28, 0.45),
+            0 0 calc(6px + 10px * var(--life-pulse-strength)) var(--life-bar-glow);
+        animation: glow-pulse var(--life-pulse-duration) ease-in-out infinite;
         position: relative;
         overflow: hidden;
     }
@@ -103,7 +108,7 @@ TEMPLATE.innerHTML = `
         width: 30%;
         height: 100%;
         background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.12), transparent);
-        animation: sweep 3s ease-in-out infinite;
+        animation: sweep var(--life-shimmer-duration) ease-in-out infinite;
         pointer-events: none;
         opacity: 0.65;
     }
@@ -139,7 +144,7 @@ TEMPLATE.innerHTML = `
     }
 
     :host([low]) .bar-frame {
-        animation: low-pulse 1.4s ease-in-out infinite;
+        border-color: rgba(239, 68, 68, 0.65);
     }
 
     :host([show-text="false"]) .value {
@@ -152,9 +157,19 @@ TEMPLATE.innerHTML = `
         100% { transform: translateX(280%); }
     }
 
-    @keyframes low-pulse {
-        0%, 100% { box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.65), 0 0 8px rgba(239, 68, 68, 0.25); }
-        50% { box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.65), 0 0 14px rgba(239, 68, 68, 0.55); }
+    @keyframes glow-pulse {
+        0%, 100% {
+            box-shadow:
+                inset 0 1px 2px rgba(0, 0, 0, 0.65),
+                0 0 8px rgba(8, 14, 28, 0.45),
+                0 0 calc(6px + 10px * var(--life-pulse-strength)) var(--life-bar-glow);
+        }
+        50% {
+            box-shadow:
+                inset 0 1px 2px rgba(0, 0, 0, 0.65),
+                0 0 10px rgba(8, 14, 28, 0.5),
+                0 0 calc(10px + 18px * var(--life-pulse-strength)) var(--life-bar-glow);
+        }
     }
 </style>
 
@@ -206,6 +221,7 @@ export default class PlayerLifeBar extends HTMLElement {
         this._syncSize()
         this._syncColors(pct, color, glow)
         this._syncState(pct)
+        this._syncPulse(pct)
     }
 
     _syncSize() {
@@ -254,6 +270,18 @@ export default class PlayerLifeBar extends HTMLElement {
         } else {
             this.removeAttribute('low')
         }
+    }
+
+    _syncPulse(pct) {
+        const clamped = Math.max(0, Math.min(100, pct))
+        const danger = 1 - (clamped / 100)
+        const pulseStrength = 0.15 + (danger * 1.05)
+        const pulseDuration = 2.6 - (danger * 1.9)
+        const shimmerDuration = 3.2 - (danger * 2.0)
+
+        this.style.setProperty('--life-pulse-strength', `${pulseStrength.toFixed(2)}`)
+        this.style.setProperty('--life-pulse-duration', `${pulseDuration.toFixed(2)}s`)
+        this.style.setProperty('--life-shimmer-duration', `${shimmerDuration.toFixed(2)}s`)
     }
 }
 
