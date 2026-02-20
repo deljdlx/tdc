@@ -7,7 +7,7 @@
  */
 
 @use 'sass:color';
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Source+Sans+3:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Exo+2:wght@400;500;600;700&family=Orbitron:wght@600;700;800&display=swap');
 
 $bg-dark: #0b1020;
 $bg-mid: #111b2e;
@@ -89,7 +89,7 @@ body {
         radial-gradient(circle at 82% 8%, rgba($accent, 0.18) 0%, rgba($accent, 0) 45%),
         linear-gradient(160deg, $bg-dark 0%, $bg-mid 55%, color.adjust($bg-dark, $lightness: -6%) 100%);
     color: $text;
-    font-family: 'Source Sans 3', 'Trebuchet MS', sans-serif;
+    font-family: 'Exo 2', 'Trebuchet MS', sans-serif;
     font-size: 14px;
 }
 
@@ -155,19 +155,19 @@ body::before {
     border-right: 1px solid rgba($gold, 0.08);
     background:
         linear-gradient(
-            to bottom,
-            rgba(white, 0.04) 0%,
-            rgba(white, 0.01) 35%,
-            rgba(black, 0.18) 100%
+            150deg,
+            rgba($bg-card, 0.8) 0%,
+            rgba(color.adjust($bg-card, $lightness: -8%), 0.95) 46%,
+            rgba(color.adjust($bg-mid, $lightness: -8%), 0.98) 100%
         );
-    color: $text-dim;
+    color: color.adjust($text-dim, $lightness: 6%);
     font-size: 10px;
-    font-weight: 700;
-    font-family: 'Cinzel', 'Georgia', serif;
-    letter-spacing: 0.8px;
+    font-weight: 600;
+    font-family: 'Orbitron', 'Cinzel', sans-serif;
+    letter-spacing: 1.2px;
     text-transform: uppercase;
     cursor: pointer;
-    transition: color 0.2s, background 0.2s, text-shadow 0.2s, box-shadow 0.2s;
+    transition: color 0.2s, background 0.2s, text-shadow 0.2s, box-shadow 0.2s, transform 0.16s;
     position: relative;
     overflow: hidden;
 
@@ -184,15 +184,16 @@ body::before {
     &:hover {
         background:
             linear-gradient(
-                to bottom,
-                rgba(white, 0.08) 0%,
-                rgba(white, 0.02) 40%,
-                rgba(black, 0.2) 100%
+                150deg,
+                rgba(color.adjust($bg-card, $lightness: 8%), 0.88) 0%,
+                rgba($bg-card, 0.96) 50%,
+                rgba(color.adjust($bg-mid, $lightness: -2%), 0.98) 100%
             );
-        color: color.adjust($text-dim, $lightness: 12%);
+        color: color.adjust($text, $lightness: 2%);
+        transform: translateY(-1px);
         box-shadow:
             inset 0 1px 0 rgba(white, 0.08),
-            inset 0 -2px 0 rgba($gold, 0.15);
+            inset 0 -2px 0 rgba($gold, 0.25);
 
         &::before {
             transform: translateX(120%);
@@ -201,17 +202,18 @@ body::before {
 
     &.active {
         color: $gold;
-        text-shadow: 0 0 10px rgba($gold, 0.45);
+        text-shadow: 0 0 10px rgba($gold, 0.55);
         background:
             linear-gradient(
-                to bottom,
-                rgba($gold, 0.22) 0%,
-                rgba($gold, 0.08) 45%,
-                rgba($gold, 0.04) 100%
+                155deg,
+                rgba(color.adjust($accent, $lightness: 14%), 0.88) 0%,
+                rgba(color.adjust($accent, $lightness: 4%), 0.82) 44%,
+                rgba(color.adjust($accent, $lightness: -6%), 0.72) 100%
             );
         box-shadow:
             inset 0 1px 0 rgba(white, 0.12),
-            inset 0 -2px 0 rgba($gold, 0.35);
+            inset 0 -2px 0 rgba($gold, 0.4),
+            0 0 16px rgba($accent, 0.28);
 
         &::after {
             content: '';
@@ -278,20 +280,21 @@ body::before {
 }
 
 .btn {
-    padding: 9px 22px;
-    border: 1px solid rgba(white, 0.18);
-    border-bottom: 3px solid rgba(black, 0.5);
-    border-radius: 10px;
+    padding: 10px 20px;
+    border: 1px solid rgba(white, 0.24);
+    border-bottom: 3px solid rgba(black, 0.48);
+    border-radius: 6px;
     cursor: pointer;
     font-size: 12px;
     font-weight: 700;
-    font-family: 'Cinzel', 'Georgia', serif;
+    font-family: 'Orbitron', 'Cinzel', sans-serif;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    text-shadow: 0 1px 3px rgba(black, 0.65);
+    letter-spacing: 1.4px;
+    text-shadow: 0 1px 3px rgba(black, 0.55);
     position: relative;
     overflow: hidden;
-    transition: transform 0.12s, box-shadow 0.22s, filter 0.2s, border-color 0.2s;
+    clip-path: polygon(0 18%, 12% 0, 100% 0, 100% 82%, 88% 100%, 0 100%);
+    transition: transform 0.12s, box-shadow 0.22s, filter 0.2s, border-color 0.2s, background 0.2s;
 
     &::before {
         content: '';
@@ -306,7 +309,7 @@ body::before {
     }
 
     &:hover:not(:disabled) {
-        transform: translateY(-1px);
+        transform: translateY(-1px) scale(1.01);
 
         &::before {
             opacity: 0.9;
@@ -340,24 +343,23 @@ body::before {
 
 .btn-primary {
     background: linear-gradient(
-        180deg,
-        color.adjust($accent, $lightness: 18%) 0%,
-        color.adjust($accent, $lightness: 6%) 35%,
-        $accent 60%,
-        color.adjust($accent, $lightness: -10%) 100%
+        165deg,
+        color.adjust($accent, $lightness: 16%) 0%,
+        color.adjust($accent, $lightness: 4%) 36%,
+        color.adjust($accent, $lightness: -6%) 100%
     );
     color: white;
     border-color: color.adjust($accent, $lightness: -15%);
     border-top-color: color.adjust($accent, $lightness: 14%);
     box-shadow:
-        0 6px 16px rgba($accent, 0.35),
-        0 0 20px rgba($accent, 0.25),
+        0 6px 16px rgba($accent, 0.42),
+        0 0 20px rgba($accent, 0.32),
         inset 0 1px 0 rgba(white, 0.25);
 
     &:hover:not(:disabled) {
         box-shadow:
-            0 8px 20px rgba($accent, 0.45),
-            0 0 32px rgba($accent, 0.35),
+            0 10px 22px rgba($accent, 0.48),
+            0 0 32px rgba($accent, 0.42),
             inset 0 1px 0 rgba(white, 0.3);
         filter: brightness(1.12) saturate(1.08);
         border-color: color.adjust($accent, $lightness: 2%);
@@ -366,10 +368,9 @@ body::before {
 
 .btn-secondary {
     background: linear-gradient(
-        180deg,
-        color.adjust($bg-card, $lightness: 12%) 0%,
-        color.adjust($bg-card, $lightness: 4%) 35%,
-        $bg-card 65%,
+        160deg,
+        color.adjust($bg-card, $lightness: 16%) 0%,
+        color.adjust($bg-card, $lightness: 6%) 42%,
         color.adjust($bg-card, $lightness: -8%) 100%
     );
     color: $text;
@@ -393,7 +394,7 @@ body::before {
     color: $gold;
     font-size: 12px;
     margin-left: 8px;
-    font-family: 'Cinzel', 'Georgia', serif;
+    font-family: 'Orbitron', 'Cinzel', sans-serif;
 }
 
 // =====================
