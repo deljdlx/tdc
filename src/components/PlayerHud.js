@@ -35,13 +35,13 @@ TEMPLATE.innerHTML = `
     :host {
         display: flex;
         flex-direction: column;
-        border: 1px solid #3d4f30;
+        border: 1px solid #4b5a3a;
         border-radius: 12px;
         overflow: visible;
         background:
-            linear-gradient(170deg, rgba(40, 52, 30, 0.95) 0%, rgba(26, 34, 20, 0.98) 100%);
+            linear-gradient(170deg, rgba(52, 66, 38, 0.95) 0%, rgba(30, 38, 22, 0.98) 100%);
         box-shadow:
-            0 10px 24px rgba(12, 16, 10, 0.4),
+            0 10px 24px rgba(12, 16, 10, 0.35),
             inset 0 1px 0 rgba(255, 255, 255, 0.05);
         transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
         font-family: 'Source Sans 3', 'Trebuchet MS', sans-serif;
@@ -62,10 +62,10 @@ TEMPLATE.innerHTML = `
     }
 
     :host([active]) {
-        border-color: #d6b96a;
+        border-color: #f0c86b;
         box-shadow:
-            0 0 18px rgba(214, 185, 106, 0.22),
-            0 10px 26px rgba(12, 16, 10, 0.4),
+            0 0 18px rgba(240, 200, 107, 0.26),
+            0 10px 26px rgba(12, 16, 10, 0.35),
             inset 0 1px 0 rgba(255, 255, 255, 0.08);
         transform: translateY(-1px);
     }
@@ -75,19 +75,19 @@ TEMPLATE.innerHTML = `
         position: absolute;
         inset: -2px;
         border-radius: 12px;
-        border: 1px solid rgba(214, 185, 106, 0.32);
+        border: 1px solid rgba(240, 200, 107, 0.34);
         animation: border-pulse 2.5s ease-in-out infinite;
         pointer-events: none;
     }
 
     :host([drop-hint]) {
         border-style: dashed;
-        border-color: #c28b3b;
+        border-color: #d59a44;
     }
 
     :host([drop-target]) {
-        border-color: #c7663a;
-        box-shadow: 0 0 16px rgba(199, 102, 58, 0.35);
+        border-color: #d05f3e;
+        box-shadow: 0 0 16px rgba(208, 95, 62, 0.35);
     }
 
     /* ---- HEADER ---- */
@@ -117,13 +117,13 @@ TEMPLATE.innerHTML = `
         background: linear-gradient(
             90deg,
             transparent,
-            rgba(120, 150, 90, 0.25),
+            rgba(140, 185, 98, 0.35),
             transparent
         );
     }
 
     .header:hover {
-        box-shadow: inset 0 0 12px rgba(214, 185, 106, 0.12);
+        box-shadow: inset 0 0 12px rgba(240, 200, 107, 0.18);
     }
 
     /* ---- PORTRAIT ---- */
@@ -137,8 +137,8 @@ TEMPLATE.innerHTML = `
         justify-content: center;
         flex-shrink: 0;
         background:
-            linear-gradient(145deg, #324027, #212b1a);
-        border: 2px solid #435638;
+            linear-gradient(145deg, #3c4c2b, #25311b);
+        border: 2px solid #4f6240;
         box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.06),
             inset 0 -2px 4px rgba(0, 0, 0, 0.3);
@@ -146,25 +146,25 @@ TEMPLATE.innerHTML = `
     }
 
     :host([active]) .portrait {
-        border-color: #c9a45a;
+        border-color: #e3b75d;
         box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.08),
             inset 0 -2px 4px rgba(0, 0, 0, 0.3),
-            0 0 6px rgba(201, 164, 90, 0.28);
+            0 0 6px rgba(227, 183, 93, 0.3);
     }
 
     .portrait-letter {
         font-family: 'Cinzel', 'Georgia', serif;
         font-size: 18px;
         font-weight: 700;
-        color: #7e916b;
+        color: #94a977;
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         line-height: 1;
     }
 
     :host([active]) .portrait-letter {
-        color: #e0c27a;
-        text-shadow: 0 0 8px rgba(224, 194, 122, 0.35);
+        color: #f4d585;
+        text-shadow: 0 0 8px rgba(244, 213, 133, 0.4);
     }
 
     /* ---- STATS COLUMN ---- */
@@ -189,7 +189,7 @@ TEMPLATE.innerHTML = `
         font-family: 'Cinzel', 'Georgia', serif;
         font-weight: 600;
         font-size: 13px;
-        color: #b6c49c;
+        color: #c5d2a9;
         letter-spacing: 0.5px;
         text-transform: uppercase;
         transition: color 0.3s, text-shadow 0.3s;
@@ -199,21 +199,21 @@ TEMPLATE.innerHTML = `
     }
 
     :host([active]) .name {
-        color: #e0c27a;
-        text-shadow: 0 0 8px rgba(224, 194, 122, 0.3);
+        color: #f4d585;
+        text-shadow: 0 0 8px rgba(244, 213, 133, 0.3);
     }
 
     .active-badge {
         display: none;
         font-size: 7px;
-        color: #c9a45a;
+        color: #e3b75d;
         letter-spacing: 1px;
         font-weight: 700;
         text-transform: uppercase;
         padding: 1px 5px;
-        border: 1px solid rgba(201, 164, 90, 0.3);
+        border: 1px solid rgba(227, 183, 93, 0.35);
         border-radius: 2px;
-        background: rgba(201, 164, 90, 0.1);
+        background: rgba(227, 183, 93, 0.12);
         white-space: nowrap;
     }
 
@@ -247,7 +247,7 @@ TEMPLATE.innerHTML = `
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.6px;
-        color: #7b8fad;
+        color: #93aa7e;
     }
 
     .mana-gems {
@@ -259,7 +259,7 @@ TEMPLATE.innerHTML = `
     .mana-text {
         font-size: 11px;
         font-weight: 700;
-        color: #9ad1ff;
+        color: #6fd1b5;
         font-variant-numeric: tabular-nums;
         min-width: 28px;
         text-align: right;
@@ -274,16 +274,16 @@ TEMPLATE.innerHTML = `
 
     .mana-gem.filled {
         background:
-            linear-gradient(145deg, #a6d672, #5ea247, #3f7f34);
-        filter: drop-shadow(0 0 3px rgba(126, 190, 96, 0.6));
+            linear-gradient(145deg, #b9e87a, #6ec35a, #3f9a3c);
+        filter: drop-shadow(0 0 4px rgba(138, 216, 112, 0.65));
         animation: gem-sparkle 3s ease-in-out infinite;
         animation-delay: var(--gem-delay, 0s);
     }
 
     .mana-gem.spent {
         background:
-            linear-gradient(145deg, #1e2a19, #151e13);
-        filter: drop-shadow(0 0 1px rgba(34, 48, 30, 0.3));
+            linear-gradient(145deg, #22301b, #182114);
+        filter: drop-shadow(0 0 1px rgba(42, 58, 34, 0.3));
     }
 
     /* ---- COUNTERS ---- */
@@ -294,7 +294,7 @@ TEMPLATE.innerHTML = `
         gap: 2px;
         margin-left: auto;
         font-size: 12px;
-        color: #6f8361;
+        color: #7b8f66;
         flex-shrink: 0;
     }
 
@@ -304,8 +304,8 @@ TEMPLATE.innerHTML = `
         gap: 4px;
         padding: 2px 6px;
         border-radius: 2px;
-        background: rgba(24, 32, 18, 0.6);
-        border: 1px solid rgba(70, 92, 60, 0.4);
+        background: rgba(30, 40, 22, 0.65);
+        border: 1px solid rgba(82, 108, 66, 0.45);
     }
 
     .counter-icon {
@@ -319,13 +319,13 @@ TEMPLATE.innerHTML = `
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        color: #7e906b;
+        color: #94a77b;
     }
 
     .counter-value {
         font-size: 12px;
         font-weight: 700;
-        color: #c8d5b3;
+        color: #d6e2be;
         font-variant-numeric: tabular-nums;
         min-width: 12px;
         text-align: right;
