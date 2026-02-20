@@ -12,6 +12,15 @@ Format defini dans `doc/ai-changelog.md`.
 Rechauffe les teintes de l'interface avec des verts et bruns inspirés nature,
 pour une ambiance plus accueillante tout en gardant la lisibilite du HUD.
 
+### style(ui): barre de vie "tube en verre" avec palette HP
+
+**Agent**: `codex` | **PR**: —
+
+Refonte visuelle de la barre de vie avec un rendu tube en verre (contour vitre,
+reflets et effet de liquide interne). La couleur du fluide suit maintenant une
+lecture intuitive des HP: vert quand la vie est haute, jaune au palier moyen,
+puis rouge en zone critique.
+
 ### style(ui): glow dynamique de la barre de vie selon les HP
 
 **Agent**: `codex` | **PR**: —
