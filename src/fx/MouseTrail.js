@@ -268,6 +268,9 @@ export default class MouseTrail {
     /** @type {Object[]} Points du trail avec position et âge */
     _points
 
+    /** @type {Object[]} Particules décoratives éphémères */
+    _sparkles
+
     /**
      * @param {Object|string}   [options]
      * @param {number}   [options.maxPoints=60]    - Nombre max de points conservés
@@ -280,6 +283,10 @@ export default class MouseTrail {
      * @param {number}   [options.glowAlpha=0.15]  - Opacité du halo
      * @param {boolean}  [options.ribbon=true]      - Relier les points par une ligne lissée
      * @param {number}   [options.ribbonWidth=2]   - Épaisseur max du ruban
+     * @param {number}   [options.sparklesPerPoint=2] - Nombre de sparkles émis par point
+     * @param {number}   [options.sparkleLifetime=0.32] - Durée de vie d'un sparkle (secondes)
+     * @param {number}   [options.sparkleSpeed=55]  - Vitesse max des sparkles
+     * @param {number}   [options.sparkleSize=1.6]  - Taille de base des sparkles
      */
     constructor(options = {}) {
         const resolvedOptions = MouseTrail._resolveOptions(options)
@@ -293,7 +300,11 @@ export default class MouseTrail {
             glowRadius = 2.5,
             glowAlpha = 0.15,
             ribbon = true,
-            ribbonWidth = 2
+            ribbonWidth = 2,
+            sparklesPerPoint = 2,
+            sparkleLifetime = 0.32,
+            sparkleSpeed = 55,
+            sparkleSize = 1.6
         } = resolvedOptions
 
         this._maxPoints = maxPoints
@@ -306,7 +317,12 @@ export default class MouseTrail {
         this._glowAlpha = glowAlpha
         this._ribbon = ribbon
         this._ribbonWidth = ribbonWidth
+        this._sparklesPerPoint = sparklesPerPoint
+        this._sparkleLifetime = sparkleLifetime
+        this._sparkleSpeed = sparkleSpeed
+        this._sparkleSize = sparkleSize
         this._points = []
+        this._sparkles = []
     }
 
     /**
@@ -332,6 +348,7 @@ export default class MouseTrail {
      */
     addPoint(x, y) {
         this._points.push({ x, y, age: 0 })
+        this._emitSparkles(x, y)
         if (this._points.length > this._maxPoints) {
             this._points.shift()
         }
@@ -341,7 +358,7 @@ export default class MouseTrail {
      * @returns {boolean} true si l'effet a encore des points visibles
      */
     isAlive() {
-        return this._points.length > 0
+        return this._points.length > 0 || this._sparkles.length > 0
     }
 
     /**
@@ -353,7 +370,17 @@ export default class MouseTrail {
             p.age += dt
         }
         this._points = this._points.filter(p => p.age < this._lifetime)
-        return this._points.length > 0
+
+        for (const sparkle of this._sparkles) {
+            sparkle.age += dt
+            sparkle.x += sparkle.vx * dt
+            sparkle.y += sparkle.vy * dt
+            sparkle.vx *= 0.93
+            sparkle.vy *= 0.93
+        }
+        this._sparkles = this._sparkles.filter(sparkle => sparkle.age < sparkle.life)
+
+        return this._points.length > 0 || this._sparkles.length > 0
     }
 
     /**
@@ -361,14 +388,17 @@ export default class MouseTrail {
      */
     draw(ctx) {
         const len = this._points.length
-        if (len === 0) return
+        if (len === 0 && this._sparkles.length === 0) return
 
         // Pass 1 : ruban lissé reliant les points
         if (this._ribbon && len >= 2) {
             this._drawRibbon(ctx)
         }
 
-        // Pass 2 : particules individuelles avec halo
+        // Pass 2 : micro-particules décoratives
+        this._drawSparkles(ctx)
+
+        // Pass 3 : particules individuelles avec halo
         for (let i = 0; i < len; i++) {
             this._drawPoint(ctx, i)
         }
@@ -395,6 +425,60 @@ export default class MouseTrail {
      */
     _progress(point) {
         return Math.min(point.age / this._lifetime, 1)
+    }
+
+    _emitSparkles(x, y) {
+        if (this._sparklesPerPoint <= 0) return
+
+        for (let i = 0; i < this._sparklesPerPoint; i++) {
+            const angle = Math.random() * Math.PI * 2
+            const speed = this._sparkleSpeed * (0.35 + Math.random() * 0.65)
+            const baseColor = this._colors[Math.floor(Math.random() * this._colors.length)]
+
+            this._sparkles.push({
+                x,
+                y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                life: this._sparkleLifetime * (0.7 + Math.random() * 0.6),
+                age: 0,
+                size: this._sparkleSize * (0.7 + Math.random() * 0.8),
+                phase: Math.random() * Math.PI * 2,
+                color: baseColor
+            })
+        }
+    }
+
+    _drawSparkles(ctx) {
+        if (this._sparkles.length === 0) return
+
+        for (const sparkle of this._sparkles) {
+            const progress = sparkle.age / sparkle.life
+            if (progress >= 1) continue
+
+            const fade = 1 - progress
+            const twinkle = 0.65 + Math.sin(sparkle.age * 28 + sparkle.phase) * 0.35
+            const alpha = fade * fade * twinkle
+            const radius = Math.max(0.25, sparkle.size * (0.5 + fade * 0.8))
+            const { r, g, b } = sparkle.color
+
+            ctx.beginPath()
+            ctx.arc(sparkle.x, sparkle.y, radius, 0, Math.PI * 2)
+            ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`
+            ctx.fill()
+
+            if (radius > 0.5) {
+                const arm = radius * 2.1
+                ctx.beginPath()
+                ctx.moveTo(sparkle.x - arm, sparkle.y)
+                ctx.lineTo(sparkle.x + arm, sparkle.y)
+                ctx.moveTo(sparkle.x, sparkle.y - arm)
+                ctx.lineTo(sparkle.x, sparkle.y + arm)
+                ctx.strokeStyle = `rgba(${r},${g},${b},${alpha * 0.55})`
+                ctx.lineWidth = 0.8
+                ctx.stroke()
+            }
+        }
     }
 
     /**
