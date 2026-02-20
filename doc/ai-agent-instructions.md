@@ -11,9 +11,10 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 4. Exception: Si l'utilisateur demande explicitement de merger et pusher sur `main`, l'agent peut executer ces operations.
 5. Avant tout merge vers `main`, l'agent doit mettre a jour sa branche de travail avec `origin/main` (rebase).
 6. Le merge vers `main` passe par une **Pull Request** via `gh pr create`, puis squash merge via `gh pr merge --squash`.
-7. Ne jamais merger localement vers `main`. Toujours utiliser le workflow PR GitHub.
-8. Apres merge reussi de la PR, l'agent doit supprimer sa branche de travail locale (`git branch -d`). La branche remote est supprimee automatiquement par GitHub.
-9. Si l'utilisateur demande de "publier le code" (ou formulation equivalente), l'agent doit utiliser `gh` pour creer la PR puis faire un squash merge vers `main` (`gh pr create` + `gh pr merge --squash`), sans merge local.
+7. Le titre de la PR doit etre prefixe par le nom de l'agent (`codex: ...`, `claude: ...`, `copilot: ...`).
+8. Ne jamais merger localement vers `main`. Toujours utiliser le workflow PR GitHub.
+9. Apres merge reussi de la PR, l'agent doit supprimer sa branche de travail locale (`git branch -d`). La branche remote est supprimee automatiquement par GitHub.
+10. Si l'utilisateur demande de "publier le code" (ou formulation equivalente), l'agent doit utiliser `gh` pour creer la PR puis faire un squash merge vers `main` (`gh pr create` + `gh pr merge --squash`), sans merge local.
 
 ## 1. Sources de verite
 
@@ -49,15 +50,16 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 3. Pour toute operation qui deplace HEAD (creation de branche, merge, rebase), utiliser un worktree isole.
 4. Si aucun worktree isole n'est disponible, l'agent doit demander avant de continuer.
 5. Le working tree principal est accessible en lecture/ecriture pour les edits de code uniquement, sauf demande explicite de mode autonome (voir regle 9).
-6. Chaque agent definit son propre chemin worktree dans son fichier d'instructions specifique.
+6. Chaque agent definit son chemin worktree selon la convention `/tmp/AGENT_NAME/FEATURE_NAME` dans son fichier d'instructions specifique.
 7. Convention de nommage des branches: `AGENT_NAME/FEATURE_NAME` (ex: `claude/fix-drag-drop`, `codex/add-tests`, `copilot/refactor-ui`).
-8. Un agent ne travaille que dans ses propres branches. Interdit d'editer ou merger une branche d'un autre agent.
-9. Si l'utilisateur demande "en autonomie" (ou formulation equivalente: "mode autonome", "travaille en autonome", "fais-le en autonomie"), l'agent DOIT travailler dans son worktree isole uniquement.
-10. En mode autonome, l'agent DOIT utiliser une branche dediee a son nom au format `AGENT_NAME/FEATURE_NAME` dans son worktree isole.
-11. En mode autonome, l'agent NE DOIT JAMAIS intervenir dans le working tree principal de l'utilisateur (aucune modification de code, de documentation, de config, ni d'operations git).
-12. Si le contexte courant n'est pas le worktree isole de l'agent lors d'une demande autonome, l'agent doit s'arreter et demander avant toute modification.
-13. Les modifications de code dans les worktrees isoles des agents sous `/tmp` ne necessitent pas de validation prealable de l'utilisateur.
-14. Si l'utilisateur demande de "publier le code" en mode autonome, toutes les operations git/gh (commit, push, PR, merge) doivent etre executees uniquement depuis le worktree isole de l'agent.
+8. Convention de titre de PR: prefixer par `AGENT_NAME:` (ex: `claude: fix drag and drop`, `codex: improve button design`, `copilot: refactor ui adapter`).
+9. Un agent ne travaille que dans ses propres branches. Interdit d'editer ou merger une branche d'un autre agent.
+10. Si l'utilisateur demande "en autonomie" (ou formulation equivalente: "mode autonome", "travaille en autonome", "fais-le en autonomie"), l'agent DOIT travailler dans son worktree isole uniquement.
+11. En mode autonome, l'agent DOIT utiliser une branche dediee a son nom au format `AGENT_NAME/FEATURE_NAME` dans son worktree isole.
+12. En mode autonome, l'agent NE DOIT JAMAIS intervenir dans le working tree principal de l'utilisateur (aucune modification de code, de documentation, de config, ni d'operations git).
+13. Si le contexte courant n'est pas le worktree isole de l'agent lors d'une demande autonome, l'agent doit s'arreter et demander avant toute modification.
+14. Les modifications de code dans les worktrees isoles des agents sous `/tmp` ne necessitent pas de validation prealable de l'utilisateur.
+15. Si l'utilisateur demande de "publier le code" en mode autonome, toutes les operations git/gh (commit, push, PR, merge) doivent etre executees uniquement depuis le worktree isole de l'agent.
 
 ## 6. Documentation
 
