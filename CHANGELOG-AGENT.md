@@ -7,7 +7,7 @@ Format defini dans `doc/ai-changelog.md`.
 
 ### style(ui): palette champetre pour HUD et theme global
 
-**Agent**: `copilot` | **PR**: —
+**Agent**: `copilot` | **PR**: #19
 
 Rechauffe les teintes de l'interface avec des verts et bruns inspirés nature,
 pour une ambiance plus accueillante tout en gardant la lisibilite du HUD.
