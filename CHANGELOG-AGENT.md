@@ -5,6 +5,13 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-20
 
+### style(ui): palette champetre pour HUD et theme global
+
+**Agent**: `copilot` | **PR**: —
+
+Rechauffe les teintes de l'interface avec des verts et bruns inspirés nature,
+pour une ambiance plus accueillante tout en gardant la lisibilite du HUD.
+
 ### style(ui): glow dynamique de la barre de vie selon les HP
 
 **Agent**: `codex` | **PR**: —

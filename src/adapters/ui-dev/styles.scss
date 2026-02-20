@@ -9,14 +9,14 @@
 @use 'sass:color';
 @use 'fonts' as fonts;
 
-$bg-dark: #15261d;
-$bg-mid: #1f3529;
-$bg-card: #2f4a3a;
-$accent: #c86d50;
-$gold: #d7bd6b;
-$text: #edf3ea;
-$text-dim: #b4c3b6;
-$border: #46614f;
+$bg-dark: #1a2416;
+$bg-mid: #25311e;
+$bg-card: #2f3b25;
+$accent: #8b5a2b;
+$gold: #d6b96a;
+$text: #eef2e6;
+$text-dim: #b7c2a0;
+$border: #3a4a30;
 
 $tab-bar-height: 52px;
 
@@ -85,9 +85,9 @@ $desktop: 1280px;
 
 body {
     background:
-        radial-gradient(circle at 18% 12%, rgba($gold, 0.18) 0%, rgba($gold, 0) 42%),
-        radial-gradient(circle at 82% 8%, rgba($accent, 0.18) 0%, rgba($accent, 0) 45%),
-        linear-gradient(160deg, $bg-dark 0%, $bg-mid 55%, color.adjust($bg-dark, $lightness: -6%) 100%);
+        radial-gradient(circle at 16% 10%, rgba($gold, 0.18) 0%, rgba($gold, 0) 44%),
+        radial-gradient(circle at 86% 12%, rgba($accent, 0.2) 0%, rgba($accent, 0) 48%),
+        linear-gradient(165deg, $bg-dark 0%, $bg-mid 55%, color.adjust($bg-dark, $lightness: -4%) 100%);
     color: $text;
     font-family: fonts.$font-family-base;
     font-size: 14px;
@@ -99,8 +99,8 @@ body::before {
     inset: 0;
     pointer-events: none;
     background:
-        linear-gradient(transparent 0%, rgba($bg-dark, 0.2) 45%, rgba($bg-dark, 0.6) 100%),
-        radial-gradient(circle at 50% 120%, rgba($accent, 0.15) 0%, rgba($accent, 0) 55%);
+        linear-gradient(transparent 0%, rgba($bg-dark, 0.12) 40%, rgba($bg-dark, 0.45) 100%),
+        radial-gradient(circle at 50% 120%, rgba($gold, 0.12) 0%, rgba($gold, 0) 58%);
     z-index: 0;
 }
 
