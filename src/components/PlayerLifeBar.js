@@ -14,6 +14,8 @@ TEMPLATE.innerHTML = `
         --life-bar-font: 11px;
         --life-bar-color: #22c55e;
         --life-bar-glow: rgba(34, 197, 94, 0.35);
+        --life-fluid-core: rgba(110, 231, 183, 0.9);
+        --life-fluid-edge: rgba(21, 128, 61, 0.95);
         --life-pulse-duration: 2.6s;
         --life-pulse-strength: 0.15;
         --life-shimmer-duration: 3.2s;
@@ -61,11 +63,14 @@ TEMPLATE.innerHTML = `
     .bar-frame {
         width: var(--life-bar-width);
         height: var(--life-bar-height);
-        border-radius: 2px;
-        background: linear-gradient(180deg, #050a16 0%, var(--life-bar-bg) 55%, #070d1b 100%);
-        border: 1px solid var(--life-bar-frame);
+        border-radius: 999px;
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 50%),
+            linear-gradient(180deg, #081124 0%, var(--life-bar-bg) 52%, #060c1a 100%);
+        border: 1px solid color-mix(in srgb, var(--life-bar-frame) 72%, #dbeafe 28%);
         box-shadow:
-            inset 0 1px 2px rgba(0, 0, 0, 0.65),
+            inset 0 1px 3px rgba(255, 255, 255, 0.12),
+            inset 0 -2px 4px rgba(0, 0, 0, 0.55),
             0 0 8px rgba(8, 14, 28, 0.45),
             0 0 calc(6px + 10px * var(--life-pulse-strength)) var(--life-bar-glow);
         animation: glow-pulse var(--life-pulse-duration) ease-in-out infinite;
@@ -73,23 +78,54 @@ TEMPLATE.innerHTML = `
         overflow: hidden;
     }
 
+    .bar-frame::before {
+        content: '';
+        position: absolute;
+        inset: 2px 12%;
+        border-radius: 999px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0));
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
     .bar-frame::after {
         content: '';
         position: absolute;
         inset: 1px;
-        border-radius: 1px;
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 999px;
+        border: 1px solid rgba(191, 219, 254, 0.18);
         pointer-events: none;
     }
 
     .fill {
         height: 100%;
         width: 0;
-        background: var(--life-bar-color);
-        box-shadow: 0 0 8px var(--life-bar-glow);
+        border-radius: inherit;
+        background:
+            linear-gradient(
+                90deg,
+                color-mix(in srgb, var(--life-fluid-edge) 85%, #0b1120 15%) 0%,
+                var(--life-fluid-core) 35%,
+                var(--life-bar-color) 65%,
+                color-mix(in srgb, var(--life-fluid-edge) 92%, #020617 8%) 100%
+            );
+        box-shadow:
+            inset 0 1px 2px rgba(255, 255, 255, 0.24),
+            inset 0 -2px 3px rgba(2, 6, 23, 0.3),
+            0 0 8px var(--life-bar-glow);
         transition: width 0.4s ease, background 0.35s ease;
         position: relative;
         overflow: hidden;
+    }
+
+    .fill::before {
+        content: '';
+        position: absolute;
+        inset: 1px 8% auto 8%;
+        height: 45%;
+        border-radius: 999px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0));
+        opacity: 0.75;
     }
 
     .fill::after {
@@ -249,18 +285,26 @@ export default class PlayerLifeBar extends HTMLElement {
         if (color) {
             this.style.setProperty('--life-bar-color', color)
             this.style.setProperty('--life-bar-glow', glow || 'rgba(255, 255, 255, 0.35)')
+            this.style.setProperty('--life-fluid-core', 'rgba(255, 255, 255, 0.85)')
+            this.style.setProperty('--life-fluid-edge', 'rgba(255, 255, 255, 0.45)')
             return
         }
 
         if (pct > 60) {
             this.style.setProperty('--life-bar-color', '#22c55e')
             this.style.setProperty('--life-bar-glow', 'rgba(34, 197, 94, 0.35)')
+            this.style.setProperty('--life-fluid-core', 'rgba(134, 239, 172, 0.9)')
+            this.style.setProperty('--life-fluid-edge', 'rgba(21, 128, 61, 0.95)')
         } else if (pct > 30) {
-            this.style.setProperty('--life-bar-color', '#f59e0b')
-            this.style.setProperty('--life-bar-glow', 'rgba(245, 158, 11, 0.35)')
+            this.style.setProperty('--life-bar-color', '#facc15')
+            this.style.setProperty('--life-bar-glow', 'rgba(250, 204, 21, 0.4)')
+            this.style.setProperty('--life-fluid-core', 'rgba(253, 224, 71, 0.92)')
+            this.style.setProperty('--life-fluid-edge', 'rgba(202, 138, 4, 0.95)')
         } else {
             this.style.setProperty('--life-bar-color', '#ef4444')
             this.style.setProperty('--life-bar-glow', 'rgba(239, 68, 68, 0.45)')
+            this.style.setProperty('--life-fluid-core', 'rgba(252, 165, 165, 0.9)')
+            this.style.setProperty('--life-fluid-edge', 'rgba(185, 28, 28, 0.95)')
         }
     }
 
