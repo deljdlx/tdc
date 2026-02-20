@@ -35,13 +35,13 @@ TEMPLATE.innerHTML = `
     :host {
         display: flex;
         flex-direction: column;
-        border: 1px solid #2b3f5c;
+        border: 1px solid #3d4f30;
         border-radius: 12px;
         overflow: visible;
         background:
-            linear-gradient(170deg, rgba(20, 30, 55, 0.95) 0%, rgba(10, 16, 32, 0.98) 100%);
+            linear-gradient(170deg, rgba(40, 52, 30, 0.95) 0%, rgba(26, 34, 20, 0.98) 100%);
         box-shadow:
-            0 10px 24px rgba(6, 10, 20, 0.45),
+            0 10px 24px rgba(12, 16, 10, 0.4),
             inset 0 1px 0 rgba(255, 255, 255, 0.05);
         transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
         font-family: 'Source Sans 3', 'Trebuchet MS', sans-serif;
@@ -62,10 +62,10 @@ TEMPLATE.innerHTML = `
     }
 
     :host([active]) {
-        border-color: #f2c14e;
+        border-color: #d6b96a;
         box-shadow:
-            0 0 18px rgba(242, 193, 78, 0.18),
-            0 10px 26px rgba(6, 10, 20, 0.45),
+            0 0 18px rgba(214, 185, 106, 0.22),
+            0 10px 26px rgba(12, 16, 10, 0.4),
             inset 0 1px 0 rgba(255, 255, 255, 0.08);
         transform: translateY(-1px);
     }
@@ -75,19 +75,19 @@ TEMPLATE.innerHTML = `
         position: absolute;
         inset: -2px;
         border-radius: 12px;
-        border: 1px solid rgba(242, 193, 78, 0.3);
+        border: 1px solid rgba(214, 185, 106, 0.32);
         animation: border-pulse 2.5s ease-in-out infinite;
         pointer-events: none;
     }
 
     :host([drop-hint]) {
         border-style: dashed;
-        border-color: #f59e0b;
+        border-color: #c28b3b;
     }
 
     :host([drop-target]) {
-        border-color: #e94560;
-        box-shadow: 0 0 16px rgba(233, 69, 96, 0.35);
+        border-color: #c7663a;
+        box-shadow: 0 0 16px rgba(199, 102, 58, 0.35);
     }
 
     /* ---- HEADER ---- */
@@ -100,7 +100,7 @@ TEMPLATE.innerHTML = `
         cursor: pointer;
         background:
             linear-gradient(180deg,
-                rgba(255, 255, 255, 0.06) 0%,
+                rgba(255, 255, 255, 0.08) 0%,
                 rgba(255, 255, 255, 0.01) 45%,
                 transparent 100%);
         transition: background 0.2s, box-shadow 0.2s;
@@ -117,13 +117,13 @@ TEMPLATE.innerHTML = `
         background: linear-gradient(
             90deg,
             transparent,
-            rgba(100, 140, 200, 0.2),
+            rgba(120, 150, 90, 0.25),
             transparent
         );
     }
 
     .header:hover {
-        box-shadow: inset 0 0 12px rgba(242, 193, 78, 0.08);
+        box-shadow: inset 0 0 12px rgba(214, 185, 106, 0.12);
     }
 
     /* ---- PORTRAIT ---- */
@@ -137,8 +137,8 @@ TEMPLATE.innerHTML = `
         justify-content: center;
         flex-shrink: 0;
         background:
-            linear-gradient(145deg, #1a2844, #0e1728);
-        border: 2px solid #2a3a5c;
+            linear-gradient(145deg, #324027, #212b1a);
+        border: 2px solid #435638;
         box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.06),
             inset 0 -2px 4px rgba(0, 0, 0, 0.3);
@@ -146,25 +146,25 @@ TEMPLATE.innerHTML = `
     }
 
     :host([active]) .portrait {
-        border-color: #c8962c;
+        border-color: #c9a45a;
         box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.08),
             inset 0 -2px 4px rgba(0, 0, 0, 0.3),
-            0 0 6px rgba(200, 150, 44, 0.2);
+            0 0 6px rgba(201, 164, 90, 0.28);
     }
 
     .portrait-letter {
         font-family: 'Cinzel', 'Georgia', serif;
         font-size: 18px;
         font-weight: 700;
-        color: #5a7099;
+        color: #7e916b;
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         line-height: 1;
     }
 
     :host([active]) .portrait-letter {
-        color: #f2c14e;
-        text-shadow: 0 0 8px rgba(242, 193, 78, 0.35);
+        color: #e0c27a;
+        text-shadow: 0 0 8px rgba(224, 194, 122, 0.35);
     }
 
     /* ---- STATS COLUMN ---- */
@@ -189,7 +189,7 @@ TEMPLATE.innerHTML = `
         font-family: 'Cinzel', 'Georgia', serif;
         font-weight: 600;
         font-size: 13px;
-        color: #c5d3e6;
+        color: #b6c49c;
         letter-spacing: 0.5px;
         text-transform: uppercase;
         transition: color 0.3s, text-shadow 0.3s;
@@ -199,21 +199,21 @@ TEMPLATE.innerHTML = `
     }
 
     :host([active]) .name {
-        color: #f2c14e;
-        text-shadow: 0 0 8px rgba(242, 193, 78, 0.3);
+        color: #e0c27a;
+        text-shadow: 0 0 8px rgba(224, 194, 122, 0.3);
     }
 
     .active-badge {
         display: none;
         font-size: 7px;
-        color: #c8962c;
+        color: #c9a45a;
         letter-spacing: 1px;
         font-weight: 700;
         text-transform: uppercase;
         padding: 1px 5px;
-        border: 1px solid rgba(200, 150, 44, 0.3);
+        border: 1px solid rgba(201, 164, 90, 0.3);
         border-radius: 2px;
-        background: rgba(200, 150, 44, 0.08);
+        background: rgba(201, 164, 90, 0.1);
         white-space: nowrap;
     }
 
@@ -274,16 +274,16 @@ TEMPLATE.innerHTML = `
 
     .mana-gem.filled {
         background:
-            linear-gradient(145deg, #7dc4ff, #2563eb, #1a4fc7);
-        filter: drop-shadow(0 0 3px rgba(96, 165, 250, 0.5));
+            linear-gradient(145deg, #a6d672, #5ea247, #3f7f34);
+        filter: drop-shadow(0 0 3px rgba(126, 190, 96, 0.6));
         animation: gem-sparkle 3s ease-in-out infinite;
         animation-delay: var(--gem-delay, 0s);
     }
 
     .mana-gem.spent {
         background:
-            linear-gradient(145deg, #1a2240, #0e1628);
-        filter: drop-shadow(0 0 1px rgba(30, 46, 74, 0.3));
+            linear-gradient(145deg, #1e2a19, #151e13);
+        filter: drop-shadow(0 0 1px rgba(34, 48, 30, 0.3));
     }
 
     /* ---- COUNTERS ---- */
@@ -294,7 +294,7 @@ TEMPLATE.innerHTML = `
         gap: 2px;
         margin-left: auto;
         font-size: 12px;
-        color: #6a7fa1;
+        color: #6f8361;
         flex-shrink: 0;
     }
 
@@ -304,8 +304,8 @@ TEMPLATE.innerHTML = `
         gap: 4px;
         padding: 2px 6px;
         border-radius: 2px;
-        background: rgba(15, 22, 40, 0.6);
-        border: 1px solid rgba(42, 58, 92, 0.4);
+        background: rgba(24, 32, 18, 0.6);
+        border: 1px solid rgba(70, 92, 60, 0.4);
     }
 
     .counter-icon {
@@ -319,13 +319,13 @@ TEMPLATE.innerHTML = `
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        color: #6c7f9e;
+        color: #7e906b;
     }
 
     .counter-value {
         font-size: 12px;
         font-weight: 700;
-        color: #c4d2e8;
+        color: #c8d5b3;
         font-variant-numeric: tabular-nums;
         min-width: 12px;
         text-align: right;
