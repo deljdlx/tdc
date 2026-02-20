@@ -639,6 +639,7 @@ export default class UiAdapter {
         section.appendChild(this._renderTrailSlider('maxSize', 'Size', 1, 15, 0.5, 'px'))
         section.appendChild(this._renderTrailSlider('glowAlpha', 'Glow', 0, 0.5, 0.01, ''))
         section.appendChild(this._renderTrailSlider('sparklesPerPoint', 'Sparkles', 0, 6, 1, ''))
+        section.appendChild(this._renderTrailSlider('spread', 'Spread', 0, 40, 1, 'px'))
 
         const resetBtn = this._el('button', 'btn btn-secondary btn-sm')
         resetBtn.textContent = 'Reset params'

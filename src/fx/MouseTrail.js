@@ -230,6 +230,7 @@ export default class MouseTrail {
      * @param {number}   [options.sparkleSpeed=55]  - Vitesse max des sparkles
      * @param {number}   [options.sparkleSize=1.6]  - Taille de base des sparkles
      * @param {string}   [options.shape='circle']  - Forme des particules (circle, square, star, diamond, triangle)
+     * @param {number}   [options.spread=0]        - Dispersion aléatoire des points autour du curseur (px)
      */
     constructor(options = {}) {
         const resolvedOptions = MouseTrail._resolveOptions(options)
@@ -248,7 +249,8 @@ export default class MouseTrail {
             sparkleLifetime = 0.32,
             sparkleSpeed = 55,
             sparkleSize = 1.6,
-            shape = 'circle'
+            shape = 'circle',
+            spread = 0
         } = resolvedOptions
 
         this._maxPoints = maxPoints
@@ -266,6 +268,7 @@ export default class MouseTrail {
         this._sparkleSpeed = sparkleSpeed
         this._sparkleSize = sparkleSize
         this._shape = shape
+        this._spread = spread
         this._points = []
         this._sparkles = []
     }
@@ -292,11 +295,22 @@ export default class MouseTrail {
      * @param {number} y - Coordonnée Y
      */
     addPoint(x, y) {
-        this._points.push({ x, y, age: 0 })
-        this._emitSparkles(x, y)
+        const [px, py] = this._applySpread(x, y)
+        this._points.push({ x: px, y: py, age: 0 })
+        this._emitSparkles(px, py)
         if (this._points.length > this._maxPoints) {
             this._points.shift()
         }
+    }
+
+    /**
+     * Applique une dispersion aléatoire autour d'une position.
+     */
+    _applySpread(x, y) {
+        if (this._spread <= 0) return [x, y]
+        const angle = Math.random() * Math.PI * 2
+        const dist = Math.random() * this._spread
+        return [x + Math.cos(angle) * dist, y + Math.sin(angle) * dist]
     }
 
     /**
@@ -335,8 +349,8 @@ export default class MouseTrail {
         const len = this._points.length
         if (len === 0 && this._sparkles.length === 0) return
 
-        // Pass 1 : ruban lissé reliant les points
-        if (this._ribbon && len >= 2) {
+        // Pass 1 : ruban lissé (désactivé quand spread > 0 pour garder l'effet diffus)
+        if (this._ribbon && this._spread <= 0 && len >= 2) {
             this._drawRibbon(ctx)
         }
 
@@ -470,7 +484,10 @@ export default class MouseTrail {
         const len = this._points.length
         const progress = this._progress(p)
         const alpha = 1 - progress
-        const size = this._maxSize - (this._maxSize - this._minSize) * progress
+        const baseSize = this._maxSize - (this._maxSize - this._minSize) * progress
+        // En mode spread, varier la taille pour un rendu granulaire
+        const jitter = this._spread > 0 ? 0.3 + ((i * 7 + 3) % 10) / 10 * 0.7 : 1
+        const size = baseSize * jitter
         const color = this._colorAt(i, len, alpha)
 
         // Halo

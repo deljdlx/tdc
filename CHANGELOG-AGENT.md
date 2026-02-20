@@ -5,6 +5,15 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-20
 
+### feat(fx): parametre spread pour effet trail diffus et granulaire
+
+**Agent**: `claude` | **PR**: —
+
+Ajout du parametre `spread` au MouseTrail: disperse les particules
+aleatoirement autour du curseur pour un rendu nuage/brume. Le ribbon
+est auto-desactive quand spread > 0 pour eviter l'effet "gros pate",
+et la taille des particules varie par grain pour un rendu granulaire.
+
 ### style(ui): refonte fantasy de la barre de vie joueur
 
 **Agent**: `codex` | **PR**: —
