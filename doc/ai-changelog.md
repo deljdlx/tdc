@@ -1,193 +1,100 @@
-# AI Agent Changelog Instructions
+# Instructions Changelog Agents IA
 
-Ce document définit le processus pour que les agents IA documentent leurs changements dans `CHANGELOG-AGENT.md`.
+Ce document definit le format commun pour documenter les changements dans `CHANGELOG-AGENT.md`.
+Tous les agents (claude, copilot, codex) doivent suivre ce format.
 
-## Règle obligatoire: Identification d'agent
+## Principes
 
-**CHAQUE changement doit inclure l'identification de l'agent responsable.**
+1. **Ne pas dupliquer git**: le hash de commit, la liste des fichiers modifies et le diff sont deja dans l'historique git. Le changelog sert a expliquer le **pourquoi** et l'**impact** en langage humain.
+2. **Concision**: une entree doit etre lisible en 10 secondes.
+3. **Structure commune**: tous les agents utilisent le meme format pour faciliter la lecture croisee.
 
-- **Agent responsable**: Identifiant unique de l'agent (`claude`, `copilot`, `codex`, etc.)
-- **Location**: Toujours dans le champ `Agent` de l'entrée changelog
-- **Format**: Nom parfaitement unique de l'agent (en minuscules, pas d'espaces)
-
-## Procédure: Ajouter un changement au changelog
-
-### 1. Lire le changelog existant
-
-Avant de modifier:
-```bash
-cat CHANGELOG-AGENT.md | head -100
-```
-
-### 2. Identifier les informations de votre changement
-
-Collecter:
-- `COMMIT_HASH` (7-8 cars, ex: `a1b2c3d`)
-- `PR_NUMBER` (ex: `#15`) ou `Non` si pas de PR
-- `CHANGED_FILES` (liste des fichiers modifiés)
-- `MODULE` (module principal affecté, ex: `src/fx/`, `src/components/`)
-- `DESCRIPTION_COURTE` (1-2 lignes, clair et concis)
-- `DESCRIPTION_LONGUE` (contexte, justification, détails)
-- `IMPACT` (effets, dépendances, risques si applicables)
-- `TAGS` (classification: `#feat`, `#fix`, `#style`, `#docs`, `#refactor`, `#chore`, etc.)
-
-### 3. Créer l'entrée changelog
-
-Format obligatoire:
+## Format d'une entree
 
 ```markdown
-### [TYPE]: [MODULE] — [DESCRIPTION_COURTE]
+### type(scope): description courte
 
-- **Agent**: `[AGENT_NAME]`
-- **Commit**: `[HASH]`
-- **PR**: #[NUMÉRO] ou Non
-- **Changed Files**: [fichiers]
-- **Module**: [module]
-- **Details**: [description longue]
-- **Impact**: [risques, dépendances]
-- **Tags**: `#tag1` `#tag2` `#tag3`
+**Agent**: `nom` | **PR**: #numero
+
+Explication en 1-3 phrases: pourquoi ce changement, contexte si necessaire.
+
+**Impact**: consequence notable (seulement si applicable).
 ```
 
-### 4. Placer l'entrée dans le bon endroit
+### Champs obligatoires
 
-**Important**: Les changements les PLUS RÉCENTS doivent être EN PREMIER dans la section date.
+| Champ | Description | Exemple |
+|-------|-------------|---------|
+| `type` | Categorie du changement (voir types ci-dessous) | `feat`, `fix` |
+| `scope` | Module ou zone affectee (court) | `fx`, `ui`, `core`, `docs` |
+| `description courte` | Resume en < 70 caracteres | `particules configurables` |
+| `Agent` | Identifiant de l'agent, minuscules, sans espace | `claude`, `copilot`, `codex` |
+| `PR` | Numero de la PR ou `—` si pas de PR | `#25`, `—` |
+| Description libre | 1-3 phrases: pourquoi, contexte | texte libre |
 
-- Ouvrir `CHANGELOG-AGENT.md`
-- Chercher la section `## [DATE_ACTUELLE]` au format ISO 8601 (ex: `## 2026-02-20`)
-- Si la date n'existe pas, créer une nouvelle section au début du fichier (après le front matter)
-- **Ajouter l'entrée SANS numéro de section**, juste avant la première `###` existante
+### Champ optionnel
 
-Exemple d'insertion (ajout en haut du fichier antes les autres entries de la même date):
+| Champ | Quand l'utiliser |
+|-------|-----------------|
+| `Impact` | Breaking change, regression possible, effet sur la performance, dependance modifiee |
+
+## Types de changements
+
+| Type | Usage |
+|------|-------|
+| `feat` | Nouvelle fonctionnalite |
+| `fix` | Correction de bug |
+| `style` | Changement CSS/visuel sans logique metier |
+| `refactor` | Restructuration sans changement de comportement |
+| `docs` | Documentation uniquement |
+| `chore` | Maintenance, tooling, dependencies |
+
+## Structure du fichier CHANGELOG-AGENT.md
+
+Les entrees sont groupees par date (ISO 8601), les plus recentes en premier.
 
 ```markdown
 ## 2026-02-20
 
-### feat: New Module — Add new feature
+### feat(fx): particules configurables pour le mouse trail
 
-- **Agent**: `copilot`
-- **Commit**: `xyz1234`
-...
+**Agent**: `copilot` | **PR**: #25
 
-### feat: Previous Feature — Older change
+Refactored le systeme de particules pour accepter des presets JSON.
+Permet la reconfiguration runtime sans reload.
 
-- **Agent**: `claude`
-...
+### fix(ui): correction du z-index du HUD
+
+**Agent**: `claude` | **PR**: #24
+
+Le HUD passait sous les modales en mode inspection.
+
+**Impact**: les composants qui utilisent z-index > 1000 doivent etre verifies.
+
+## 2026-02-19
+
+### style(ui): palette de couleurs printaniere
+
+**Agent**: `copilot` | **PR**: #14
+
+Adoucissement des teintes pour un rendu plus agreable.
 ```
 
-## Règles d'identification d'agent
+## Regles
 
-### Format accepté
+1. **Identification obligatoire**: chaque entree doit contenir le champ `Agent` avec l'identifiant exact de l'agent (`claude`, `copilot`, `codex`). Jamais d'agent anonyme.
+2. **Placement**: inserer l'entree sous la section de date du jour. Si la date n'existe pas, creer la section en haut du fichier.
+3. **Quand documenter**:
+   - **Obligatoire** quand l'utilisateur demande de "publier" (ou equivalent: "publish", "merge", "envoie la PR"). Mettre a jour le changelog **avant** de creer la PR.
+   - Recommande apres tout changement significatif (feature, fix majeur, refactor notable).
+   - **Pas** pour les commits intermediaires, rebases, ou cherry-picks internes.
+4. **Langue**: meme langue que le reste du fichier (francais par defaut).
+5. **Un agent ne modifie que ses propres entrees**, sauf reorganisation demandee par l'utilisateur.
 
-- ✅ `claude` — Claude agent
-- ✅ `copilot` — Copilot agent
-- ✅ `codex` — Codex agent
-- ✅ `[agent-name]` — Tout agent avec identifiant unique
+## Verification avant ecriture
 
-### Format rejeté
-
-- ❌ `Claude` (cap)
-- ❌ `CoPiLoT` (mixed case)
-- ❌ `copilot-v2` (avec tirets, sauf si c'est l'identifiant exact)
-- ❌ `unknown` (jamais d'agent anonyme)
-
-**Règle**: Un agent doit TOUJOURS connaître son identifiant. S'il ne le connaît pas, il doit chercher dans ses instructions personnelles (`CLAUDE.md`, `AGENTS.md`, `COPILOT.md`, etc.) ou demander avant de documenter.
-
-## Template markdown à copier-coller
-
-```markdown
-### [TYPE]: [MODULE] — [DESCRIPTION_COURTE]
-
-- **Agent**: `[claude|copilot|codex]`
-- **Commit**: `[7-char hash]`
-- **PR**: #[numero] ou Non
-- **Changed Files**: [fichier1], [fichier2], [fichier3]
-- **Module**: [src/path/to/module]
-- **Details**: 
-  - Point clé 1
-  - Point clé 2
-  - Point clé 3
-- **Impact**: 
-  - Conséquence 1
-  - Conséquence 2
-- **Tags**: `#feat` `#tag2` `#tag3`
-```
-
-## Types de changements (exigés)
-
-Choisir une et une seule catégorie:
-
-- `feat` — Nouvelle fonctionnalité
-- `fix` — Correction de bug  
-- `style` — Changement CSS/visuel (sans logique métier)
-- `refactor` — Restructuration sans changement comportement
-- `docs` — Documentation uniquement
-- `chore` — Maintenance, tooling, dependencies
-
-## Tags optionnels mais recommandés
-
-Ajouter des tags supplémentaires pour classification:
-
-- `#breaking-change` — API change non compatible
-- `#a11y` — Accessibilité
-- `#mobile-support` — Support mobile
-- `#performance` — Optimisation performance
-- `#test-coverage` — Ajout de tests
-- `#ui-redesign` — Redesign UI majeur
-- `#config-driven` — Configuration externalisée
-- Etc. (créer des tags pertinents pour le changement)
-
-## Checklist avant de documenter
-
-- [ ] Je suis connecté sous l'identité d'agent correcte (vérifier dans instructions perso)
-- [ ] Le commit hash est correctement formalisé (7-8 caractères)
-- [ ] Le numéro PR est correct ou `Non` si pas applicable
-- [ ] Les fichiers modifiés sont listés (au moins les 3 principaux)
-- [ ] Le module est identifié avec le chemin relatif
-- [ ] La description longue explique POURQUOI, pas juste QUOI
-- [ ] L'impact liste les dépendances et effets secondaires potentiels
-- [ ] Au moins 2 tags sont présents
-- [ ] L'agent est identifié dans le champ `Agent`
-
-## Exemple complet
-
-```markdown
-### feat: FX Système — Configurable mouse trail particles
-
-- **Agent**: `copilot`
-- **Commit**: `a1b2c3d`
-- **PR**: #25
-- **Changed Files**: `src/fx/MouseTrail.js`, `src/fx/trail-presets.json`, `src/adapters/ui-dev/UiAdapter.js`
-- **Module**: `src/fx/` (particle effects system)
-- **Details**: 
-  - Refactored particle system pour accepter presets JSON
-  - Permet runtime reconfiguration sans reload
-  - Presets supportés: sparkles, embers, auras
-- **Impact**: 
-  - MouseTrail charge les presets au startup
-  - Aucun breaking change sur l'API publique
-  - Performance: +2ms startup (presets loading) negligible
-- **Tags**: `#feat` `#config-driven` `#performance` `#fx-system`
-```
-
-## Integration automatisée (Agents)
-
-Les agents peuvent parser ce document pour:
-
-1. **Lire les instructions**: chercher pattern `### [TYPE]:`
-2. **Extraire métadonnées**: regex `^\- \*\*Agent\*\*: \`([^`]+)\`$`
-3. **Valider agent**: s'assurer que l'agent dans le changelog correspond au contexte d'exécution
-4. **Analyser impact**: lire `Impact` avant modification d'un module
-
-## Quand documenter?
-
-- ✅ Après un commit significatif (feature, fix majeur)
-- ✅ Après squash merge d'une PR
-- ✅ Après refactor ou restructuration
-- ❌ Pas de documentation pour chaque petit commit intermédiaire
-- ❌ Pas de documentation pour rebase ou cherry-pick interne
-
----
-
-**Document version**: 1.0
-**Date de création**: 2026-02-20
-**Maintenu par**: Agent process owneragent-process
+- [ ] L'identifiant agent est correct et en minuscules
+- [ ] Le type est un des types autorises
+- [ ] La description explique le **pourquoi**, pas juste le **quoi**
+- [ ] Le champ Impact est present si le changement a des effets notables
+- [ ] L'entree est placee sous la bonne date, en haut de la section
