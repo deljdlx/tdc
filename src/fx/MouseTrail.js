@@ -22,6 +22,7 @@
 import defaultConfig from './trail-presets.json' with { type: 'json' }
 
 const PRESET_REQUIRED_FIELDS = ['colors']
+const VALID_SHAPES = ['circle', 'square', 'star', 'diamond', 'triangle']
 
 /**
  * @param {string} hex
@@ -44,6 +45,52 @@ function lerpColor(a, b, t) {
 }
 
 /**
+ * Trace un chemin de forme sur le contexte canvas (sans fill/stroke).
+ *
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {string} shape
+ * @param {number} x
+ * @param {number} y
+ * @param {number} size - Rayon ou demi-côté selon la forme
+ */
+function tracePath(ctx, shape, x, y, size) {
+    switch (shape) {
+        case 'square':
+            ctx.rect(x - size, y - size, size * 2, size * 2)
+            break
+        case 'diamond':
+            ctx.moveTo(x, y - size)
+            ctx.lineTo(x + size, y)
+            ctx.lineTo(x, y + size)
+            ctx.lineTo(x - size, y)
+            ctx.closePath()
+            break
+        case 'triangle': {
+            const h = size * 0.866
+            ctx.moveTo(x, y - size)
+            ctx.lineTo(x + h, y + size * 0.5)
+            ctx.lineTo(x - h, y + size * 0.5)
+            ctx.closePath()
+            break
+        }
+        case 'star': {
+            const inner = size * 0.4
+            const step = Math.PI / 5
+            ctx.moveTo(x, y - size)
+            for (let i = 1; i < 10; i++) {
+                const r = i % 2 === 0 ? size : inner
+                const angle = -Math.PI / 2 + step * i
+                ctx.lineTo(x + Math.cos(angle) * r, y + Math.sin(angle) * r)
+            }
+            ctx.closePath()
+            break
+        }
+        default:
+            ctx.arc(x, y, size, 0, Math.PI * 2)
+    }
+}
+
+/**
  * Valide qu'un objet preset contient les champs requis.
  *
  * @param {string} name
@@ -59,6 +106,9 @@ function validatePreset(name, preset) {
     }
     if (preset.colors && !Array.isArray(preset.colors)) {
         errors.push(`Preset "${name}": "colors" must be an array`)
+    }
+    if (preset.shape && !VALID_SHAPES.includes(preset.shape)) {
+        errors.push(`Preset "${name}": "shape" must be one of ${VALID_SHAPES.join(', ')}`)
     }
     return errors
 }
@@ -179,6 +229,7 @@ export default class MouseTrail {
      * @param {number}   [options.sparkleLifetime=0.32] - Durée de vie d'un sparkle (secondes)
      * @param {number}   [options.sparkleSpeed=55]  - Vitesse max des sparkles
      * @param {number}   [options.sparkleSize=1.6]  - Taille de base des sparkles
+     * @param {string}   [options.shape='circle']  - Forme des particules (circle, square, star, diamond, triangle)
      */
     constructor(options = {}) {
         const resolvedOptions = MouseTrail._resolveOptions(options)
@@ -196,7 +247,8 @@ export default class MouseTrail {
             sparklesPerPoint = 2,
             sparkleLifetime = 0.32,
             sparkleSpeed = 55,
-            sparkleSize = 1.6
+            sparkleSize = 1.6,
+            shape = 'circle'
         } = resolvedOptions
 
         this._maxPoints = maxPoints
@@ -213,6 +265,7 @@ export default class MouseTrail {
         this._sparkleLifetime = sparkleLifetime
         this._sparkleSpeed = sparkleSpeed
         this._sparkleSize = sparkleSize
+        this._shape = shape
         this._points = []
         this._sparkles = []
     }
@@ -355,7 +408,7 @@ export default class MouseTrail {
             const { r, g, b } = sparkle.color
 
             ctx.beginPath()
-            ctx.arc(sparkle.x, sparkle.y, radius, 0, Math.PI * 2)
+            tracePath(ctx, this._shape, sparkle.x, sparkle.y, radius)
             ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`
             ctx.fill()
 
@@ -435,7 +488,7 @@ export default class MouseTrail {
         // Particule centrale
         if (size > 0.3) {
             ctx.beginPath()
-            ctx.arc(p.x, p.y, Math.max(0.3, size), 0, Math.PI * 2)
+            tracePath(ctx, this._shape, p.x, p.y, Math.max(0.3, size))
             ctx.fillStyle = `rgba(${color.r},${color.g},${color.b},${alpha})`
             ctx.fill()
         }

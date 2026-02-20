@@ -20,7 +20,8 @@
             "glowRadius": 3,
             "glowAlpha": 0.25,
             "ribbon": true,
-            "ribbonWidth": 3
+            "ribbonWidth": 3,
+            "shape": "triangle"
         },
         "MAGIC": {
             "colors": ["#a78bfa", "#818cf8", "#22d3ee", "#c084fc"],
@@ -31,7 +32,8 @@
             "glowRadius": 3,
             "glowAlpha": 0.2,
             "ribbon": true,
-            "ribbonWidth": 2
+            "ribbonWidth": 2,
+            "shape": "star"
         },
         "NEON": {
             "colors": ["#e94560", "#f0c040", "#4ade80", "#22d3ee"],
@@ -104,7 +106,8 @@
             "glowRadius": 2.2,
             "glowAlpha": 0.15,
             "ribbon": true,
-            "ribbonWidth": 2
+            "ribbonWidth": 2,
+            "shape": "square"
         },
         "GALAXY": {
             "colors": ["#1e1b4b", "#5b21b6", "#7c3aed", "#c4b5fd", "#f5f3ff"],
@@ -181,7 +184,8 @@
             "glowRadius": 4,
             "glowAlpha": 0.18,
             "ribbon": true,
-            "ribbonWidth": 2
+            "ribbonWidth": 2,
+            "shape": "diamond"
         }
     },
     "collections": {
