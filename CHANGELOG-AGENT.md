@@ -5,6 +5,15 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-20
 
+### style(ui): refonte fantasy de la barre de vie joueur
+
+**Agent**: `codex` | **PR**: —
+
+Nettoyage du rendu de la barre de vie pour supprimer les effets de bordure
+agressifs et remplacer le mode "ribbon" par une base rectangulaire arrondie
+plus lisible. Application d'une direction visuelle fantasy (palette chaud
+bois/or, ombres plus organiques) tout en conservant les animations utiles.
+
 ### feat(ui): controles de parametres trail FX dans l'onglet Trail FX
 
 **Agent**: `claude` | **PR**: —

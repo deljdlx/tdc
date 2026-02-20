@@ -12,6 +12,7 @@ TEMPLATE.innerHTML = `
         --life-bar-width: 140px;
         --life-bar-height: 12px;
         --life-bar-font: 11px;
+        --life-bar-radius: 6px;
         --life-bar-color: #22c55e;
         --life-bar-glow: rgba(34, 197, 94, 0.35);
         --life-fluid-core: rgba(110, 231, 183, 0.9);
@@ -20,14 +21,14 @@ TEMPLATE.innerHTML = `
         --life-pulse-strength: 0.15;
         --life-shimmer-duration: 3.2s;
         --life-change-boost: 0.2;
-        --life-bar-bg: #0b1120;
-        --life-bar-frame: #1d2945;
-        --life-bar-label: #7b8fad;
-        --life-bar-text: #e2e8f0;
+        --life-bar-bg: #231a12;
+        --life-bar-frame: #5f4a2c;
+        --life-bar-label: #cbb898;
+        --life-bar-text: #f4e6c9;
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        font-family: 'Orbitron', 'Cinzel', sans-serif;
+        font-family: 'Cinzel', 'Orbitron', serif;
         text-transform: uppercase;
         letter-spacing: 0.4px;
     }
@@ -58,22 +59,22 @@ TEMPLATE.innerHTML = `
         min-width: 36px;
         text-align: right;
         font-variant-numeric: tabular-nums;
-        text-shadow: 0 0 6px rgba(15, 23, 42, 0.6);
+        text-shadow: 0 1px 4px rgba(45, 28, 12, 0.7);
     }
 
     .bar-frame {
         width: var(--life-bar-width);
         height: var(--life-bar-height);
-        border-radius: 999px;
+        border-radius: var(--life-bar-radius);
         background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 50%),
-            linear-gradient(180deg, #081124 0%, var(--life-bar-bg) 52%, #060c1a 100%);
-        border: 1px solid color-mix(in srgb, var(--life-bar-frame) 72%, #dbeafe 28%);
+            linear-gradient(180deg, rgba(255, 241, 214, 0.12), rgba(255, 255, 255, 0) 42%),
+            linear-gradient(180deg, #322418 0%, var(--life-bar-bg) 55%, #1a120b 100%);
+        border: 1px solid color-mix(in srgb, var(--life-bar-frame) 80%, #f6ead2 20%);
         box-shadow:
-            inset 0 1px 3px rgba(255, 255, 255, 0.12),
-            inset 0 -2px 4px rgba(0, 0, 0, 0.55),
-            0 0 8px rgba(8, 14, 28, 0.45),
-            0 0 calc(6px + 10px * var(--life-pulse-strength)) var(--life-bar-glow);
+            inset 0 1px 1px rgba(255, 242, 214, 0.12),
+            inset 0 -1px 2px rgba(0, 0, 0, 0.5),
+            0 2px 7px rgba(28, 16, 7, 0.5),
+            0 0 calc(3px + 8px * var(--life-pulse-strength)) var(--life-bar-glow);
         animation: glow-pulse var(--life-pulse-duration) ease-in-out infinite;
         position: relative;
         overflow: hidden;
@@ -83,10 +84,11 @@ TEMPLATE.innerHTML = `
     .bar-frame::before {
         content: '';
         position: absolute;
-        inset: 2px 12%;
-        border-radius: 999px;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0));
-        opacity: 0.5;
+        inset: 1px 2px auto 2px;
+        height: 48%;
+        border-radius: calc(var(--life-bar-radius) - 1px);
+        background: linear-gradient(180deg, rgba(255, 236, 196, 0.26), rgba(255, 255, 255, 0));
+        opacity: 0.55;
         pointer-events: none;
     }
 
@@ -94,8 +96,8 @@ TEMPLATE.innerHTML = `
         content: '';
         position: absolute;
         inset: 1px;
-        border-radius: 999px;
-        border: 1px solid rgba(191, 219, 254, 0.18);
+        border-radius: calc(var(--life-bar-radius) - 1px);
+        border: 1px solid rgba(244, 228, 197, 0.14);
         pointer-events: none;
     }
 
@@ -123,11 +125,11 @@ TEMPLATE.innerHTML = `
     .fill::before {
         content: '';
         position: absolute;
-        inset: 1px 8% auto 8%;
+        inset: 1px 6% auto 6%;
         height: 45%;
-        border-radius: 999px;
+        border-radius: inherit;
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0));
-        opacity: 0.75;
+        opacity: 0.6;
     }
 
     .fill::after {
@@ -166,23 +168,31 @@ TEMPLATE.innerHTML = `
     }
 
     :host([variant="arcade"]) .bar-frame {
-        clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 50%, calc(100% - 6px) 100%, 0 100%, 6px 50%);
+        border-color: color-mix(in srgb, var(--life-bar-frame) 65%, #f8e9cb 35%);
+        background:
+            linear-gradient(180deg, rgba(255, 236, 196, 0.12), rgba(255, 255, 255, 0) 38%),
+            linear-gradient(180deg, #3a2b1a 0%, #22170d 100%);
+        box-shadow:
+            inset 0 1px 1px rgba(255, 242, 214, 0.12),
+            inset 0 -1px 2px rgba(0, 0, 0, 0.5),
+            0 2px 8px rgba(28, 16, 7, 0.55),
+            0 0 calc(5px + 9px * var(--life-pulse-strength)) var(--life-bar-glow);
     }
 
     :host([variant="neon"]) .bar-frame {
-        border-color: #4cc9f0;
+        border-color: #d1b57a;
         box-shadow:
             inset 0 1px 2px rgba(0, 0, 0, 0.65),
-            0 0 14px rgba(76, 201, 240, 0.4);
+            0 0 14px rgba(209, 181, 122, 0.35);
     }
 
     :host([variant="steel"]) .bar-frame {
-        border-color: #4b5563;
-        background: linear-gradient(180deg, #0e141f 0%, #121b28 55%, #0b111b 100%);
+        border-color: #7b6848;
+        background: linear-gradient(180deg, #2f2519 0%, #261e14 55%, #1a130c 100%);
     }
 
     :host([low]) .bar-frame {
-        border-color: rgba(239, 68, 68, 0.65);
+        border-color: rgba(183, 58, 37, 0.78);
     }
 
     .bar-frame.hp-hit {
@@ -210,15 +220,17 @@ TEMPLATE.innerHTML = `
     @keyframes glow-pulse {
         0%, 100% {
             box-shadow:
-                inset 0 1px 2px rgba(0, 0, 0, 0.65),
-                0 0 8px rgba(8, 14, 28, 0.45),
-                0 0 calc(6px + 10px * var(--life-pulse-strength)) var(--life-bar-glow);
+                inset 0 1px 1px rgba(255, 242, 214, 0.12),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.5),
+                0 2px 7px rgba(28, 16, 7, 0.5),
+                0 0 calc(3px + 8px * var(--life-pulse-strength)) var(--life-bar-glow);
         }
         50% {
             box-shadow:
-                inset 0 1px 2px rgba(0, 0, 0, 0.65),
-                0 0 10px rgba(8, 14, 28, 0.5),
-                0 0 calc(10px + 18px * var(--life-pulse-strength)) var(--life-bar-glow);
+                inset 0 1px 1px rgba(255, 242, 214, 0.18),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.5),
+                0 3px 9px rgba(28, 16, 7, 0.6),
+                0 0 calc(7px + 14px * var(--life-pulse-strength)) var(--life-bar-glow);
         }
     }
 
