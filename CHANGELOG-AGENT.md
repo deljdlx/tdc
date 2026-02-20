@@ -16,6 +16,16 @@ travail concurrent multi-agents (sync, detection de conflits, isolation),
 gestion d'erreurs et recovery. Harmonisation des 3 fichiers agents sur la
 meme structure exacte.
 
+### style(ui): animation HP avec gradient vert-rouge et glow adaptatif
+
+**Agent**: `codex` | **PR**: —
+
+La barre de vie anime maintenant explicitement les variations de points de vie
+(impact en perte, pulse en soin) pour rendre les changements plus lisibles en
+combat. La couleur evolue en continu du vert vers le rouge selon le
+pourcentage de HP, et l'intensite du glow augmente automatiquement quand la
+vie devient basse.
+
 ### style(ui): palette champetre pour HUD et theme global
 
 **Agent**: `copilot` | **PR**: #19
