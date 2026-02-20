@@ -66,4 +66,6 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 
 1. Toute evolution de stack doit mettre a jour `doc/stack.md`.
 2. Toute nouvelle regle de style doit etre ajoutee a `doc/ai-code-style.md`.
-3. Apres un changement significatif (feature, fix majeur, refactor), documenter dans `CHANGELOG-AGENT.md` en suivant le format defini dans `doc/ai-changelog.md`.
+3. Documenter dans `CHANGELOG-AGENT.md` en suivant le format defini dans `doc/ai-changelog.md`:
+   - **Obligatoire** quand l'utilisateur demande de "publier" (ou equivalent: "publish", "merge", "envoie la PR"). L'agent doit mettre a jour le changelog **avant** de creer la PR.
+   - Recommande apres tout changement significatif (feature, fix majeur, refactor).

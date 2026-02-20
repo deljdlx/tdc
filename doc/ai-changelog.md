@@ -85,8 +85,8 @@ Adoucissement des teintes pour un rendu plus agreable.
 1. **Identification obligatoire**: chaque entree doit contenir le champ `Agent` avec l'identifiant exact de l'agent (`claude`, `copilot`, `codex`). Jamais d'agent anonyme.
 2. **Placement**: inserer l'entree sous la section de date du jour. Si la date n'existe pas, creer la section en haut du fichier.
 3. **Quand documenter**:
-   - Apres un squash merge de PR vers `main`.
-   - Apres un changement significatif (feature, fix majeur, refactor notable).
+   - **Obligatoire** quand l'utilisateur demande de "publier" (ou equivalent: "publish", "merge", "envoie la PR"). Mettre a jour le changelog **avant** de creer la PR.
+   - Recommande apres tout changement significatif (feature, fix majeur, refactor notable).
    - **Pas** pour les commits intermediaires, rebases, ou cherry-picks internes.
 4. **Langue**: meme langue que le reste du fichier (francais par defaut).
 5. **Un agent ne modifie que ses propres entrees**, sauf reorganisation demandee par l'utilisateur.
