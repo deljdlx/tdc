@@ -19,6 +19,7 @@ TEMPLATE.innerHTML = `
         --life-pulse-duration: 2.6s;
         --life-pulse-strength: 0.15;
         --life-shimmer-duration: 3.2s;
+        --life-change-boost: 0.2;
         --life-bar-bg: #0b1120;
         --life-bar-frame: #1d2945;
         --life-bar-label: #7b8fad;
@@ -76,6 +77,7 @@ TEMPLATE.innerHTML = `
         animation: glow-pulse var(--life-pulse-duration) ease-in-out infinite;
         position: relative;
         overflow: hidden;
+        transition: box-shadow 0.25s ease, border-color 0.25s ease;
     }
 
     .bar-frame::before {
@@ -113,7 +115,7 @@ TEMPLATE.innerHTML = `
             inset 0 1px 2px rgba(255, 255, 255, 0.24),
             inset 0 -2px 3px rgba(2, 6, 23, 0.3),
             0 0 8px var(--life-bar-glow);
-        transition: width 0.4s ease, background 0.35s ease;
+        transition: width 0.45s cubic-bezier(0.2, 0.75, 0.25, 1), background 0.35s ease;
         position: relative;
         overflow: hidden;
     }
@@ -183,6 +185,18 @@ TEMPLATE.innerHTML = `
         border-color: rgba(239, 68, 68, 0.65);
     }
 
+    .bar-frame.hp-hit {
+        animation:
+            glow-pulse var(--life-pulse-duration) ease-in-out infinite,
+            hp-hit 0.44s ease;
+    }
+
+    .bar-frame.hp-heal {
+        animation:
+            glow-pulse var(--life-pulse-duration) ease-in-out infinite,
+            hp-heal 0.44s ease;
+    }
+
     :host([show-text="false"]) .value {
         display: none;
     }
@@ -207,6 +221,18 @@ TEMPLATE.innerHTML = `
                 0 0 calc(10px + 18px * var(--life-pulse-strength)) var(--life-bar-glow);
         }
     }
+
+    @keyframes hp-hit {
+        0% { filter: saturate(1); transform: translateY(0); }
+        35% { filter: saturate(calc(1 + var(--life-change-boost))); transform: translateY(0.4px); }
+        100% { filter: saturate(1); transform: translateY(0); }
+    }
+
+    @keyframes hp-heal {
+        0% { filter: brightness(1); transform: translateY(0); }
+        35% { filter: brightness(calc(1 + var(--life-change-boost))); transform: translateY(-0.4px); }
+        100% { filter: brightness(1); transform: translateY(0); }
+    }
 </style>
 
 <span class="label"></span>
@@ -227,12 +253,21 @@ export default class PlayerLifeBar extends HTMLElement {
         super()
         this.attachShadow({ mode: 'open' })
         this.shadowRoot.appendChild(TEMPLATE.content.cloneNode(true))
+        this._prevPct = null
+        this._changeFxTimer = null
 
         this._els = {
             label: this.shadowRoot.querySelector('.label'),
             value: this.shadowRoot.querySelector('.value'),
             fill: this.shadowRoot.querySelector('.fill'),
             frame: this.shadowRoot.querySelector('.bar-frame')
+        }
+    }
+
+    disconnectedCallback() {
+        if (this._changeFxTimer) {
+            clearTimeout(this._changeFxTimer)
+            this._changeFxTimer = null
         }
     }
 
@@ -258,6 +293,8 @@ export default class PlayerLifeBar extends HTMLElement {
         this._syncColors(pct, color, glow)
         this._syncState(pct)
         this._syncPulse(pct)
+        this._syncChangeAnimation(this._prevPct, pct)
+        this._prevPct = pct
     }
 
     _syncSize() {
@@ -290,22 +327,15 @@ export default class PlayerLifeBar extends HTMLElement {
             return
         }
 
-        if (pct > 60) {
-            this.style.setProperty('--life-bar-color', '#22c55e')
-            this.style.setProperty('--life-bar-glow', 'rgba(34, 197, 94, 0.35)')
-            this.style.setProperty('--life-fluid-core', 'rgba(134, 239, 172, 0.9)')
-            this.style.setProperty('--life-fluid-edge', 'rgba(21, 128, 61, 0.95)')
-        } else if (pct > 30) {
-            this.style.setProperty('--life-bar-color', '#facc15')
-            this.style.setProperty('--life-bar-glow', 'rgba(250, 204, 21, 0.4)')
-            this.style.setProperty('--life-fluid-core', 'rgba(253, 224, 71, 0.92)')
-            this.style.setProperty('--life-fluid-edge', 'rgba(202, 138, 4, 0.95)')
-        } else {
-            this.style.setProperty('--life-bar-color', '#ef4444')
-            this.style.setProperty('--life-bar-glow', 'rgba(239, 68, 68, 0.45)')
-            this.style.setProperty('--life-fluid-core', 'rgba(252, 165, 165, 0.9)')
-            this.style.setProperty('--life-fluid-edge', 'rgba(185, 28, 28, 0.95)')
-        }
+        const clamped = Math.max(0, Math.min(100, pct))
+        const danger = 1 - (clamped / 100)
+        const hue = Math.round((clamped / 100) * 120)
+        const glowAlpha = 0.32 + (danger * 0.4)
+
+        this.style.setProperty('--life-bar-color', `hsl(${hue} 88% 52%)`)
+        this.style.setProperty('--life-bar-glow', `hsl(${hue} 95% 55% / ${glowAlpha.toFixed(2)})`)
+        this.style.setProperty('--life-fluid-core', `hsl(${hue} 92% 70% / 0.92)`)
+        this.style.setProperty('--life-fluid-edge', `hsl(${hue} 84% 36% / 0.95)`)
     }
 
     _syncState(pct) {
@@ -326,6 +356,30 @@ export default class PlayerLifeBar extends HTMLElement {
         this.style.setProperty('--life-pulse-strength', `${pulseStrength.toFixed(2)}`)
         this.style.setProperty('--life-pulse-duration', `${pulseDuration.toFixed(2)}s`)
         this.style.setProperty('--life-shimmer-duration', `${shimmerDuration.toFixed(2)}s`)
+    }
+
+    _syncChangeAnimation(prevPct, currentPct) {
+        if (prevPct == null || prevPct === currentPct) {
+            return
+        }
+
+        const frame = this._els.frame
+        const changeClass = currentPct < prevPct ? 'hp-hit' : 'hp-heal'
+        const intensity = Math.max(0.2, Math.min(1, Math.abs(currentPct - prevPct) / 45))
+
+        frame.classList.remove('hp-hit', 'hp-heal')
+        void frame.offsetWidth
+        this.style.setProperty('--life-change-boost', intensity.toFixed(2))
+        frame.classList.add(changeClass)
+
+        if (this._changeFxTimer) {
+            clearTimeout(this._changeFxTimer)
+        }
+
+        this._changeFxTimer = setTimeout(() => {
+            frame.classList.remove('hp-hit', 'hp-heal')
+            this._changeFxTimer = null
+        }, 460)
     }
 }
 
