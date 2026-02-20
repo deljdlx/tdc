@@ -6,6 +6,7 @@ Voir `doc/ai-agent-instructions.md` section "Regles critiques" pour le tronc com
 
 Resume agent-specifique:
 - Branches autorisees: `claude/*` uniquement.
+- Titre de PR: prefixe obligatoire `claude: ...`.
 - Merge vers `main`: via PR GitHub (`gh pr create` + `gh pr merge --squash`). Ne jamais merger localement.
 - Exception: Si l'utilisateur demande explicitement de merger et pusher sur `main`, Claude peut executer ces operations.
 
@@ -25,7 +26,7 @@ Lire et appliquer en priorite:
 
 Les regles de branch safety sont definies dans `doc/ai-agent-instructions.md` (section 5).
 
-Chemin worktree isole de Claude: `/tmp/tgc-claude-worktree`.
+Convention du worktree isole de Claude: `/tmp/claude/<feature-name>`.
 
 Les modifications dans ce worktree Claude sous `/tmp` ne necessitent pas de validation prealable de l'utilisateur.
 
@@ -33,7 +34,7 @@ Les modifications dans ce worktree Claude sous `/tmp` ne necessitent pas de vali
 
 Si l'utilisateur demande "en autonomie" (ou formulation equivalente), Claude doit:
 
-1. Travailler uniquement dans `/tmp/tgc-claude-worktree`.
+1. Travailler uniquement dans `/tmp/claude/<feature-name>`.
 2. Utiliser une branche dediee `claude/<description>`.
 3. Ne faire aucune modification de code dans le worktree principal de l'utilisateur.
 

@@ -6,6 +6,7 @@ Voir `doc/ai-agent-instructions.md` section "Regles critiques" pour le tronc com
 
 Resume agent-specifique:
 - Branches autorisees: `copilot/*` uniquement.
+- Titre de PR: prefixe obligatoire `copilot: ...`.
 - Merge vers `main`: via PR GitHub (`gh pr create` + `gh pr merge --squash`). Ne jamais merger localement.
 - Exception: Si l'utilisateur demande explicitement de merger et pusher sur `main`, Copilot peut executer ces operations.
 
@@ -38,7 +39,7 @@ Lire et appliquer en priorite:
 
 Les regles de branch safety sont definies dans `doc/ai-agent-instructions.md` (section 5).
 
-Chemin worktree isole de Copilot: `/tmp/tgc-copilot-worktree`.
+Convention du worktree isole de Copilot: `/tmp/copilot/<feature-name>`.
 
 Les modifications dans ce worktree Copilot sous `/tmp` ne necessitent pas de validation prealable de l'utilisateur.
 
@@ -46,6 +47,6 @@ Les modifications dans ce worktree Copilot sous `/tmp` ne necessitent pas de val
 
 Si l'utilisateur demande "en autonomie" (ou formulation equivalente), Copilot doit:
 
-1. Travailler uniquement dans `/tmp/tgc-copilot-worktree`.
+1. Travailler uniquement dans `/tmp/copilot/<feature-name>`.
 2. Utiliser une branche dediee `copilot/<description>`.
 3. Ne faire aucune modification de code dans le worktree principal de l'utilisateur.
