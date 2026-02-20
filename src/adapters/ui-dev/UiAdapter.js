@@ -73,6 +73,9 @@ export default class UiAdapter {
     /** @type {CardModal} */
     _cardModal
 
+    /** @type {string} Message de statut pour le panneau trail */
+    _trailStatusMessage
+
     constructor(rootElement) {
         this._root = rootElement
         this._eventLog = []
@@ -87,6 +90,7 @@ export default class UiAdapter {
         this._activePanel = 'game'
         this._landingCardId = null
         this._cardModal = this._createCardModal()
+        this._trailStatusMessage = ''
 
         this._setupMouseTrail()
         this._setupCardInspect()
@@ -543,45 +547,129 @@ export default class UiAdapter {
         subtitle.textContent = 'Configure visual presets and runtime activation.'
         container.appendChild(subtitle)
 
-        const toggleRow = this._el('label', 'trail-row')
-        const toggleInput = this._el('input')
-        toggleInput.type = 'checkbox'
-        toggleInput.checked = this._mouseTrailEnabled
-        toggleInput.addEventListener('change', () => {
-            this._mouseTrailEnabled = toggleInput.checked
-            if (!this._mouseTrailEnabled) {
-                this._mouseTrail = null
-            }
+        container.appendChild(this._renderTrailToggle())
+        container.appendChild(this._renderTrailPresetSelect())
+        container.appendChild(this._renderTrailJsonControls())
+
+        if (this._trailStatusMessage) {
+            const status = this._el('div', 'trail-status')
+            status.textContent = this._trailStatusMessage
+            container.appendChild(status)
+        }
+
+        return container
+    }
+
+    _renderTrailToggle() {
+        const row = this._el('label', 'trail-row')
+        const input = this._el('input')
+        input.type = 'checkbox'
+        input.checked = this._mouseTrailEnabled
+        input.addEventListener('change', () => {
+            this._mouseTrailEnabled = input.checked
+            if (!this._mouseTrailEnabled) this._mouseTrail = null
             this.render()
         })
+        const text = this._el('span')
+        text.textContent = 'Enable mouse trail'
+        row.append(input, text)
+        return row
+    }
 
-        const toggleText = this._el('span')
-        toggleText.textContent = 'Enable mouse trail'
-        toggleRow.append(toggleInput, toggleText)
-        container.appendChild(toggleRow)
-
-        const presetRow = this._el('label', 'trail-row trail-row-column')
-        const presetLabel = this._el('span')
-        presetLabel.textContent = 'Preset'
-        const presetSelect = this._el('select', 'trail-select')
-        const presetNames = MouseTrail.listPresetNames()
-        for (const presetName of presetNames) {
+    _renderTrailPresetSelect() {
+        const row = this._el('label', 'trail-row trail-row-column')
+        const label = this._el('span')
+        label.textContent = 'Preset'
+        const select = this._el('select', 'trail-select')
+        for (const name of MouseTrail.listPresetNames()) {
             const option = this._el('option')
-            option.value = presetName
-            option.textContent = presetName
-            option.selected = presetName === this._mouseTrailPreset
-            presetSelect.appendChild(option)
+            option.value = name
+            option.textContent = name
+            option.selected = name === this._mouseTrailPreset
+            select.appendChild(option)
         }
-        presetSelect.addEventListener('change', () => {
-            this._mouseTrailPreset = presetSelect.value
+        select.addEventListener('change', () => {
+            this._mouseTrailPreset = select.value
             this._mouseTrail = null
             this.render()
         })
+        row.append(label, select)
+        return row
+    }
 
-        presetRow.append(presetLabel, presetSelect)
-        container.appendChild(presetRow)
+    /**
+     * Boutons Import / Export / Reset pour les presets JSON.
+     */
+    _renderTrailJsonControls() {
+        const row = this._el('div', 'trail-row trail-json-controls')
 
-        return container
+        const importBtn = this._el('button', 'btn btn-secondary btn-sm')
+        importBtn.textContent = 'Import JSON'
+        importBtn.addEventListener('click', () => this._importTrailPresets())
+
+        const exportBtn = this._el('button', 'btn btn-secondary btn-sm')
+        exportBtn.textContent = 'Export JSON'
+        exportBtn.addEventListener('click', () => this._exportTrailPresets())
+
+        const resetBtn = this._el('button', 'btn btn-secondary btn-sm')
+        resetBtn.textContent = 'Reset'
+        resetBtn.addEventListener('click', () => {
+            MouseTrail.resetPresets()
+            this._mouseTrail = null
+            this._trailStatusMessage = 'Presets reset to defaults.'
+            this.render()
+        })
+
+        row.append(importBtn, exportBtn, resetBtn)
+        return row
+    }
+
+    /**
+     * Ouvre un sélecteur de fichier et charge le JSON sélectionné.
+     */
+    _importTrailPresets() {
+        const input = this._el('input')
+        input.type = 'file'
+        input.accept = '.json'
+        input.addEventListener('change', () => {
+            const file = input.files[0]
+            if (!file) return
+
+            const reader = new FileReader()
+            reader.onload = () => {
+                try {
+                    const data = JSON.parse(reader.result)
+                    const { added, errors } = MouseTrail.loadPresetsFromJSON(data)
+                    this._mouseTrail = null
+                    const parts = []
+                    if (added.length > 0) parts.push(`${added.length} preset(s) loaded`)
+                    if (errors.length > 0) parts.push(`${errors.length} error(s)`)
+                    this._trailStatusMessage = parts.join(', ') || 'No presets found in file.'
+                } catch {
+                    this._trailStatusMessage = 'Invalid JSON file.'
+                }
+                this.render()
+            }
+            reader.readAsText(file)
+        })
+        input.click()
+    }
+
+    /**
+     * Télécharge les presets actuels en fichier JSON.
+     */
+    _exportTrailPresets() {
+        const data = MouseTrail.exportPresets()
+        const json = JSON.stringify(data, null, 4)
+        const blob = new Blob([json], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const a = this._el('a')
+        a.href = url
+        a.download = 'trail-presets.json'
+        a.click()
+        URL.revokeObjectURL(url)
+        this._trailStatusMessage = 'Presets exported.'
+        this.render()
     }
 
     _doReplay() {

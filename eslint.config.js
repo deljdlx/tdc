@@ -19,7 +19,10 @@ export default [
         performance: 'readonly',
         HTMLElement: 'readonly',
         customElements: 'readonly',
-        CustomEvent: 'readonly'
+        CustomEvent: 'readonly',
+        FileReader: 'readonly',
+        Blob: 'readonly',
+        URL: 'readonly'
       }
     },
     rules: {
