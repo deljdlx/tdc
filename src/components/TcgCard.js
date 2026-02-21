@@ -27,33 +27,13 @@ TEMPLATE.innerHTML = `
         font-family: 'Crimson Pro', 'Georgia', serif;
     }
 
-    /* ---- FRAME ---- */
+    /* ==================================================
+       CARD BORDER (wrapper with gradient)
+       ================================================== */
 
-    .frame {
+    .card-border {
         position: relative;
-        display: flex;
-        flex-direction: column;
         height: 100%;
-        border-radius: 16px;
-        overflow: hidden;
-        background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.35) 100%),
-            radial-gradient(circle at 20% 10%, rgba(255, 232, 180, 0.18) 0%, rgba(0, 0, 0, 0) 45%),
-            #111a2b;
-        transition: box-shadow 0.25s, transform 0.25s, filter 0.25s;
-        cursor: default;
-        box-shadow:
-            0 12px 24px rgba(0, 0, 0, 0.6),
-            0 6px 12px rgba(0, 0, 0, 0.4),
-            inset 0 0 0 1px rgba(255, 255, 255, 0.12),
-            inset 0 2px 4px rgba(255, 255, 255, 0.08);
-    }
-
-    /* Bordure dégradée via pseudo-élément pour compatibilité avec border-radius */
-    .frame::before {
-        content: '';
-        position: absolute;
-        inset: -3px;
         border-radius: 16px;
         padding: 3px;
         background: linear-gradient(135deg, 
@@ -64,16 +44,10 @@ TEMPLATE.innerHTML = `
             #b08a45 65%,
             #f4e4b8 85%,
             #d4af37 100%);
-        -webkit-mask: 
-            linear-gradient(#fff 0 0) content-box, 
-            linear-gradient(#fff 0 0);
-        -webkit-mask-composite: xor;
-        mask-composite: exclude;
-        pointer-events: none;
-        z-index: 2;
+        transition: filter 0.25s;
     }
 
-    .frame.spell::before {
+    .card-border.spell {
         background: linear-gradient(135deg,
             #9b6fd8 0%,
             #d8b4fe 15%,
@@ -84,12 +58,119 @@ TEMPLATE.innerHTML = `
             #9b6fd8 100%);
     }
 
-    /* Highlight intérieur - renommé pour éviter conflit */
+    /* Border colors for interactive states */
+    .card-border.playable {
+        background: linear-gradient(135deg,
+            #4ade80 0%,
+            #86efac 15%,
+            #22c55e 35%,
+            #4ade80 50%,
+            #22c55e 65%,
+            #86efac 85%,
+            #4ade80 100%);
+    }
+
+    .card-border.can-attack {
+        background: linear-gradient(135deg,
+            #e94560 0%,
+            #ff6b88 15%,
+            #c72847 35%,
+            #e94560 50%,
+            #c72847 65%,
+            #ff6b88 85%,
+            #e94560 100%);
+    }
+
+    .card-border.selected {
+        background: linear-gradient(135deg,
+            #f0c040 0%,
+            #ffd96a 15%,
+            #d4a832 35%,
+            #f0c040 50%,
+            #d4a832 65%,
+            #ffd96a 85%,
+            #f0c040 100%);
+        animation: selectedPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes selectedPulse {
+        0%, 100% {
+            filter: brightness(1);
+        }
+        50% {
+            filter: brightness(1.2);
+        }
+    }
+
+    .card-border.drop-hint {
+        background: linear-gradient(135deg,
+            #f59e0b 0%,
+            #fbbf24 15%,
+            #d97706 35%,
+            #f59e0b 50%,
+            #d97706 65%,
+            #fbbf24 85%,
+            #f59e0b 100%);
+        animation: dropHintPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes dropHintPulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.75;
+        }
+    }
+
+    .card-border.drop-target {
+        background: linear-gradient(135deg,
+            #e94560 0%,
+            #ff6b88 15%,
+            #c72847 35%,
+            #e94560 50%,
+            #c72847 65%,
+            #ff6b88 85%,
+            #e94560 100%);
+    }
+
+    /* ==================================================
+       CARD FRAME (inner content)
+       ================================================== */
+
+    .frame {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        border-radius: 13px;
+        overflow: hidden;
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.35) 100%),
+            radial-gradient(circle at 20% 10%, rgba(255, 232, 180, 0.18) 0%, rgba(0, 0, 0, 0) 45%),
+            #111a2b;
+        cursor: default;
+        transition: box-shadow 0.25s, transform 0.25s, filter 0.25s;
+        box-shadow:
+            0 12px 24px rgba(0, 0, 0, 0.6),
+            0 6px 12px rgba(0, 0, 0, 0.4),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+            inset 0 2px 4px rgba(255, 255, 255, 0.08);
+    }
+
+    .frame.spell {
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.45) 100%),
+            radial-gradient(circle at 20% 10%, rgba(210, 176, 255, 0.2) 0%, rgba(0, 0, 0, 0) 45%),
+            #1a1230;
+    }
+
+    /* Inner highlight border */
     .frame::after {
         content: '';
         position: absolute;
         inset: 5px;
-        border-radius: 12px;
+        border-radius: 8px;
         border: 1px solid rgba(255, 233, 186, 0.25);
         pointer-events: none;
         z-index: 1;
@@ -105,25 +186,9 @@ TEMPLATE.innerHTML = `
             inset 0 1px 2px rgba(200, 165, 255, 0.15);
     }
 
-    .frame.spell {
-        background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.45) 100%),
-            radial-gradient(circle at 20% 10%, rgba(210, 176, 255, 0.2) 0%, rgba(0, 0, 0, 0) 45%),
-            #1a1230;
-    }
-
-    /* ---- STATES ---- */
-
-    .frame.playable::before {
-        background: linear-gradient(135deg,
-            #4ade80 0%,
-            #86efac 15%,
-            #22c55e 35%,
-            #4ade80 50%,
-            #22c55e 65%,
-            #86efac 85%,
-            #4ade80 100%);
-    }
+    /* ==================================================
+       INTERACTIVE STATES
+       ================================================== */
 
     .frame.playable {
         cursor: pointer;
@@ -133,6 +198,7 @@ TEMPLATE.innerHTML = `
             0 12px 24px rgba(0, 0, 0, 0.6);
         filter: brightness(1.08);
     }
+
     .frame.playable:hover {
         transform: perspective(400px) rotateX(-8deg) translateY(-12px) scale(1.05);
         box-shadow: 
@@ -140,17 +206,6 @@ TEMPLATE.innerHTML = `
             0 0 12px rgba(74, 222, 128, 0.3),
             0 16px 32px rgba(0, 0, 0, 0.7);
         filter: brightness(1.15) saturate(1.1);
-    }
-
-    .frame.can-attack::before {
-        background: linear-gradient(135deg,
-            #e94560 0%,
-            #ff6b88 15%,
-            #c72847 35%,
-            #e94560 50%,
-            #c72847 65%,
-            #ff6b88 85%,
-            #e94560 100%);
     }
 
     .frame.can-attack {
@@ -161,6 +216,7 @@ TEMPLATE.innerHTML = `
             0 12px 24px rgba(0, 0, 0, 0.6);
         filter: brightness(1.08);
     }
+
     .frame.can-attack:hover {
         box-shadow: 
             0 0 24px rgba(233, 69, 96, 0.6),
@@ -170,39 +226,12 @@ TEMPLATE.innerHTML = `
         filter: brightness(1.15) saturate(1.1);
     }
 
-    .frame.selected::before {
-        background: linear-gradient(135deg,
-            #f0c040 0%,
-            #ffd96a 15%,
-            #d4a832 35%,
-            #f0c040 50%,
-            #d4a832 65%,
-            #ffd96a 85%,
-            #f0c040 100%);
-    }
-
     .frame.selected {
         box-shadow: 
             0 0 20px rgba(240, 192, 64, 0.6),
             0 0 10px rgba(240, 192, 64, 0.4),
             0 12px 24px rgba(0, 0, 0, 0.6);
         filter: brightness(1.12);
-        animation: selectedPulse 2s ease-in-out infinite;
-    }
-
-    @keyframes selectedPulse {
-        0%, 100% {
-            box-shadow: 
-                0 0 20px rgba(240, 192, 64, 0.6),
-                0 0 10px rgba(240, 192, 64, 0.4),
-                0 12px 24px rgba(0, 0, 0, 0.6);
-        }
-        50% {
-            box-shadow: 
-                0 0 28px rgba(240, 192, 64, 0.8),
-                0 0 14px rgba(240, 192, 64, 0.5),
-                0 12px 24px rgba(0, 0, 0, 0.6);
-        }
     }
 
     .frame.exhausted {
@@ -215,7 +244,9 @@ TEMPLATE.innerHTML = `
         transition: filter 1.2s ease-in;
     }
 
-    /* ---- DRAG & DROP ---- */
+    /* ==================================================
+       DRAG & DROP STATES
+       ================================================== */
 
     :host([draggable="true"]) .frame {
         cursor: grab;
@@ -227,7 +258,7 @@ TEMPLATE.innerHTML = `
         transform: scale(0.95);
     }
 
-    :host([drop-hint]) .frame::before {
+    :host([drop-hint]) .card-border {
         background: linear-gradient(135deg,
             #f59e0b 0%,
             #fbbf24 15%,
@@ -246,16 +277,7 @@ TEMPLATE.innerHTML = `
             0 8px 16px rgba(0, 0, 0, 0.5);
     }
 
-    @keyframes dropHintPulse {
-        0%, 100% {
-            opacity: 1;
-        }
-        50% {
-            opacity: 0.75;
-        }
-    }
-
-    :host([drop-target]) .frame::before {
+    :host([drop-target]) .card-border {
         background: linear-gradient(135deg,
             #e94560 0%,
             #ff6b88 15%,
@@ -275,7 +297,9 @@ TEMPLATE.innerHTML = `
         filter: brightness(1.15);
     }
 
-    /* ---- COST GEM ---- */
+    /* ==================================================
+       COST GEM
+       ================================================== */
 
     .cost {
         position: absolute;
@@ -283,27 +307,35 @@ TEMPLATE.innerHTML = `
         left: 5px;
         width: 24px;
         height: 24px;
-        background: radial-gradient(circle at 35% 35%, #bfdbfe 0%, #60a5fa 30%, #3b82f6 60%, #1e40af 100%);
-        color: white;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 11px;
         font-weight: 800;
+        font-family: 'Cinzel', serif;
+        color: white;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
         z-index: 3;
+        background: radial-gradient(circle at 35% 35%, 
+            #bfdbfe 0%, 
+            #60a5fa 30%, 
+            #3b82f6 60%, 
+            #1e40af 100%);
+        border: 2px solid rgba(255, 255, 255, 0.35);
         box-shadow: 
             0 3px 8px rgba(0, 0, 0, 0.7),
             0 0 6px rgba(59, 130, 246, 0.5),
             inset 0 -3px 4px rgba(0, 0, 0, 0.4),
             inset 0 2px 2px rgba(255, 255, 255, 0.4);
-        border: 2px solid rgba(255, 255, 255, 0.35);
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-        font-family: 'Cinzel', serif;
     }
 
     .spell .cost {
-        background: radial-gradient(circle at 35% 35%, #e9d5ff 0%, #c084fc 30%, #a855f7 60%, #7c3aed 100%);
+        background: radial-gradient(circle at 35% 35%, 
+            #e9d5ff 0%, 
+            #c084fc 30%, 
+            #a855f7 60%, 
+            #7c3aed 100%);
         box-shadow: 
             0 3px 8px rgba(0, 0, 0, 0.7),
             0 0 6px rgba(168, 85, 247, 0.5),
@@ -311,7 +343,9 @@ TEMPLATE.innerHTML = `
             inset 0 2px 2px rgba(255, 255, 255, 0.4);
     }
 
-    /* ---- ART ---- */
+    /* ==================================================
+       CARD ART
+       ================================================== */
 
     .art-wrap {
         position: relative;
@@ -357,27 +391,29 @@ TEMPLATE.innerHTML = `
         pointer-events: none;
     }
 
-    /* ---- NAME BANNER ---- */
+    /* ==================================================
+       TEXT SECTIONS
+       ================================================== */
 
     .name {
         padding: 4px 6px 3px;
         font-size: 9px;
         font-weight: 700;
+        font-family: 'Cinzel', serif;
         color: #f9e2a7;
         text-align: center;
         letter-spacing: 0.6px;
         text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex-shrink: 0;
         background: linear-gradient(180deg,
             rgba(36, 28, 16, 0.92) 0%,
             rgba(20, 16, 10, 0.96) 50%,
             rgba(36, 28, 16, 0.92) 100%);
         border-top: 1px solid rgba(255, 233, 186, 0.25);
         border-bottom: 1px solid rgba(255, 233, 186, 0.18);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        flex-shrink: 0;
-        font-family: 'Cinzel', serif;
     }
 
     .spell .name {
@@ -386,8 +422,6 @@ TEMPLATE.innerHTML = `
         border-bottom-color: rgba(210, 180, 255, 0.18);
     }
 
-    /* ---- TYPE LINE ---- */
-
     .type-line {
         padding: 2px 6px;
         font-size: 6.5px;
@@ -395,19 +429,22 @@ TEMPLATE.innerHTML = `
         text-align: center;
         text-transform: uppercase;
         letter-spacing: 1px;
-        background: linear-gradient(90deg, rgba(10, 8, 6, 0.8), rgba(30, 24, 18, 0.4), rgba(10, 8, 6, 0.8));
+        flex-shrink: 0;
+        background: linear-gradient(90deg, 
+            rgba(10, 8, 6, 0.8), 
+            rgba(30, 24, 18, 0.4), 
+            rgba(10, 8, 6, 0.8));
         border-top: 1px solid rgba(255, 233, 186, 0.18);
         border-bottom: 1px solid rgba(255, 233, 186, 0.12);
-        flex-shrink: 0;
     }
-
-    /* ---- BODY (effect text) ---- */
 
     .body {
         padding: 4px 6px 4px;
         min-height: 0;
         flex-shrink: 0;
-        background: linear-gradient(180deg, rgba(245, 231, 200, 0.92), rgba(220, 197, 156, 0.92));
+        background: linear-gradient(180deg, 
+            rgba(245, 231, 200, 0.92), 
+            rgba(220, 197, 156, 0.92));
         border-top: 1px solid rgba(255, 255, 255, 0.35);
         border-bottom: 1px solid rgba(70, 56, 36, 0.4);
     }
@@ -425,7 +462,9 @@ TEMPLATE.innerHTML = `
         display: none;
     }
 
-    /* ---- STATS ---- */
+    /* ==================================================
+       STATS (POWER/HP)
+       ================================================== */
 
     .stats {
         display: flex;
@@ -448,17 +487,20 @@ TEMPLATE.innerHTML = `
         justify-content: center;
         font-size: 11px;
         font-weight: 800;
+        font-family: 'Cinzel', serif;
         color: #fef3c7;
         text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
         border: 1.5px solid rgba(255, 255, 255, 0.3);
         box-shadow: 
             inset 0 -3px 4px rgba(0, 0, 0, 0.4),
             inset 0 1px 2px rgba(255, 255, 255, 0.2);
-        font-family: 'Cinzel', serif;
     }
 
     .power {
-        background: linear-gradient(180deg, #dc2626 0%, #b91c1c 50%, #7f1d1d 100%);
+        background: linear-gradient(180deg, 
+            #dc2626 0%, 
+            #b91c1c 50%, 
+            #7f1d1d 100%);
         box-shadow: 
             0 3px 6px rgba(185, 28, 28, 0.5),
             inset 0 -3px 4px rgba(0, 0, 0, 0.4),
@@ -466,14 +508,19 @@ TEMPLATE.innerHTML = `
     }
 
     .hp {
-        background: linear-gradient(180deg, #16a34a 0%, #15803d 50%, #14532d 100%);
+        background: linear-gradient(180deg, 
+            #16a34a 0%, 
+            #15803d 50%, 
+            #14532d 100%);
         box-shadow: 
             0 3px 6px rgba(21, 128, 61, 0.5),
             inset 0 -3px 4px rgba(0, 0, 0, 0.4),
             inset 0 1px 2px rgba(255, 255, 255, 0.2);
     }
 
-    /* ---- STATUS OVERLAY ---- */
+    /* ==================================================
+       STATUS OVERLAY
+       ================================================== */
 
     .status-overlay {
         position: absolute;
@@ -500,16 +547,18 @@ TEMPLATE.innerHTML = `
     }
 </style>
 
-<div class="frame">
-    <div class="cost"></div>
-    <div class="art-wrap"><div class="art"></div></div>
-    <div class="name"></div>
-    <div class="type-line"></div>
-    <div class="body">
-        <div class="effect"></div>
+<div class="card-border">
+    <div class="frame">
+        <div class="cost"></div>
+        <div class="art-wrap"><div class="art"></div></div>
+        <div class="name"></div>
+        <div class="type-line"></div>
+        <div class="body">
+            <div class="effect"></div>
+        </div>
+        <div class="stats"></div>
+        <div class="status-overlay"></div>
     </div>
-    <div class="stats"></div>
-    <div class="status-overlay"></div>
 </div>
 `
 
@@ -544,6 +593,7 @@ export default class TcgCard extends HTMLElement {
         this._longPressTimer = null
         this._dragStarted = false
         this._els = {
+            border: this.shadowRoot.querySelector('.card-border'),
             frame: this.shadowRoot.querySelector('.frame'),
             cost: this.shadowRoot.querySelector('.cost'),
             art: this.shadowRoot.querySelector('.art'),
@@ -658,14 +708,27 @@ export default class TcgCard extends HTMLElement {
             this._els.status.className = 'status-overlay'
         }
 
-        // Frame state classes
-        const f = this._els.frame
-        f.classList.toggle('spell', type === 'spell')
-        f.classList.toggle('playable', this.hasAttribute('playable'))
-        f.classList.toggle('can-attack', this.hasAttribute('can-attack'))
-        f.classList.toggle('selected', this.hasAttribute('selected'))
-        f.classList.toggle('sick', sick)
-        f.classList.toggle('exhausted', done)
+        // Apply classes to border (for gradient color) and frame (for type-specific styles)
+        const border = this._els.border
+        const frame = this._els.frame
+        const isSpell = type === 'spell'
+        const isPlayable = this.hasAttribute('playable')
+        const isCanAttack = this.hasAttribute('can-attack')
+        const isSelected = this.hasAttribute('selected')
+
+        // Border classes (affect gradient color)
+        border.classList.toggle('spell', isSpell)
+        border.classList.toggle('playable', isPlayable)
+        border.classList.toggle('can-attack', isCanAttack)
+        border.classList.toggle('selected', isSelected)
+
+        // Frame classes (affect inner content and states)
+        frame.classList.toggle('spell', isSpell)
+        frame.classList.toggle('playable', isPlayable)
+        frame.classList.toggle('can-attack', isCanAttack)
+        frame.classList.toggle('selected', isSelected)
+        frame.classList.toggle('sick', sick)
+        frame.classList.toggle('exhausted', done)
     }
 }
 
