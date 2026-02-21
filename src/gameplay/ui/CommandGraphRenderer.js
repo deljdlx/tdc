@@ -35,9 +35,9 @@ export default class CommandGraphRenderer {
             layout: {
                 name: 'dagre',
                 rankDir: 'TB',
-                nodeSep: 50,
-                rankSep: 70,
-                edgeSep: 20,
+                nodeSep: 80,
+                rankSep: 100,
+                edgeSep: 30,
                 animate: false,
                 fit: true,
                 padding: 20
