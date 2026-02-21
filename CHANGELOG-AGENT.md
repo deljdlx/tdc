@@ -5,6 +5,21 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-21
 
+### style(ui): bordures visibles et CSS refactoré pour les cartes
+
+**Agent**: `copilot` | **PR**: #35
+
+Correction du problème de bordures invisibles en remplaçant l'approche
+mask CSS par une solution wrapper HTML plus robuste. Le fichier CSS a été
+entièrement refactoré avec des sections clairement délimitées et commentées,
+améliorant considérablement la lisibilité. La structure HTML ajoute maintenant
+un wrapper `.card-border` contenant les gradients, avec la `.frame` comme
+contenu intérieur, permettant des coins arrondis (16px) fonctionnels tout en
+conservant les bordures dégradées animées visibles.
+
+**Impact**: changement de structure HTML (ajout wrapper), CSS mieux organisé
+avec sections commentées, résolution du problème de bordures invisibles.
+
 ### style(ui): coins arrondis pour les cartes TCG
 
 **Agent**: `copilot` | **PR**: #34
