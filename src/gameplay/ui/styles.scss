@@ -6,19 +6,48 @@
  * Panel "Log"  = event log plein écran.
  */
 
-@use 'sass:color';
 @use 'fonts' as fonts;
 
-$bg-dark: #c8cfc2;
-$bg-mid: #d4d8d0;
-$bg-card: #e6e8e2;
-$accent: #3d7a5a;
-$gold: #d4a24c;
-$text: #2a3029;
-$text-dim: #6b7065;
-$border: #9a9e96;
-$leaf: #5a9e6e;
-$blossom: #d4a0a8;
+// =====================
+// PALETTE — Spring / Material
+// =====================
+
+$primary: #5B8C5A;
+$primary-light: #7BAF7A;
+$primary-dark: #3D6B3C;
+
+$secondary: #E8927C;
+$secondary-light: #F0B4A4;
+$secondary-dark: #C46E58;
+
+$tertiary: #7BA7CC;
+$tertiary-light: #A3C4E0;
+$tertiary-dark: #5889B0;
+
+$bg-page: #F5F3EF;
+$bg-surface: #FFFFFF;
+$bg-raised: #FAFAF7;
+$bg-muted: #EDEBE6;
+
+$text: #2D3436;
+$text-dim: #7F8C8D;
+
+$border: #D5D2CC;
+$border-light: #E8E6E1;
+
+$danger: #E94560;
+$warning: #F0A030;
+$success: #4CAF50;
+
+// =====================
+// MATERIAL SHADOWS
+// =====================
+
+$shadow-1: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+$shadow-2: 0 2px 4px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+$shadow-3: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+$shadow-4: 0 8px 16px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
+$shadow-5: 0 16px 32px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.08);
 
 $tab-bar-height: 46px;
 
@@ -86,30 +115,10 @@ $desktop: 1280px;
 }
 
 body {
-    background:
-        radial-gradient(circle at 14% 12%, rgba($gold, 0.18) 0%, rgba($gold, 0) 48%),
-        radial-gradient(circle at 86% 10%, rgba($accent, 0.12) 0%, rgba($accent, 0) 50%),
-        radial-gradient(circle at 76% 74%, rgba($blossom, 0.10) 0%, rgba($blossom, 0) 48%),
-        linear-gradient(
-            160deg,
-            color.adjust($bg-dark, $lightness: 3%) 0%,
-            $bg-mid 56%,
-            color.adjust($bg-dark, $lightness: -6%) 100%
-        );
+    background: $bg-page;
     color: $text;
     font-family: fonts.$font-family-base;
     font-size: 14px;
-}
-
-body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background:
-        linear-gradient(transparent 0%, rgba($bg-dark, 0.06) 36%, rgba($accent, 0.06) 100%),
-        radial-gradient(circle at 50% 118%, rgba($blossom, 0.14) 0%, rgba($blossom, 0) 58%);
-    z-index: 1;
 }
 
 #app {
@@ -151,17 +160,9 @@ body::before {
     padding: 5px;
     gap: 5px;
     border-radius: 10px;
-    background:
-        linear-gradient(
-            165deg,
-            rgba(color.adjust($bg-mid, $lightness: -4%), 0.9) 0%,
-            rgba(color.adjust($bg-mid, $lightness: -10%), 0.86) 100%
-        );
-    border: 1px solid rgba($gold, 0.18);
-    box-shadow:
-        0 4px 12px rgba(black, 0.18),
-        inset 0 1px 0 rgba(white, 0.06);
-    backdrop-filter: blur(8px);
+    background: $bg-surface;
+    border: 1px solid $border;
+    box-shadow: $shadow-3;
     z-index: 200;
 }
 
@@ -174,51 +175,26 @@ body::before {
     gap: 5px;
     border: none;
     border-radius: 6px;
-    background:
-        linear-gradient(
-            150deg,
-            rgba($bg-card, 0.62) 0%,
-            rgba(color.adjust($bg-card, $lightness: -10%), 0.7) 46%,
-            rgba(color.adjust($bg-mid, $lightness: -10%), 0.74) 100%
-        );
-    color: color.adjust($text-dim, $lightness: 6%);
+    background: transparent;
+    color: $text-dim;
     font-size: 11px;
     font-weight: 600;
     font-family: fonts.$font-family-heading;
     letter-spacing: 0.7px;
     text-transform: uppercase;
     cursor: pointer;
-    transition: color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.16s;
+    transition: color 0.2s, background 0.2s;
     position: relative;
     overflow: hidden;
 
     &:hover {
-        background:
-            linear-gradient(
-                150deg,
-                rgba(color.adjust($bg-card, $lightness: 6%), 0.84) 0%,
-                rgba($bg-card, 0.9) 50%,
-                rgba(color.adjust($bg-mid, $lightness: -4%), 0.92) 100%
-            );
+        background: $bg-muted;
         color: $text;
-        transform: translateY(-1px);
-        box-shadow:
-            inset 0 1px 0 rgba(white, 0.08),
-            inset 0 -1px 0 rgba($gold, 0.25);
     }
 
     &.active {
         color: white;
-        background:
-            linear-gradient(
-                155deg,
-                rgba(color.adjust($accent, $lightness: 8%), 0.62) 0%,
-                rgba(color.adjust($accent, $lightness: 0%), 0.6) 44%,
-                rgba(color.adjust($accent, $lightness: -8%), 0.56) 100%
-            );
-        box-shadow:
-            inset 0 1px 0 rgba(white, 0.12),
-            inset 0 -1px 0 rgba($gold, 0.28);
+        background: $primary;
     }
 }
 
@@ -284,7 +260,7 @@ body::before {
 
 .btn {
     padding: 10px 20px;
-    border: 1px solid rgba(black, 0.12);
+    border: 1px solid $border;
     border-radius: 6px;
     cursor: pointer;
     font-size: 12px;
@@ -292,10 +268,9 @@ body::before {
     font-family: fonts.$font-family-heading;
     text-transform: uppercase;
     letter-spacing: 0.6px;
-    text-shadow: 0 1px 1px rgba(black, 0.15);
     position: relative;
     overflow: hidden;
-    transition: transform 0.12s, box-shadow 0.22s, border-color 0.2s, background 0.2s;
+    transition: transform 0.12s, box-shadow 0.22s, background 0.2s;
 
     &:hover:not(:disabled) {
         transform: translateY(-1px);
@@ -312,7 +287,7 @@ body::before {
     }
 
     &:focus-visible {
-        outline: 2px solid rgba($gold, 0.6);
+        outline: 2px solid $tertiary;
         outline-offset: 2px;
     }
 }
@@ -325,50 +300,31 @@ body::before {
 }
 
 .btn-primary {
-    background: linear-gradient(
-        165deg,
-        color.adjust($accent, $lightness: 14%) 0%,
-        $accent 40%,
-        color.adjust($accent, $lightness: -8%) 100%
-    );
+    background: $primary;
     color: white;
-    border-color: color.adjust($accent, $lightness: -12%);
-    box-shadow:
-        0 2px 6px rgba($accent, 0.25),
-        inset 0 1px 0 rgba(white, 0.18);
+    border-color: $primary-dark;
+    box-shadow: $shadow-1;
 
     &:hover:not(:disabled) {
-        box-shadow:
-            0 4px 10px rgba($accent, 0.30),
-            inset 0 1px 0 rgba(white, 0.22);
-        filter: brightness(1.06);
-        border-color: color.adjust($accent, $lightness: -4%);
+        background: $primary-light;
+        box-shadow: $shadow-2;
     }
 }
 
 .btn-secondary {
-    background: linear-gradient(
-        160deg,
-        color.adjust($bg-card, $lightness: 4%) 0%,
-        $bg-card 45%,
-        color.adjust($bg-card, $lightness: -6%) 100%
-    );
+    background: $bg-surface;
     color: $text;
-    border-color: color.adjust($border, $lightness: -6%);
-    box-shadow:
-        0 2px 6px rgba(black, 0.08),
-        inset 0 1px 0 rgba(white, 0.10);
+    border-color: $border;
+    box-shadow: $shadow-1;
 
     &:hover:not(:disabled) {
-        box-shadow:
-            0 3px 8px rgba(black, 0.12),
-            inset 0 1px 0 rgba(white, 0.14);
-        filter: brightness(1.04);
+        background: $bg-raised;
+        box-shadow: $shadow-2;
     }
 }
 
 .mode-hint {
-    color: $gold;
+    color: $secondary;
     font-size: 12px;
     margin-left: 8px;
     font-family: fonts.$font-family-heading;
@@ -382,14 +338,16 @@ body::before {
     display: flex;
     gap: 16px;
     padding: 6px 12px;
-    background: linear-gradient(135deg, color.adjust($bg-mid, $lightness: 6%) 0%, $bg-mid 100%);
+    background: $bg-surface;
+    border: 1px solid $border-light;
     border-radius: 4px;
     margin: 8px 0;
     font-size: 13px;
     color: $text-dim;
+    box-shadow: $shadow-1;
 
     strong {
-        color: $gold;
+        color: $primary;
         font-family: fonts.$font-family-heading;
     }
 }
@@ -409,24 +367,16 @@ body::before {
 
 .game-over-banner {
     padding: 12px;
-    background: linear-gradient(
-        to bottom,
-        color.adjust($accent, $lightness: 8%),
-        $accent,
-        color.adjust($accent, $lightness: -6%)
-    );
+    background: $secondary;
     color: white;
     text-align: center;
     font-weight: 700;
     font-size: 16px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    text-shadow: 0 1px 3px rgba(black, 0.35);
     border-radius: 6px;
-    border: 1px solid color.adjust($accent, $lightness: -12%);
-    box-shadow:
-        0 0 10px rgba($accent, 0.2),
-        inset 0 1px 0 rgba(white, 0.12);
+    border: 1px solid $secondary-dark;
+    box-shadow: $shadow-2;
     margin-bottom: 8px;
     font-family: fonts.$font-family-heading;
 }
@@ -448,7 +398,8 @@ body::before {
 .event-log {
     border: 1px solid $border;
     border-radius: 4px;
-    background: linear-gradient(180deg, color.adjust($bg-mid, $lightness: 4%) 0%, $bg-mid 100%);
+    background: $bg-surface;
+    box-shadow: $shadow-1;
     display: flex;
     flex-direction: column;
     // Occupe tout l'espace disponible dans le panel
@@ -462,7 +413,7 @@ body::before {
     text-transform: uppercase;
     letter-spacing: 1px;
     color: $text-dim;
-    border-bottom: 1px solid $border;
+    border-bottom: 1px solid $border-light;
     font-family: fonts.$font-family-heading;
 }
 
@@ -477,7 +428,7 @@ body::before {
     font-size: 11px;
     font-family: fonts.$font-family-mono;
     color: $text-dim;
-    border-bottom: 1px solid rgba($border, 0.3);
+    border-bottom: 1px solid $border-light;
 
     &:last-child {
         border-bottom: none;
@@ -492,7 +443,7 @@ body::before {
 .trail-settings {
     border: 1px solid $border;
     border-radius: 4px;
-    background: $bg-mid;
+    background: $bg-surface;
     padding: 14px;
     display: flex;
     flex-direction: column;
@@ -501,7 +452,7 @@ body::before {
 
 .trail-title {
     font-size: 18px;
-    color: $gold;
+    color: $secondary;
 }
 
 .trail-subtitle {
@@ -529,7 +480,7 @@ body::before {
     border: 1px solid $border;
     border-radius: 4px;
     padding: 7px 9px;
-    background: $bg-card;
+    background: $bg-raised;
     color: $text;
 }
 
@@ -545,7 +496,7 @@ body::before {
 
 .trail-status {
     font-size: 11px;
-    color: $gold;
+    color: $secondary;
     padding: 4px 0;
 }
 
@@ -557,7 +508,7 @@ body::before {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    border-top: 1px solid $border;
+    border-top: 1px solid $border-light;
     padding-top: 12px;
 }
 
@@ -587,7 +538,7 @@ body::before {
 .trail-param-value {
     min-width: 42px;
     font-size: 12px;
-    color: $gold;
+    color: $primary;
     text-align: right;
     font-family: fonts.$font-family-mono;
 }
@@ -595,7 +546,7 @@ body::before {
 .trail-slider {
     flex: 1;
     max-width: 200px;
-    accent-color: $gold;
+    accent-color: $primary;
     cursor: pointer;
 }
 
@@ -619,7 +570,7 @@ body::before {
     padding: 0;
     border: 1px solid $border;
     border-radius: 4px;
-    background: $bg-card;
+    background: $bg-raised;
     cursor: pointer;
 
     &::-webkit-color-swatch-wrapper {
@@ -654,8 +605,8 @@ body::before {
     flex-wrap: wrap;
     gap: 8px;
     padding: 10px 14px;
-    border-bottom: 1px solid $border;
-    background: linear-gradient(135deg, color.adjust($bg-mid, $lightness: 4%) 0%, $bg-mid 100%);
+    border-bottom: 1px solid $border-light;
+    background: $bg-raised;
 }
 
 .graph-title {
@@ -693,7 +644,7 @@ body::before {
 .graph-legend-dash {
     width: 16px;
     height: 0;
-    border-top: 2px dashed color.adjust($blossom, $lightness: -20%);
+    border-top: 2px dashed $secondary-dark;
 }
 
 .graph-canvas {

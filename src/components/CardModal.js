@@ -13,7 +13,7 @@ const PICSUM = 'https://picsum.photos/seed'
 const TEMPLATE = document.createElement('template')
 TEMPLATE.innerHTML = `
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Crimson+Pro:wght@400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
     :host {
         position: fixed;
@@ -22,7 +22,7 @@ TEMPLATE.innerHTML = `
         display: none;
         align-items: center;
         justify-content: center;
-        font-family: 'Crimson Pro', 'Georgia', serif;
+        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
     }
 
     :host(.visible) {
@@ -34,8 +34,7 @@ TEMPLATE.innerHTML = `
     .backdrop {
         position: absolute;
         inset: 0;
-        background: rgba(0, 0, 0, 0.75);
-        backdrop-filter: blur(4px);
+        background: rgba(0, 0, 0, 0.5);
         animation: fadeIn 0.2s ease-out;
     }
 
@@ -48,42 +47,15 @@ TEMPLATE.innerHTML = `
         max-width: 90vw;
         border-radius: 16px;
         overflow: hidden;
-        background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.35) 100%),
-            radial-gradient(circle at 20% 10%, rgba(255, 232, 180, 0.18) 0%, rgba(0, 0, 0, 0) 45%),
-            #111a2b;
-        border: 2px solid #b08a45;
-        box-shadow:
-            0 20px 60px rgba(0, 0, 0, 0.7),
-            0 0 30px rgba(176, 138, 69, 0.15),
-            inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+        background: #FFFFFF;
+        border: 2px solid #D5D2CC;
+        box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.08);
         animation: slideUp 0.25s ease-out;
     }
 
-    .card-panel::before {
-        content: '';
-        position: absolute;
-        inset: 5px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 233, 186, 0.15);
-        pointer-events: none;
-        z-index: 1;
-    }
-
     .card-panel.spell {
-        background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.45) 100%),
-            radial-gradient(circle at 20% 10%, rgba(210, 176, 255, 0.2) 0%, rgba(0, 0, 0, 0) 45%),
-            #1a1230;
-        border-color: #7f5db6;
-        box-shadow:
-            0 20px 60px rgba(0, 0, 0, 0.7),
-            0 0 30px rgba(127, 93, 182, 0.15),
-            inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-    }
-
-    .card-panel.spell::before {
-        border-color: rgba(200, 165, 255, 0.15);
+        background: #FAF8FF;
+        border-color: #B8A9D4;
     }
 
     /* ---- ART ---- */
@@ -94,18 +66,17 @@ TEMPLATE.innerHTML = `
         margin: 10px 10px 0;
         border-radius: 10px;
         overflow: hidden;
-        border: 1px solid rgba(255, 233, 186, 0.25);
-        box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.65);
+        border: 1px solid #D5D2CC;
     }
 
     .spell .art-wrap {
-        border-color: rgba(180, 130, 255, 0.15);
+        border-color: #C4B8DA;
     }
 
     .art {
         position: absolute;
         inset: 0;
-        background: #080c18 center / cover no-repeat;
+        background: #EDEBE6 center / cover no-repeat;
         opacity: 0;
         transition: opacity 0.4s ease;
     }
@@ -118,9 +89,7 @@ TEMPLATE.innerHTML = `
         content: '';
         position: absolute;
         inset: 0;
-        background:
-            linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 55%),
-            linear-gradient(180deg, transparent 45%, rgba(0,0,0,0.6) 100%);
+        background: linear-gradient(180deg, transparent 60%, rgba(0, 0, 0, 0.3) 100%);
         pointer-events: none;
     }
 
@@ -132,7 +101,7 @@ TEMPLATE.innerHTML = `
         left: 14px;
         width: 36px;
         height: 36px;
-        background: radial-gradient(circle at 35% 35%, #93c5fd 0%, #3b82f6 50%, #1d4ed8 100%);
+        background: #7BA7CC;
         color: white;
         border-radius: 50%;
         display: flex;
@@ -141,19 +110,14 @@ TEMPLATE.innerHTML = `
         font-size: 18px;
         font-weight: 800;
         z-index: 3;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6),
-                    0 0 6px rgba(59, 130, 246, 0.4),
-                    inset 0 -2px 4px rgba(0, 0, 0, 0.3);
-        border: 2px solid rgba(255, 255, 255, 0.25);
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
-        font-family: 'Cinzel', serif;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+        border: 2px solid #5889B0;
+        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
     }
 
     .spell .cost {
-        background: radial-gradient(circle at 35% 35%, #d8b4fe 0%, #a855f7 50%, #7c3aed 100%);
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6),
-                    0 0 6px rgba(168, 85, 247, 0.4),
-                    inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+        background: #9B8EC4;
+        border-color: #7A6DA8;
     }
 
     /* ---- NAME ---- */
@@ -162,15 +126,14 @@ TEMPLATE.innerHTML = `
         padding: 10px 14px 6px;
         font-size: 18px;
         font-weight: 700;
-        color: #f9e2a7;
+        color: #2D3436;
         text-align: center;
         letter-spacing: 0.8px;
-        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
-        font-family: 'Cinzel', serif;
+        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
     }
 
     .spell .name {
-        color: #e7d8ff;
+        color: #4A3D6B;
     }
 
     /* ---- TYPE LINE ---- */
@@ -178,13 +141,13 @@ TEMPLATE.innerHTML = `
     .type-line {
         padding: 4px 14px;
         font-size: 11px;
-        color: #d6c6a1;
+        color: #7F8C8D;
         text-align: center;
         text-transform: uppercase;
         letter-spacing: 1.5px;
-        background: linear-gradient(90deg, rgba(10, 8, 6, 0.6), rgba(30, 24, 18, 0.3), rgba(10, 8, 6, 0.6));
-        border-top: 1px solid rgba(255, 233, 186, 0.15);
-        border-bottom: 1px solid rgba(255, 233, 186, 0.1);
+        background: transparent;
+        border-top: 1px solid #E8E6E1;
+        border-bottom: 1px solid #E8E6E1;
     }
 
     /* ---- STATS ---- */
@@ -212,25 +175,21 @@ TEMPLATE.innerHTML = `
         justify-content: center;
         font-size: 18px;
         font-weight: 800;
-        color: #fef3c7;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
-        border: 1.5px solid rgba(255, 255, 255, 0.25);
-        font-family: 'Cinzel', serif;
+        color: white;
+        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
     }
 
     .stat-value.power {
-        background: linear-gradient(180deg, #b91c1c 0%, #7f1d1d 100%);
-        box-shadow: 0 3px 8px rgba(185, 28, 28, 0.45);
+        background: #E94560;
     }
 
     .stat-value.hp {
-        background: linear-gradient(180deg, #15803d 0%, #14532d 100%);
-        box-shadow: 0 3px 8px rgba(21, 128, 61, 0.45);
+        background: #5B8C5A;
     }
 
     .stat-label {
         font-size: 9px;
-        color: #8888aa;
+        color: #7F8C8D;
         text-transform: uppercase;
         letter-spacing: 1px;
         font-weight: 600;
@@ -241,18 +200,18 @@ TEMPLATE.innerHTML = `
     .effect-section {
         padding: 10px 14px;
         margin: 0 10px;
-        background: linear-gradient(180deg, rgba(245, 231, 200, 0.92), rgba(220, 197, 156, 0.92));
+        background: #FAFAF7;
         border-radius: 6px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid #E8E6E1;
     }
 
     .effect-text {
         font-size: 13px;
-        color: #2f2518;
+        color: #2D3436;
         text-align: center;
         font-style: italic;
         line-height: 1.5;
-        font-weight: 600;
+        font-weight: 500;
     }
 
     .effect-text:empty {
@@ -279,19 +238,19 @@ TEMPLATE.innerHTML = `
     }
 
     .status-badge.sick {
-        background: rgba(148, 163, 184, 0.2);
+        background: rgba(148, 163, 184, 0.15);
         color: #94a3b8;
         border: 1px solid rgba(148, 163, 184, 0.3);
     }
 
     .status-badge.exhausted {
-        background: rgba(107, 114, 128, 0.2);
+        background: rgba(107, 114, 128, 0.15);
         color: #6b7280;
         border: 1px solid rgba(107, 114, 128, 0.3);
     }
 
     .status-badge.can-attack {
-        background: rgba(233, 69, 96, 0.2);
+        background: rgba(233, 69, 96, 0.15);
         color: #e94560;
         border: 1px solid rgba(233, 69, 96, 0.3);
     }

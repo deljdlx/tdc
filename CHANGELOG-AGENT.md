@@ -38,6 +38,18 @@ ombres reduites partout, et couleurs PlayerHud harmonisees.
 
 **Impact**: aspect plus mature et coherent, moins d'effet « monochrome vert ».
 
+### style(ui): Material Design printanier — refonte complete
+
+**Agent**: `claude` | **PR**: —
+
+Refonte complete vers un style Material Design printanier : police
+unique Inter (sans-serif), palette 3 couleurs (sauge, corail, ciel),
+ombres Material a 5 niveaux uniformes, cartes sur fond blanc, suppression
+de tous les effets (glows, text-shadows, shimmer, scanlines, pulses).
+9 fichiers modifies.
+
+**Impact**: UI professionnelle, propre et coherente sur tous les composants.
+
 - Noeuds : ombres, bordures colorees par categorie, texte lisible
   (blanc avec outline categorie, doré fonce sur nœuds jaunes),
   police Orbitron, taille agrandie (130×44)

@@ -16,45 +16,19 @@ const MAX_MANA_CAP = 10
 const TEMPLATE = document.createElement('template')
 TEMPLATE.innerHTML = `
 <style>
-    /* ---- KEYFRAMES ---- */
-
-    @keyframes border-pulse {
-        0%, 100% { opacity: 0.6; }
-        50% { opacity: 1; }
-    }
-
-
-    @keyframes gem-sparkle {
-        0%, 100% { filter: brightness(1); }
-        50% { filter: brightness(1.4); }
-    }
-
-
     /* ---- HOST ---- */
 
     :host {
         display: flex;
         flex-direction: column;
-        border: 1px solid #9a9e96;
+        border: 1px solid #D5D2CC;
         border-radius: 12px;
         overflow: visible;
-        background:
-            linear-gradient(170deg, rgba(212, 216, 208, 0.96) 0%, rgba(200, 207, 194, 0.98) 100%);
-        box-shadow:
-            0 4px 12px rgba(42, 48, 41, 0.15),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
-        font-family: 'Source Sans 3', 'Trebuchet MS', sans-serif;
+        background: #FFFFFF;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+        transition: border-color 0.3s, box-shadow 0.3s;
+        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
         position: relative;
-    }
-
-    :host::before {
-        content: '';
-        position: absolute;
-        inset: -1px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        pointer-events: none;
     }
 
     :host([mirrored]) {
@@ -62,32 +36,19 @@ TEMPLATE.innerHTML = `
     }
 
     :host([active]) {
-        border-color: #d4a24c;
-        box-shadow:
-            0 0 12px rgba(212, 162, 76, 0.20),
-            0 4px 12px rgba(42, 48, 41, 0.15),
-            inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        border-color: #5B8C5A;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
         transform: translateY(-1px);
-    }
-
-    :host([active])::after {
-        content: '';
-        position: absolute;
-        inset: -2px;
-        border-radius: 12px;
-        border: 1px solid rgba(212, 162, 76, 0.30);
-        animation: border-pulse 2.5s ease-in-out infinite;
-        pointer-events: none;
     }
 
     :host([drop-hint]) {
         border-style: dashed;
-        border-color: #d9a86a;
+        border-color: #E8927C;
     }
 
     :host([drop-target]) {
-        border-color: #cb7f66;
-        box-shadow: 0 0 16px rgba(203, 127, 102, 0.34);
+        border-color: #E94560;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
     }
 
     /* ---- HEADER ---- */
@@ -98,12 +59,8 @@ TEMPLATE.innerHTML = `
         gap: 10px;
         padding: 8px 12px;
         cursor: pointer;
-        background:
-            linear-gradient(180deg,
-                rgba(255, 255, 255, 0.26) 0%,
-                rgba(255, 255, 255, 0.01) 45%,
-                transparent 100%);
-        transition: background 0.2s, box-shadow 0.2s;
+        background: transparent;
+        transition: background 0.2s;
         position: relative;
     }
 
@@ -117,13 +74,13 @@ TEMPLATE.innerHTML = `
         background: linear-gradient(
             90deg,
             transparent,
-            rgba(154, 158, 150, 0.42),
+            rgba(213, 210, 204, 0.5),
             transparent
         );
     }
 
     .header:hover {
-        box-shadow: inset 0 0 12px rgba(212, 162, 76, 0.14);
+        background: #FAFAF7;
     }
 
     /* ---- PORTRAIT ---- */
@@ -136,35 +93,25 @@ TEMPLATE.innerHTML = `
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        background:
-            linear-gradient(145deg, #cad5c2, #b0bfa8);
-        border: 2px solid #8a9a86;
-        box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.06),
-            inset 0 -2px 4px rgba(0, 0, 0, 0.18);
+        background: #EDEBE6;
+        border: 2px solid #D5D2CC;
         position: relative;
     }
 
     :host([active]) .portrait {
-        border-color: #d4a24c;
-        box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.08),
-            inset 0 -2px 4px rgba(0, 0, 0, 0.18),
-            0 0 5px rgba(212, 162, 76, 0.25);
+        border-color: #5B8C5A;
     }
 
     .portrait-letter {
-        font-family: 'Cinzel', 'Georgia', serif;
+        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
         font-size: 18px;
         font-weight: 700;
-        color: #4a6648;
-        text-shadow: 0 1px 2px rgba(42, 48, 41, 0.22);
+        color: #5B8C5A;
         line-height: 1;
     }
 
     :host([active]) .portrait-letter {
-        color: #d4a24c;
-        text-shadow: 0 0 6px rgba(212, 162, 76, 0.28);
+        color: #5B8C5A;
     }
 
     /* ---- STATS COLUMN ---- */
@@ -186,34 +133,33 @@ TEMPLATE.innerHTML = `
     }
 
     .name {
-        font-family: 'Cinzel', 'Georgia', serif;
+        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
         font-weight: 600;
         font-size: 13px;
-        color: #3d5a42;
+        color: #2D3436;
         letter-spacing: 0.5px;
         text-transform: uppercase;
-        transition: color 0.3s, text-shadow 0.3s;
+        transition: color 0.3s;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     :host([active]) .name {
-        color: #b8893e;
-        text-shadow: 0 0 8px rgba(212, 162, 76, 0.20);
+        color: #5B8C5A;
     }
 
     .active-badge {
         display: none;
         font-size: 7px;
-        color: #b8893e;
+        color: #5B8C5A;
         letter-spacing: 1px;
         font-weight: 700;
         text-transform: uppercase;
         padding: 1px 5px;
-        border: 1px solid rgba(212, 162, 76, 0.4);
+        border: 1px solid rgba(91, 140, 90, 0.4);
         border-radius: 2px;
-        background: rgba(212, 162, 76, 0.14);
+        background: rgba(91, 140, 90, 0.1);
         white-space: nowrap;
     }
 
@@ -231,10 +177,10 @@ TEMPLATE.innerHTML = `
 
     .hp-bar {
         flex: 1;
-        --life-bar-bg: #e6e8e2;
-        --life-bar-frame: #8a9a86;
-        --life-bar-label: #5a6b5e;
-        --life-bar-text: #2a3629;
+        --life-bar-bg: #EDEBE6;
+        --life-bar-frame: #D5D2CC;
+        --life-bar-label: #7F8C8D;
+        --life-bar-text: #2D3436;
     }
 
     /* ---- MANA ---- */
@@ -251,7 +197,7 @@ TEMPLATE.innerHTML = `
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.6px;
-        color: #5a6b5e;
+        color: #7F8C8D;
     }
 
     .mana-gems {
@@ -263,7 +209,7 @@ TEMPLATE.innerHTML = `
     .mana-text {
         font-size: 11px;
         font-weight: 700;
-        color: #3d7a5a;
+        color: #5B8C5A;
         font-variant-numeric: tabular-nums;
         min-width: 28px;
         text-align: right;
@@ -273,21 +219,15 @@ TEMPLATE.innerHTML = `
         width: 10px;
         height: 10px;
         clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-        transition: background 0.3s, box-shadow 0.3s, filter 0.3s;
+        transition: background 0.3s;
     }
 
     .mana-gem.filled {
-        background:
-            linear-gradient(145deg, #b8e07a, #6db85e, #4a9150);
-        filter: drop-shadow(0 0 3px rgba(90, 158, 110, 0.45));
-        animation: gem-sparkle 3s ease-in-out infinite;
-        animation-delay: var(--gem-delay, 0s);
+        background: linear-gradient(145deg, #7BAF7A, #5B8C5A);
     }
 
     .mana-gem.spent {
-        background:
-            linear-gradient(145deg, #9a9e96, #848a80);
-        filter: drop-shadow(0 0 1px rgba(61, 89, 63, 0.26));
+        background: #D5D2CC;
     }
 
     /* ---- COUNTERS ---- */
@@ -298,7 +238,7 @@ TEMPLATE.innerHTML = `
         gap: 2px;
         margin-left: auto;
         font-size: 12px;
-        color: #5a6b5e;
+        color: #7F8C8D;
         flex-shrink: 0;
     }
 
@@ -308,8 +248,8 @@ TEMPLATE.innerHTML = `
         gap: 4px;
         padding: 2px 6px;
         border-radius: 2px;
-        background: rgba(202, 213, 194, 0.8);
-        border: 1px solid rgba(138, 154, 134, 0.5);
+        background: #FAFAF7;
+        border: 1px solid #E8E6E1;
     }
 
     .counter-icon {
@@ -323,13 +263,13 @@ TEMPLATE.innerHTML = `
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        color: #5a6b5e;
+        color: #7F8C8D;
     }
 
     .counter-value {
         font-size: 12px;
         font-weight: 700;
-        color: #2a3629;
+        color: #2D3436;
         font-variant-numeric: tabular-nums;
         min-width: 12px;
         text-align: right;

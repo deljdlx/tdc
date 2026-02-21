@@ -69,10 +69,10 @@ const EDGES = ALL_COMMANDS.flatMap(Cmd =>
 
 /** Couleurs par categorie de noeud. */
 const CATEGORY_COLORS = {
-    [CATEGORY.GAME_FLOW]: '#00aaff',
-    [CATEGORY.PLAYER_ACTION]: '#ffcc00',
-    [CATEGORY.EFFECT]: '#a78bfa',
-    [CATEGORY.TERMINAL]: '#e94560'
+    [CATEGORY.GAME_FLOW]: '#7BA7CC',
+    [CATEGORY.PLAYER_ACTION]: '#F0C858',
+    [CATEGORY.EFFECT]: '#B8A0E0',
+    [CATEGORY.TERMINAL]: '#E94560'
 }
 
 /** Labels lisibles pour chaque categorie. */

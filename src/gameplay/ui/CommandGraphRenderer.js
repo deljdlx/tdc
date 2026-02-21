@@ -13,10 +13,10 @@ cytoscape.use(dagre)
 
 /** Bordures plus foncees par categorie, pour donner du relief. */
 const CATEGORY_BORDER_COLORS = {
-    [CATEGORY.GAME_FLOW]: '#0080cc',
-    [CATEGORY.PLAYER_ACTION]: '#d4a000',
-    [CATEGORY.EFFECT]: '#7c5fc7',
-    [CATEGORY.TERMINAL]: '#c0324a'
+    [CATEGORY.GAME_FLOW]: '#5889B0',
+    [CATEGORY.PLAYER_ACTION]: '#D4960A',
+    [CATEGORY.EFFECT]: '#7A64B8',
+    [CATEGORY.TERMINAL]: '#C43850'
 }
 
 export default class CommandGraphRenderer {
@@ -69,7 +69,7 @@ export default class CommandGraphRenderer {
                     'text-halign': 'center',
                     'font-size': '11px',
                     'font-weight': '600',
-                    'font-family': "'Orbitron', 'Cinzel', sans-serif",
+                    'font-family': "'Inter', 'Segoe UI', system-ui, sans-serif",
                     'color': '#ffffff',
                     'text-outline-width': 2,
                     'text-outline-opacity': 0.5,
@@ -78,10 +78,10 @@ export default class CommandGraphRenderer {
                     'shape': 'round-rectangle',
                     'border-width': 2,
                     'background-opacity': 0.92,
-                    'shadow-blur': 10,
+                    'shadow-blur': 4,
                     'shadow-offset-x': 0,
-                    'shadow-offset-y': 3,
-                    'shadow-opacity': 0.2
+                    'shadow-offset-y': 1,
+                    'shadow-opacity': 0.12
                 }
             },
             ...this._categorySelectors(),
@@ -89,17 +89,17 @@ export default class CommandGraphRenderer {
                 selector: 'edge',
                 style: {
                     'width': 1.5,
-                    'line-color': '#8fb08d',
-                    'target-arrow-color': '#6a9468',
+                    'line-color': '#B8C9B8',
+                    'target-arrow-color': '#7BAF7A',
                     'target-arrow-shape': 'triangle',
                     'arrow-scale': 0.9,
                     'curve-style': 'bezier',
                     'label': 'data(label)',
                     'font-size': '8px',
-                    'font-family': "'Exo 2', 'Trebuchet MS', sans-serif",
-                    'color': '#4a6a4e',
+                    'font-family': "'Inter', 'Segoe UI', system-ui, sans-serif",
+                    'color': '#5B8C5A',
                     'text-rotation': 'autorotate',
-                    'text-background-color': '#e9f6e3',
+                    'text-background-color': '#F5F3EF',
                     'text-background-opacity': 0.85,
                     'text-background-shape': 'roundrectangle',
                     'text-background-padding': '3px'
@@ -110,9 +110,9 @@ export default class CommandGraphRenderer {
                 style: {
                     'line-style': 'dashed',
                     'line-dash-pattern': [6, 4],
-                    'line-color': '#d4a0a8',
-                    'target-arrow-color': '#c07882',
-                    'color': '#8a4a52'
+                    'line-color': '#E8927C',
+                    'target-arrow-color': '#C46E58',
+                    'color': '#C46E58'
                 }
             }
         ]
@@ -129,7 +129,6 @@ export default class CommandGraphRenderer {
                     'background-color': color,
                     'border-color': borderColor,
                     'text-outline-color': borderColor,
-                    'shadow-color': color,
                     ...(isLight ? { 'color': '#3a3000', 'text-outline-color': '#f5e6b8' } : {})
                 }
             }]
