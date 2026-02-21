@@ -28,6 +28,16 @@ avec un z-index de fond dedie, afin qu'il reste derriere toute l'UI
 Amelioration du design du panneau graphe de commandes pour un
 rendu plus professionnel et coherent avec le theme nature de l'app.
 
+### style(ui): redesign global — nature enrichie
+
+**Agent**: `claude` | **PR**: —
+
+Refonte design globale : palette desaturee (sauge, foret profond, ambre
+antique), boutons modernises (Cinzel, bords arrondis, sans bevel),
+ombres reduites partout, et couleurs PlayerHud harmonisees.
+
+**Impact**: aspect plus mature et coherent, moins d'effet « monochrome vert ».
+
 - Noeuds : ombres, bordures colorees par categorie, texte lisible
   (blanc avec outline categorie, doré fonce sur nœuds jaunes),
   police Orbitron, taille agrandie (130×44)
