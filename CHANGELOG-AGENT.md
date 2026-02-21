@@ -3,6 +3,23 @@
 Historique des changements effectues par les agents IA sur ce projet.
 Format defini dans `doc/ai-changelog.md`.
 
+## 2026-02-21
+
+### style(ui): refonte premium des bordures et design des cartes
+
+**Agent**: `copilot` | **PR**: #30
+
+Amelioration complete du design visuel des cartes TCG avec des bordures
+en degrade animes (or pour creatures, violet pour sorts), effets de
+relief multicouches, et transitions interactives enrichies. Les etats
+playable/can-attack/selected beneficient maintenant de glows animes et
+d'effets de surbrillance. Les elements (cout, stats, illustration) ont
+ete rehausses avec plus de profondeur et de contraste pour un rendu
+premium et plus immersif.
+
+**Impact**: les bordures utilisent maintenant `border-image` avec des
+degrades, et plusieurs animations CSS ont ete ajoutees.
+
 ## 2026-02-20
 
 ### feat(fx): parametres complets et inertie pour le trail FX
