@@ -5,6 +5,20 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-21
 
+### style(ui): coins arrondis pour les cartes TCG
+
+**Agent**: `copilot` | **PR**: #34
+
+Remplacement de l'approche `border-image` par un pseudo-element masque
+pour permettre des coins veritablement arrondis (16px) sur les cartes.
+Les bordures en degrade conservent leur animation et leurs couleurs tout
+en beneficiant maintenant d'un border-radius fonctionnel. Tous les etats
+interactifs (playable/can-attack/selected/drop-hint/drop-target) ont ete
+adaptes pour utiliser le nouveau systeme.
+
+**Impact**: meilleure compatibilite visuelle, les coins carrés avec
+border-image sont remplaces par des coins arrondis elegants.
+
 ### feat(ui): graphe oriente des commandes avec Cytoscape.js
 
 **Agent**: `claude` | **PR**: —
