@@ -20,6 +20,14 @@ conservant les bordures dégradées animées visibles.
 **Impact**: changement de structure HTML (ajout wrapper), CSS mieux organisé
 avec sections commentées, résolution du problème de bordures invisibles.
 
+### style(ui): espacement augmente sur le graphe des commandes
+
+**Agent**: `codex` | **PR**: —
+
+Augmente les separations `nodeSep`, `rankSep` et `edgeSep` du layout
+dagre pour aerer le graphe et limiter les chevauchements visuels sur
+les liens et les labels en vue d'ensemble.
+
 ### style(ui): coins arrondis pour les cartes TCG
 
 **Agent**: `copilot` | **PR**: #34
