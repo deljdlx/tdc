@@ -5,6 +5,14 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-21
 
+### style(ui): couleur corail distincte pour les elements interactifs
+
+**Agent**: `claude` | **PR**: —
+
+Les boutons d'action, l'onglet actif et les sliders utilisent maintenant
+la couleur secondaire corail (#E8927C) au lieu du vert primaire, pour
+mieux se distinguer du reste de l'interface.
+
 ### style(ui): tab bar en footer dans le flux
 
 **Agent**: `claude` | **PR**: —

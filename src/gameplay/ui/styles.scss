@@ -189,7 +189,7 @@ body {
     }
 
     &.active {
-        color: $primary;
+        color: $secondary-dark;
         background: transparent;
         font-weight: 700;
     }
@@ -292,13 +292,13 @@ body {
 }
 
 .btn-primary {
-    background: $primary;
+    background: $secondary;
     color: white;
-    border-color: $primary-dark;
+    border-color: $secondary-dark;
     box-shadow: $shadow-1;
 
     &:hover:not(:disabled) {
-        background: $primary-light;
+        background: $secondary-light;
         box-shadow: $shadow-2;
     }
 }
@@ -530,7 +530,7 @@ body {
 .trail-param-value {
     min-width: 42px;
     font-size: 12px;
-    color: $primary;
+    color: $secondary-dark;
     text-align: right;
     font-family: fonts.$font-family-mono;
 }
@@ -538,7 +538,7 @@ body {
 .trail-slider {
     flex: 1;
     max-width: 200px;
-    accent-color: $primary;
+    accent-color: $secondary;
     cursor: pointer;
 }
 
