@@ -183,6 +183,7 @@ export default class UiAdapter {
         this._engine = startGame({ seed })
         this._eventLog = [{ text: `Game started (seed: ${seed})` }]
         this._fx.clear()
+        this._setupBackgroundEffects()
 
         this._engine.domainEventBus.on(batch => {
             for (const event of batch) {

@@ -5,6 +5,14 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-21
 
+### fix(ui): reinitialiser les petales apres reset FX
+
+**Agent**: `codex` | **PR**: —
+
+Le reset du canvas FX supprimait aussi les effets de fond permanents.
+Le flux de demarrage reattache maintenant explicitement l'effet
+CherryBlossoms juste apres le `clear()` pour garantir son affichage.
+
 ### fix(fx): pétales de cerisiers maintenant visibles au démarrage
 
 **Agent**: `copilot` | **PR**: #41
