@@ -5,7 +5,7 @@
  * Permet de réutiliser le rendu même quand on change la logique.
  */
 
-import { CardType, getCardDefinition } from '../definitions/cards.js'
+import { getCardDefinition } from '../definitions/cards.js'
 
 export default class GameRenderer {
     /**
@@ -94,21 +94,21 @@ export default class GameRenderer {
         hud.setAttribute('data-player-id', playerId)
         hud.setAttribute('name', playerId)
         if (mirrored) hud.setAttribute('mirrored', '')
-        hud.setAttribute('hp', player.attributes.hp ?? 0)
-        hud.setAttribute('max-hp', '20')
         hud.setAttribute('mana', player.attributes.mana ?? 0)
         hud.setAttribute('max-mana', player.attributes.maxMana ?? 0)
         hud.setAttribute('deck-count', this._cardsInZone(state, `deck_${playerId}`).length)
         hud.setAttribute('grave-count', this._cardsInZone(state, `graveyard_${playerId}`).length)
         if (isActive) hud.setAttribute('active', '')
 
-        // Board zone
+        // Board zone (heroes)
         const boardZone = document.createElement('card-zone')
         boardZone.setAttribute('type', 'board')
-        boardZone.setAttribute('data-zone-id', `board_${playerId}`)
 
-        for (const card of this._cardsInZone(state, `board_${playerId}`)) {
-            boardZone.appendChild(this._renderBoardCard(card, playerId, isActive, isGameOver))
+        const heroes = state.heroes
+            ? Object.values(state.heroes).filter(h => h.playerId === playerId)
+            : []
+        for (const hero of heroes) {
+            boardZone.appendChild(this._renderHero(hero, isActive, isGameOver))
         }
         hud.appendChild(boardZone)
 
@@ -128,26 +128,20 @@ export default class GameRenderer {
     }
 
     /**
-     * Rend une carte sur le board.
+     * Rend un hero sur le board.
      */
-    _renderBoardCard(card, playerId, isActive, isGameOver) {
-        const def = getCardDefinition(card.definitionId)
+    _renderHero(hero, isActive, isGameOver) {
         const el = document.createElement('tcg-card')
 
-        el.setAttribute('data-card-id', card.id)
-        el.setAttribute('definition-id', card.definitionId)
-        el.setAttribute('name', def?.name ?? card.definitionId)
-        el.setAttribute('cost', card.attributes.cost)
-        el.setAttribute('type', card.attributes.type)
-        el.setAttribute('power', card.attributes.power)
-        el.setAttribute('hp', card.attributes.hp)
-        if (card.attributes.hasAttacked) el.setAttribute('has-attacked', '')
+        el.setAttribute('data-card-id', hero.id)
+        el.setAttribute('definition-id', hero.heroDefId)
+        el.setAttribute('name', hero.heroDefId)
+        el.setAttribute('type', 'hero')
+        el.setAttribute('power', hero.attributes.power)
+        el.setAttribute('hp', hero.attributes.hp)
+        if (hero.attributes.hasAttacked) el.setAttribute('has-attacked', '')
 
-        const canAttack = isActive &&
-            !card.attributes.summoningSickness &&
-            !card.attributes.hasAttacked &&
-            !isGameOver
-
+        const canAttack = isActive && !hero.attributes.hasAttacked && !isGameOver
         if (canAttack) {
             el.setAttribute('can-attack', '')
             el.setAttribute('draggable', 'true')
@@ -172,13 +166,8 @@ export default class GameRenderer {
         el.setAttribute('cost', card.attributes.cost)
         el.setAttribute('type', card.attributes.type)
 
-        if (card.attributes.type === CardType.CREATURE) {
-            el.setAttribute('power', card.attributes.power)
-            el.setAttribute('hp', card.attributes.hp)
-        } else {
-            const effectText = this._formatEffectText(card.attributes.effect, def)
-            el.setAttribute('effect', effectText)
-        }
+        const effectText = this._formatEffectText(card.attributes.effect, def)
+        el.setAttribute('effect', effectText)
 
         if (canPlay) {
             el.setAttribute('playable', '')

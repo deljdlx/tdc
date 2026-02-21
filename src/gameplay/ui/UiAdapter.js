@@ -13,7 +13,6 @@
  */
 
 import { startGame, createGame } from '../setup.js'
-import PlayCreatureCommand from '../commands/PlayCreatureCommand.js'
 import PlaySpellCommand from '../commands/PlaySpellCommand.js'
 import AttackCommand from '../commands/AttackCommand.js'
 import EndTurnCommand from '../commands/EndTurnCommand.js'
@@ -126,10 +125,25 @@ export default class UiAdapter {
      */
     _setupCardInspect() {
         this._root.addEventListener('card-inspect', (e) => {
-            const cardId = e.detail?.cardId
-            if (!cardId || !this._engine) return
+            const id = e.detail?.cardId
+            if (!id || !this._engine) return
 
-            const card = this._engine.state.cards[cardId]
+            const state = this._engine.state
+            const hero = state.heroes?.[id]
+            if (hero) {
+                this._cardModal.open({
+                    name: hero.heroDefId,
+                    type: 'hero',
+                    definitionId: hero.heroDefId,
+                    power: hero.attributes.power,
+                    hp: hero.attributes.hp,
+                    hasAttacked: hero.attributes.hasAttacked,
+                    canAttack: !hero.attributes.hasAttacked,
+                })
+                return
+            }
+
+            const card = state.cards[id]
             if (!card) return
 
             const def = getCardDefinition(card.definitionId)
@@ -138,15 +152,8 @@ export default class UiAdapter {
                 type: card.attributes.type,
                 cost: card.attributes.cost,
                 definitionId: card.definitionId,
-                power: card.attributes.power,
-                hp: card.attributes.hp,
                 effect: card.attributes.effect,
                 effectValue: def?.effectPayload?.amount,
-                summoningSickness: card.attributes.summoningSickness,
-                hasAttacked: card.attributes.hasAttacked,
-                canAttack: !card.attributes.summoningSickness &&
-                    !card.attributes.hasAttacked &&
-                    card.zoneId?.startsWith('board_'),
             })
         })
     }
@@ -341,48 +348,29 @@ export default class UiAdapter {
     _renderPlayerArea(state, playerId, activePlayer, mirrored = false) {
         const player = state.players[playerId]
         const isActive = playerId === activePlayer
-        const isGameOver = state.turnState.phase === 'game_over'
 
         const hud = document.createElement('player-hud')
         hud.setAttribute('name', playerId)
         if (mirrored) hud.setAttribute('mirrored', '')
-        hud.setAttribute('hp', player.attributes.hp ?? 0)
-        hud.setAttribute('max-hp', '20')
         hud.setAttribute('mana', player.attributes.mana ?? 0)
         hud.setAttribute('max-mana', player.attributes.maxMana ?? 0)
         hud.setAttribute('deck-count', this._cardsInZone(state, `deck_${playerId}`).length)
         hud.setAttribute('grave-count', this._cardsInZone(state, `graveyard_${playerId}`).length)
-
-        // Heros du joueur
-        const heroes = state.heroes
-            ? Object.values(state.heroes).filter(h => h.playerId === playerId)
-            : []
-        if (heroes.length > 0) {
-            hud.setAttribute('heroes', JSON.stringify(heroes))
-        }
-
         if (isActive) hud.setAttribute('active', '')
 
-        if (!isActive && !isGameOver) {
-            this._registerEnemyPlayerDropTarget(hud, state, playerId)
-        }
-
-        if (isActive && !isGameOver) {
-            this._registerAllyPlayerDropTarget(hud, state, playerId)
-        }
-
+        // Héros dans la zone board
         const boardZone = document.createElement('card-zone')
         boardZone.setAttribute('type', 'board')
 
-        if (isActive && !isGameOver) {
-            this._registerBoardDropTarget(boardZone, playerId)
-        }
-
-        for (const card of this._cardsInZone(state, `board_${playerId}`)) {
-            boardZone.appendChild(this._renderBoardCard(card, playerId, isActive, state))
+        const heroes = state.heroes
+            ? Object.values(state.heroes).filter(h => h.playerId === playerId)
+            : []
+        for (const hero of heroes) {
+            boardZone.appendChild(this._renderHero(hero, playerId, isActive, state))
         }
         hud.appendChild(boardZone)
 
+        // Main (sorts uniquement, joueur actif)
         if (isActive) {
             const handZone = document.createElement('card-zone')
             handZone.setAttribute('type', 'hand')
@@ -419,115 +407,32 @@ export default class UiAdapter {
     }
 
     /**
-     * Registre drop target pour joueur ennemi (attaque directe + sorts offensifs).
+     * Rend un héro comme carte interactive dans la zone board.
      */
-    _registerEnemyPlayerDropTarget(hud, state, playerId) {
-        this._dragDropManager.registerDropTarget(hud, 'drop-target',
-            (drag) =>
-                drag.action === 'attack' ||
-                (drag.action === 'play' && drag.cardType === CardType.SPELL && drag.effect === 'DEAL_DAMAGE'),
-            (drag) => {
-                if (drag.action === 'attack') {
-                    this._fxController.fxAttack(hud)
-                    this._engine.enqueueCommand(new AttackCommand({
-                        playerId: drag.playerId,
-                        attackerId: drag.cardId,
-                        targetId: playerId
-                    }))
-                } else {
-                    this._fxController.fxSpell(hud)
-                    this._engine.enqueueCommand(new PlaySpellCommand({
-                        playerId: drag.playerId,
-                        cardId: drag.cardId,
-                        targetId: playerId
-                    }))
-                }
-                this._engine.runUntilIdle()
-                this._consumeGhost()
-                this.render()
-            }
-        )
-    }
-
-    /**
-     * Registre drop target pour joueur allié (sorts de soin).
-     */
-    _registerAllyPlayerDropTarget(hud, state, playerId) {
-        this._dragDropManager.registerDropTarget(hud, 'drop-target',
-            (drag) =>
-                drag.action === 'play' &&
-                drag.cardType === CardType.SPELL &&
-                drag.effect === 'RESTORE_HP',
-            (drag) => {
-                this._fxController.fxHeal(hud)
-                this._engine.enqueueCommand(new PlaySpellCommand({
-                    playerId: drag.playerId,
-                    cardId: drag.cardId,
-                    targetId: playerId
-                }))
-                this._engine.runUntilIdle()
-                this._consumeGhost()
-                this.render()
-            }
-        )
-    }
-
-    /**
-     * Registre drop target pour zone board (jouer créatures).
-     */
-    _registerBoardDropTarget(boardZone, _playerId) {
-        this._dragDropManager.registerDropTarget(boardZone, 'drop-active',
-            (drag) => drag.action === 'play' && drag.cardType === CardType.CREATURE,
-            (drag) => {
-                this._landingCardId = drag.cardId
-                this._engine.enqueueCommand(new PlayCreatureCommand({
-                    playerId: drag.playerId,
-                    cardId: drag.cardId
-                }))
-                this._engine.runUntilIdle()
-                this.render()
-                const newCard = this._root.querySelector(`[data-card-id="${drag.cardId}"]`)
-                if (newCard) this._fxController.fxSummon(newCard)
-                this._animateGhostLanding(newCard, drag.cardId)
-            }
-        )
-    }
-
-    _renderBoardCard(card, playerId, isActive, state) {
-        const def = getCardDefinition(card.definitionId)
+    _renderHero(hero, playerId, isActive, state) {
         const el = document.createElement('tcg-card')
         const isGameOver = state.turnState.phase === 'game_over'
 
-        el.setAttribute('data-card-id', card.id)
-        el.setAttribute('definition-id', card.definitionId)
-        el.setAttribute('name', def?.name ?? card.definitionId)
-        el.setAttribute('cost', card.attributes.cost)
-        el.setAttribute('type', card.attributes.type)
-        el.setAttribute('power', card.attributes.power)
-        el.setAttribute('hp', card.attributes.hp)
-        if (card.attributes.hasAttacked) el.setAttribute('has-attacked', '')
+        el.setAttribute('data-card-id', hero.id)
+        el.setAttribute('definition-id', hero.heroDefId)
+        el.setAttribute('name', hero.heroDefId)
+        el.setAttribute('type', 'hero')
+        el.setAttribute('power', hero.attributes.power)
+        el.setAttribute('hp', hero.attributes.hp)
+        if (hero.attributes.hasAttacked) el.setAttribute('has-attacked', '')
 
-        if (card.id === this._landingCardId) {
-            el.style.opacity = '0'
-            this._landingCardId = null
-        } else if (card.attributes.summoningSickness) {
-            el.setAttribute('summoning-sickness', '')
-        }
-
-        const canAttack = isActive &&
-            !card.attributes.summoningSickness &&
-            !card.attributes.hasAttacked &&
-            !isGameOver
+        const canAttack = isActive && !hero.attributes.hasAttacked && !isGameOver
 
         if (canAttack) {
             el.setAttribute('can-attack', '')
             this._dragDropManager.makeDraggable(el, {
                 action: 'attack',
-                cardId: card.id,
+                cardId: hero.id,
                 playerId
             })
         }
 
+        // Héros ennemis : cible d'attaques et de sorts offensifs
         if (!isActive && !isGameOver) {
             this._dragDropManager.registerDropTarget(el, 'drop-target',
                 (drag) =>
@@ -539,16 +444,37 @@ export default class UiAdapter {
                         this._engine.enqueueCommand(new AttackCommand({
                             playerId: drag.playerId,
                             attackerId: drag.cardId,
-                            targetId: card.id
+                            targetId: hero.id
                         }))
                     } else {
                         this._fxController.fxSpell(el)
                         this._engine.enqueueCommand(new PlaySpellCommand({
                             playerId: drag.playerId,
                             cardId: drag.cardId,
-                            targetId: card.id
+                            targetId: hero.id
                         }))
                     }
+                    this._engine.runUntilIdle()
+                    this._consumeGhost()
+                    this.render()
+                }
+            )
+        }
+
+        // Héros alliés : cible de sorts de soin
+        if (isActive && !isGameOver) {
+            this._dragDropManager.registerDropTarget(el, 'drop-target',
+                (drag) =>
+                    drag.action === 'play' &&
+                    drag.cardType === CardType.SPELL &&
+                    drag.effect === 'RESTORE_HP',
+                (drag) => {
+                    this._fxController.fxHeal(el)
+                    this._engine.enqueueCommand(new PlaySpellCommand({
+                        playerId: drag.playerId,
+                        cardId: drag.cardId,
+                        targetId: hero.id
+                    }))
                     this._engine.runUntilIdle()
                     this._consumeGhost()
                     this.render()
@@ -570,13 +496,8 @@ export default class UiAdapter {
         el.setAttribute('cost', card.attributes.cost)
         el.setAttribute('type', card.attributes.type)
 
-        if (card.attributes.type === CardType.CREATURE) {
-            el.setAttribute('power', card.attributes.power)
-            el.setAttribute('hp', card.attributes.hp)
-        } else {
-            const fmt = EFFECT_TEXT[card.attributes.effect]
-            el.setAttribute('effect', fmt ? fmt(def?.effectValue) : card.attributes.effect)
-        }
+        const fmt = EFFECT_TEXT[card.attributes.effect]
+        el.setAttribute('effect', fmt ? fmt(def?.effectValue) : card.attributes.effect)
 
         if (canPlay) {
             el.setAttribute('playable', '')

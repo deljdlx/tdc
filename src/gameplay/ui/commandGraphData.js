@@ -10,12 +10,11 @@ import StartGameCommand from '../commands/StartGameCommand.js'
 import StartTurnCommand from '../commands/StartTurnCommand.js'
 import DrawCardsCommand from '../commands/DrawCardsCommand.js'
 import EndTurnCommand from '../commands/EndTurnCommand.js'
-import PlayCreatureCommand from '../commands/PlayCreatureCommand.js'
 import PlaySpellCommand from '../commands/PlaySpellCommand.js'
 import AttackCommand from '../commands/AttackCommand.js'
 import DealDamageCommand from '../commands/DealDamageCommand.js'
 import RestoreHpCommand from '../commands/RestoreHpCommand.js'
-import DestroyCreatureCommand from '../commands/DestroyCreatureCommand.js'
+import DestroyHeroCommand from '../commands/DestroyHeroCommand.js'
 import CheckWinConditionCommand from '../commands/CheckWinConditionCommand.js'
 
 /** Categories de noeuds pour la coloration. */
@@ -31,12 +30,11 @@ const ALL_COMMANDS = [
     StartTurnCommand,
     DrawCardsCommand,
     EndTurnCommand,
-    PlayCreatureCommand,
     PlaySpellCommand,
     AttackCommand,
     DealDamageCommand,
     RestoreHpCommand,
-    DestroyCreatureCommand,
+    DestroyHeroCommand,
     CheckWinConditionCommand
 ]
 

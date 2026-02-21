@@ -1,5 +1,5 @@
 /**
- * Tests heros — creation, compteurs AP et mana.
+ * Tests heros — creation, compteurs AP et mana, combat attributes.
  */
 
 import { describe, it, expect } from 'vitest'
@@ -42,11 +42,14 @@ describe('Hero System', () => {
         for (const hero of Object.values(state.heroes)) {
             const def = HERO_DEFINITIONS.find(d => d.id === hero.heroDefId)
             expect(hero.attributes.hp).toBe(def.hp)
+            expect(hero.attributes.maxHp).toBe(def.hp)
+            expect(hero.attributes.power).toBe(def.power)
             expect(hero.attributes.maxAp).toBe(def.maxAp)
             expect(hero.attributes.speed).toBe(def.speed)
             expect(hero.attributes.ap).toBe(0)
             expect(hero.attributes.mana).toBe(0)
             expect(hero.attributes.maxMana).toBe(0)
+            expect(hero.attributes.hasAttacked).toBe(false)
         }
     })
 
@@ -80,6 +83,27 @@ describe('Hero System', () => {
             // After 1 turn start: maxMana = 1, mana = 1
             expect(hero.attributes.maxMana).toBe(1)
             expect(hero.attributes.mana).toBe(1)
+        }
+    })
+
+    it('should reset hasAttacked on turn start', () => {
+        const engine = startGame({ seed: 100 })
+
+        // All heroes start with hasAttacked: false
+        for (const hero of Object.values(engine.state.heroes)) {
+            expect(hero.attributes.hasAttacked).toBe(false)
+        }
+
+        // End two turns to come back to player1
+        engine.enqueueCommand(new EndTurnCommand({ playerId: 'player1' }))
+        engine.runUntilIdle()
+        engine.enqueueCommand(new EndTurnCommand({ playerId: 'player2' }))
+        engine.runUntilIdle()
+
+        // Player1 heroes should have hasAttacked reset
+        const heroes1 = heroesForPlayer(engine.state, 'player1')
+        for (const hero of heroes1) {
+            expect(hero.attributes.hasAttacked).toBe(false)
         }
     })
 

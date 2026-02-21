@@ -370,8 +370,8 @@ export default class CardModal extends HTMLElement {
         name.textContent = data.name || data.definitionId || ''
         typeLine.textContent = data.type || ''
 
-        // Stats (créatures uniquement)
-        if (data.type === 'creature' && data.power != null && data.hp != null) {
+        // Stats (creatures / heroes)
+        if ((data.type === 'creature' || data.type === 'hero') && data.power != null && data.hp != null) {
             statsRow.innerHTML = `
                 <div class="stat-block">
                     <div class="stat-value power">${data.power}</div>

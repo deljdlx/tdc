@@ -259,8 +259,7 @@ export default class DragDropManager {
                     scene: s.ghostState?.ghostScene,
                     shine: s.ghostState?.ghostShine,
                     shadow: s.ghostState?.ghostShadow,
-                    cardId: this._dragState.cardId,
-                    isCreature: this._dragState.cardType === 'creature'
+                    cardId: this._dragState.cardId
                 }
 
                 target.dropFn(this._dragState, target.el)

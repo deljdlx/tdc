@@ -1,19 +1,15 @@
 /**
- * AttackCommand — une créature attaque une cible.
+ * AttackCommand — un héro attaque un héro adverse.
  *
- * Cible = créature adverse OU joueur adverse.
- * - Créature vs créature : dégâts mutuels, mort à 0 hp.
- * - Créature vs joueur : joueur perd HP = power de l'attaquant.
+ * Dégâts mutuels selon la puissance de chaque héro.
+ * Si HP ≤ 0, le héro est détruit via DESTROY_HERO.
  */
-
-import { CardType } from '../definitions/cards.js'
 
 export default class AttackCommand {
     static type = 'ATTACK'
     static category = 'player_action'
     static edges = [
-        { target: 'CHECK_WIN_CONDITION', label: 'player attack' },
-        { target: 'DESTROY_CREATURE', label: 'hp \u2264 0', conditional: true }
+        { target: 'DESTROY_HERO', label: 'hp ≤ 0', conditional: true }
     ]
 
     constructor(payload) {
@@ -27,52 +23,26 @@ export default class AttackCommand {
             return { valid: false, reason: 'Not your turn' }
         }
 
-        // Vérifier l'attaquant
-        const attacker = state.cards[attackerId]
+        const attacker = state.heroes[attackerId]
         if (!attacker) {
             return { valid: false, reason: `Attacker "${attackerId}" not found` }
         }
 
-        if (attacker.ownerId !== playerId) {
-            return { valid: false, reason: 'Not your creature' }
-        }
-
-        if (attacker.zoneId !== `board_${playerId}`) {
-            return { valid: false, reason: 'Attacker not on board' }
-        }
-
-        if (attacker.attributes.type !== CardType.CREATURE) {
-            return { valid: false, reason: 'Not a creature' }
-        }
-
-        if (attacker.attributes.summoningSickness) {
-            return { valid: false, reason: 'Summoning sickness' }
+        if (attacker.playerId !== playerId) {
+            return { valid: false, reason: 'Not your hero' }
         }
 
         if (attacker.attributes.hasAttacked) {
             return { valid: false, reason: 'Already attacked this turn' }
         }
 
-        // Vérifier la cible
-        const targetPlayer = state.players[targetId]
-        const targetCard = state.cards[targetId]
-
-        if (!targetPlayer && !targetCard) {
+        const target = state.heroes[targetId]
+        if (!target) {
             return { valid: false, reason: `Target "${targetId}" not found` }
         }
 
-        if (targetPlayer && targetId === playerId) {
-            return { valid: false, reason: 'Cannot attack yourself' }
-        }
-
-        if (targetCard) {
-            if (targetCard.ownerId === playerId) {
-                return { valid: false, reason: 'Cannot attack own creature' }
-            }
-            const opponentId = Object.keys(state.players).find(id => id !== playerId)
-            if (targetCard.zoneId !== `board_${opponentId}`) {
-                return { valid: false, reason: 'Target not on opponent board' }
-            }
+        if (target.playerId === playerId) {
+            return { valid: false, reason: 'Cannot attack own hero' }
         }
 
         return { valid: true }
@@ -85,6 +55,9 @@ export default class AttackCommand {
         const intents = []
 
         const attackerPower = ctx.query.query(attackerId, 'power')
+        const targetPower = ctx.query.query(targetId, 'power')
+        const attackerHp = ctx.query.query(attackerId, 'hp')
+        const targetHp = ctx.query.query(targetId, 'hp')
 
         // Marquer l'attaquant comme ayant attaqué
         patches.push({
@@ -93,67 +66,36 @@ export default class AttackCommand {
             payload: { key: 'hasAttacked', value: true }
         })
 
-        const targetPlayer = state.players[targetId]
+        // Dégâts mutuels
+        const newAttackerHp = attackerHp - targetPower
+        const newTargetHp = targetHp - attackerPower
 
-        if (targetPlayer) {
-            // Attaque directe sur joueur
-            const currentHp = targetPlayer.attributes.hp
-            patches.push({
-                type: 'SET_ATTRIBUTE',
-                target: targetId,
-                payload: { key: 'hp', value: currentHp - attackerPower }
-            })
+        patches.push(
+            { type: 'SET_ATTRIBUTE', target: attackerId, payload: { key: 'hp', value: newAttackerHp } },
+            { type: 'SET_ATTRIBUTE', target: targetId, payload: { key: 'hp', value: newTargetHp } }
+        )
 
-            domainEvents.push({
-                type: 'PLAYER_DAMAGED',
-                payload: { playerId: targetId, amount: attackerPower, sourceId: attackerId },
-                sourceCommandType: 'ATTACK'
-            })
+        domainEvents.push({
+            type: 'COMBAT_RESOLVED',
+            payload: { attackerId, targetId, attackerDamage: attackerPower, targetDamage: targetPower },
+            sourceCommandType: 'ATTACK'
+        })
 
-            // Vérifier victoire
+        // Vérifier les morts
+        if (newAttackerHp <= 0) {
             intents.push({
-                type: 'CHECK_WIN_CONDITION',
-                payload: { reason: 'hp_zero', loserId: targetId },
+                type: 'DESTROY_HERO',
+                payload: { heroId: attackerId, playerId: state.heroes[attackerId].playerId },
                 source: 'ATTACK'
             })
-        } else {
-            // Combat créature vs créature
-            const targetCard = state.cards[targetId]
-            const targetPower = ctx.query.query(targetId, 'power')
-            const attackerHp = ctx.query.query(attackerId, 'hp')
-            const targetHp = ctx.query.query(targetId, 'hp')
+        }
 
-            // Dégâts mutuels
-            const newAttackerHp = attackerHp - targetPower
-            const newTargetHp = targetHp - attackerPower
-
-            patches.push(
-                { type: 'SET_ATTRIBUTE', target: attackerId, payload: { key: 'hp', value: newAttackerHp } },
-                { type: 'SET_ATTRIBUTE', target: targetId, payload: { key: 'hp', value: newTargetHp } }
-            )
-
-            domainEvents.push({
-                type: 'COMBAT_RESOLVED',
-                payload: { attackerId, targetId, attackerDamage: attackerPower, targetDamage: targetPower },
-                sourceCommandType: 'ATTACK'
+        if (newTargetHp <= 0) {
+            intents.push({
+                type: 'DESTROY_HERO',
+                payload: { heroId: targetId, playerId: state.heroes[targetId].playerId },
+                source: 'ATTACK'
             })
-
-            // Vérifier les morts
-            if (newAttackerHp <= 0) {
-                intents.push({
-                    type: 'DESTROY_CREATURE',
-                    payload: { cardId: attackerId, ownerId: state.cards[attackerId].ownerId },
-                    source: 'ATTACK'
-                })
-            }
-
-            if (newTargetHp <= 0) {
-                intents.push({
-                    type: 'DESTROY_CREATURE',
-                    payload: { cardId: targetId, ownerId: targetCard.ownerId },
-                    source: 'ATTACK'
-                })
-            }
         }
 
         domainEvents.push({

@@ -45,6 +45,7 @@ export default class CycleDetector {
             turn: state.turnState,
             players: Object.keys(state.players).length,
             cards: Object.keys(state.cards).length,
+            heroes: Object.keys(state.heroes || {}).length,
             zones: Object.keys(state.zones).length,
             cq: commandQueueLen,
             iq: intentQueueLen,
