@@ -102,7 +102,7 @@ export default class FxCanvas {
 
         // Update + draw
         this._effects = this._effects.filter(effect => {
-            const alive = effect.update(dt)
+            const alive = effect.update(dt, this._canvas)
             if (alive) {
                 effect.draw(this._ctx, this._canvas)
             }

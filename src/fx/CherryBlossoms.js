@@ -30,16 +30,23 @@ export default class CherryBlossoms {
         this._petals = []
         this._width = 0
         this._height = 0
-        this._spawnTimer = 0
+        this._spawnTimer = 1.0 // Démarre à 1.0 pour forcer spawn immédiat
         this._targetDensity = density
     }
 
     /**
      * Update : fait tomber les pétales et spawn de nouveaux au besoin
      * @param {number} dt - Delta time en secondes
+     * @param {HTMLCanvasElement} [canvas] - Canvas (optionnel, pour récupérer dimensions)
      * @returns {boolean} true (effet permanent)
      */
-    update(dt) {
+    update(dt, canvas) {
+        // Mettre à jour les dimensions du canvas si fourni
+        if (canvas && (this._width !== canvas.width || this._height !== canvas.height)) {
+            this._width = canvas.width
+            this._height = canvas.height
+        }
+
         // Update tous les pétales existants
         for (let i = this._petals.length - 1; i >= 0; i--) {
             const petal = this._petals[i]
