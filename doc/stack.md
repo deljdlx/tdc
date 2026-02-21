@@ -8,6 +8,8 @@
 | Sass | 1.97 | Préprocesseur CSS (API modern-compiler) |
 | Vitest | 4.0 | Framework de test (ES modules natif) |
 | ESLint | 10.0 | Linter JS (flat config) |
+| Cytoscape.js | 3.x | Graphe interactif (visualisation commandes) |
+| cytoscape-dagre | 2.x | Layout DAG hiérarchique pour Cytoscape |
 
 ## ES Modules
 
