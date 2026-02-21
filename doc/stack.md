@@ -76,10 +76,9 @@ tgc/
 │   │       ├── DealDamageCommand.js
 │   │       ├── RestoreHpCommand.js
 │   │       └── CheckWinConditionCommand.js
-│   └── adapters/
-│       └── ui-dev/
-│           ├── UiAdapter.js        ← UI DOM interactive
-│           └── styles.scss         ← styles de l'UI dev
+│   │   └── ui/
+│   │       ├── UiAdapter.js        ← UI DOM interactive
+│   │       └── styles.scss         ← styles de l'UI
 ├── tests/
 │   ├── core/
 │   │   ├── engine/Engine.test.js
@@ -100,7 +99,7 @@ tgc/
 - Compilé par Vite via le package `sass` (dart-sass)
 - API `modern-compiler` activée dans `vite.config.js`
 - Utiliser `@use 'sass:color'` pour les fonctions de couleur modernes
-- Import depuis JS : `import './adapters/ui-dev/styles.scss'`
+- Import depuis JS : `import './gameplay/ui/styles.scss'`
 
 ## Tests (Vitest)
 

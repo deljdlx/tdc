@@ -7,10 +7,10 @@
  * Permet aussi de centraliser les préconditions et la validation.
  */
 
-import PlayCreatureCommand from '../../gameplay/commands/PlayCreatureCommand.js'
-import PlaySpellCommand from '../../gameplay/commands/PlaySpellCommand.js'
-import AttackCommand from '../../gameplay/commands/AttackCommand.js'
-import EndTurnCommand from '../../gameplay/commands/EndTurnCommand.js'
+import PlayCreatureCommand from '../commands/PlayCreatureCommand.js'
+import PlaySpellCommand from '../commands/PlaySpellCommand.js'
+import AttackCommand from '../commands/AttackCommand.js'
+import EndTurnCommand from '../commands/EndTurnCommand.js'
 
 export default class CommandDispatcher {
     /**
