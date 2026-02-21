@@ -7,6 +7,10 @@
 
 export default class DrawCardsCommand {
     static type = 'DRAW_CARDS'
+    static category = 'game_flow'
+    static edges = [
+        { target: 'CHECK_WIN_CONDITION', label: 'deck empty', conditional: true }
+    ]
 
     constructor(payload) {
         this.payload = payload

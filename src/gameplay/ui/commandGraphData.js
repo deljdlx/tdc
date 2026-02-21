@@ -1,10 +1,22 @@
 /**
- * Donnees statiques du graphe de commandes.
+ * Generation dynamique du graphe de commandes.
  *
- * Chaque noeud represente une commande du moteur.
- * Chaque arete represente un intent emis par une commande
- * qui resout vers une autre commande via l'IntentResolver.
+ * Les noeuds et aretes sont construits a partir des proprietes
+ * statiques `type`, `category` et `edges` declarees sur chaque
+ * classe de commande.
  */
+
+import StartGameCommand from '../commands/StartGameCommand.js'
+import StartTurnCommand from '../commands/StartTurnCommand.js'
+import DrawCardsCommand from '../commands/DrawCardsCommand.js'
+import EndTurnCommand from '../commands/EndTurnCommand.js'
+import PlayCreatureCommand from '../commands/PlayCreatureCommand.js'
+import PlaySpellCommand from '../commands/PlaySpellCommand.js'
+import AttackCommand from '../commands/AttackCommand.js'
+import DealDamageCommand from '../commands/DealDamageCommand.js'
+import RestoreHpCommand from '../commands/RestoreHpCommand.js'
+import DestroyCreatureCommand from '../commands/DestroyCreatureCommand.js'
+import CheckWinConditionCommand from '../commands/CheckWinConditionCommand.js'
 
 /** Categories de noeuds pour la coloration. */
 const CATEGORY = {
@@ -14,31 +26,45 @@ const CATEGORY = {
     TERMINAL: 'terminal'
 }
 
-const NODES = [
-    { data: { id: 'START_GAME', label: 'Start Game', category: CATEGORY.GAME_FLOW } },
-    { data: { id: 'START_TURN', label: 'Start Turn', category: CATEGORY.GAME_FLOW } },
-    { data: { id: 'DRAW_CARDS', label: 'Draw Cards', category: CATEGORY.GAME_FLOW } },
-    { data: { id: 'END_TURN', label: 'End Turn', category: CATEGORY.GAME_FLOW } },
-    { data: { id: 'PLAY_CREATURE', label: 'Play Creature', category: CATEGORY.PLAYER_ACTION } },
-    { data: { id: 'PLAY_SPELL', label: 'Play Spell', category: CATEGORY.PLAYER_ACTION } },
-    { data: { id: 'ATTACK', label: 'Attack', category: CATEGORY.PLAYER_ACTION } },
-    { data: { id: 'DEAL_DAMAGE_EFFECT', label: 'Deal Damage', category: CATEGORY.EFFECT } },
-    { data: { id: 'RESTORE_HP_EFFECT', label: 'Restore HP', category: CATEGORY.EFFECT } },
-    { data: { id: 'DESTROY_CREATURE', label: 'Destroy Creature', category: CATEGORY.TERMINAL } },
-    { data: { id: 'CHECK_WIN_CONDITION', label: 'Check Win', category: CATEGORY.TERMINAL } }
+const ALL_COMMANDS = [
+    StartGameCommand,
+    StartTurnCommand,
+    DrawCardsCommand,
+    EndTurnCommand,
+    PlayCreatureCommand,
+    PlaySpellCommand,
+    AttackCommand,
+    DealDamageCommand,
+    RestoreHpCommand,
+    DestroyCreatureCommand,
+    CheckWinConditionCommand
 ]
 
-const EDGES = [
-    { data: { source: 'START_GAME', target: 'DRAW_CARDS', label: 'DRAW_CARDS', conditional: false } },
-    { data: { source: 'START_TURN', target: 'DRAW_CARDS', label: 'DRAW_CARDS', conditional: false } },
-    { data: { source: 'DRAW_CARDS', target: 'CHECK_WIN_CONDITION', label: 'deck empty', conditional: true } },
-    { data: { source: 'PLAY_SPELL', target: 'DEAL_DAMAGE_EFFECT', label: 'RESOLVE_DEAL_DAMAGE', conditional: false } },
-    { data: { source: 'PLAY_SPELL', target: 'RESTORE_HP_EFFECT', label: 'RESOLVE_RESTORE_HP', conditional: false } },
-    { data: { source: 'ATTACK', target: 'DESTROY_CREATURE', label: 'hp ≤ 0', conditional: true } },
-    { data: { source: 'ATTACK', target: 'CHECK_WIN_CONDITION', label: 'player attack', conditional: false } },
-    { data: { source: 'END_TURN', target: 'START_TURN', label: 'START_TURN_INTENT', conditional: false } },
-    { data: { source: 'DEAL_DAMAGE_EFFECT', target: 'DESTROY_CREATURE', label: 'hp ≤ 0', conditional: true } },
-    { data: { source: 'DEAL_DAMAGE_EFFECT', target: 'CHECK_WIN_CONDITION', label: 'player damage', conditional: false } }
-]
+/** Convertit UPPER_SNAKE_CASE en Title Case lisible. */
+function toLabel(type) {
+    return type
+        .split('_')
+        .map(w => w.charAt(0) + w.slice(1).toLowerCase())
+        .join(' ')
+}
+
+const NODES = ALL_COMMANDS.map(Cmd => ({
+    data: {
+        id: Cmd.type,
+        label: toLabel(Cmd.type),
+        category: Cmd.category
+    }
+}))
+
+const EDGES = ALL_COMMANDS.flatMap(Cmd =>
+    (Cmd.edges || []).map(edge => ({
+        data: {
+            source: Cmd.type,
+            target: edge.target,
+            label: edge.label,
+            conditional: edge.conditional ?? false
+        }
+    }))
+)
 
 export { NODES, EDGES, CATEGORY }

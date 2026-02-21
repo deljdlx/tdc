@@ -6,6 +6,8 @@
 
 export default class DestroyCreatureCommand {
     static type = 'DESTROY_CREATURE'
+    static category = 'terminal'
+    static edges = []
 
     constructor(payload) {
         this.payload = payload

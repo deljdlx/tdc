@@ -6,6 +6,8 @@
 
 export default class RestoreHpCommand {
     static type = 'RESTORE_HP_EFFECT'
+    static category = 'effect'
+    static edges = []
 
     constructor(payload) {
         this.payload = payload

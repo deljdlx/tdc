@@ -10,6 +10,11 @@ import { CardType } from '../definitions/cards.js'
 
 export default class AttackCommand {
     static type = 'ATTACK'
+    static category = 'player_action'
+    static edges = [
+        { target: 'CHECK_WIN_CONDITION', label: 'player attack' },
+        { target: 'DESTROY_CREATURE', label: 'hp \u2264 0', conditional: true }
+    ]
 
     constructor(payload) {
         this.payload = payload

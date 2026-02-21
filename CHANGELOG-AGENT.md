@@ -5,6 +5,16 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-21
 
+### refactor(commands): graphe de commandes auto-genere depuis les metadonnees
+
+**Agent**: `claude` | **PR**: —
+
+Ajout de `static category` et `static edges` sur les 11 commandes pour
+decrire leurs dependances directement dans le code. Le fichier
+`commandGraphData.js` genere maintenant le graphe dynamiquement a partir
+de ces metadonnees au lieu de donnees hardcodees. Inclut le fix
+d'espacement des noeuds (nodeSep/rankSep augmentes).
+
 ### style(ui): bordures visibles et CSS refactoré pour les cartes
 
 **Agent**: `copilot` | **PR**: #35

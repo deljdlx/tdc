@@ -9,6 +9,8 @@ import { CardType } from '../definitions/cards.js'
 
 export default class PlayCreatureCommand {
     static type = 'PLAY_CREATURE'
+    static category = 'player_action'
+    static edges = []
 
     constructor(payload) {
         this.payload = payload
