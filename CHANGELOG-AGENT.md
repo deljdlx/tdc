@@ -5,6 +5,14 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-21
 
+### feat(fx): petales avec brise legere et rendu pseudo-3D
+
+**Agent**: `codex` | **PR**: —
+
+Le systeme CherryBlossoms simule maintenant une brise plus organique
+(vent progressif, micro-rafales, derive variable) et un rendu plus
+naturel avec profondeur, flutter, ombrage doux et highlights.
+
 ### fix(ui): layer petales place en vrai background page
 
 **Agent**: `codex` | **PR**: —
