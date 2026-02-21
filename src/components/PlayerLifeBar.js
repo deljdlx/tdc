@@ -168,10 +168,15 @@ TEMPLATE.innerHTML = `
     }
 
     :host([variant="arcade"]) .bar-frame {
-        border-color: color-mix(in srgb, var(--life-bar-frame) 65%, #f8e9cb 35%);
+        border-color: color-mix(in srgb, var(--life-bar-frame) 80%, #f8e9cb 20%);
         background:
-            linear-gradient(180deg, rgba(255, 236, 196, 0.12), rgba(255, 255, 255, 0) 38%),
-            linear-gradient(180deg, #3a2b1a 0%, #22170d 100%);
+            linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 38%),
+            linear-gradient(
+                180deg,
+                color-mix(in srgb, var(--life-bar-bg) 78%, #ffffff 22%) 0%,
+                var(--life-bar-bg) 56%,
+                color-mix(in srgb, var(--life-bar-bg) 88%, #0f1d13 12%) 100%
+            );
         box-shadow:
             inset 0 1px 1px rgba(255, 242, 214, 0.12),
             inset 0 -1px 2px rgba(0, 0, 0, 0.5),

@@ -35,14 +35,14 @@ TEMPLATE.innerHTML = `
     :host {
         display: flex;
         flex-direction: column;
-        border: 1px solid #4b5a3a;
+        border: 1px solid #8eb48e;
         border-radius: 12px;
         overflow: visible;
         background:
-            linear-gradient(170deg, rgba(52, 66, 38, 0.95) 0%, rgba(30, 38, 22, 0.98) 100%);
+            linear-gradient(170deg, rgba(235, 247, 225, 0.96) 0%, rgba(205, 229, 193, 0.98) 100%);
         box-shadow:
-            0 10px 24px rgba(12, 16, 10, 0.35),
-            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            0 10px 24px rgba(37, 62, 39, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
         transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
         font-family: 'Source Sans 3', 'Trebuchet MS', sans-serif;
         position: relative;
@@ -62,11 +62,11 @@ TEMPLATE.innerHTML = `
     }
 
     :host([active]) {
-        border-color: #f0c86b;
+        border-color: #efba73;
         box-shadow:
-            0 0 18px rgba(240, 200, 107, 0.26),
-            0 10px 26px rgba(12, 16, 10, 0.35),
-            inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            0 0 18px rgba(239, 186, 115, 0.24),
+            0 10px 26px rgba(37, 62, 39, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.35);
         transform: translateY(-1px);
     }
 
@@ -75,19 +75,19 @@ TEMPLATE.innerHTML = `
         position: absolute;
         inset: -2px;
         border-radius: 12px;
-        border: 1px solid rgba(240, 200, 107, 0.34);
+        border: 1px solid rgba(239, 186, 115, 0.34);
         animation: border-pulse 2.5s ease-in-out infinite;
         pointer-events: none;
     }
 
     :host([drop-hint]) {
         border-style: dashed;
-        border-color: #d59a44;
+        border-color: #d9a86a;
     }
 
     :host([drop-target]) {
-        border-color: #d05f3e;
-        box-shadow: 0 0 16px rgba(208, 95, 62, 0.35);
+        border-color: #cb7f66;
+        box-shadow: 0 0 16px rgba(203, 127, 102, 0.34);
     }
 
     /* ---- HEADER ---- */
@@ -100,7 +100,7 @@ TEMPLATE.innerHTML = `
         cursor: pointer;
         background:
             linear-gradient(180deg,
-                rgba(255, 255, 255, 0.08) 0%,
+                rgba(255, 255, 255, 0.26) 0%,
                 rgba(255, 255, 255, 0.01) 45%,
                 transparent 100%);
         transition: background 0.2s, box-shadow 0.2s;
@@ -117,13 +117,13 @@ TEMPLATE.innerHTML = `
         background: linear-gradient(
             90deg,
             transparent,
-            rgba(140, 185, 98, 0.35),
+            rgba(109, 178, 114, 0.42),
             transparent
         );
     }
 
     .header:hover {
-        box-shadow: inset 0 0 12px rgba(240, 200, 107, 0.18);
+        box-shadow: inset 0 0 12px rgba(239, 186, 115, 0.16);
     }
 
     /* ---- PORTRAIT ---- */
@@ -137,8 +137,8 @@ TEMPLATE.innerHTML = `
         justify-content: center;
         flex-shrink: 0;
         background:
-            linear-gradient(145deg, #3c4c2b, #25311b);
-        border: 2px solid #4f6240;
+            linear-gradient(145deg, #d8edca, #b6d8aa);
+        border: 2px solid #86aa82;
         box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.06),
             inset 0 -2px 4px rgba(0, 0, 0, 0.3);
@@ -146,25 +146,25 @@ TEMPLATE.innerHTML = `
     }
 
     :host([active]) .portrait {
-        border-color: #e3b75d;
+        border-color: #efba73;
         box-shadow:
             inset 0 1px 0 rgba(255, 255, 255, 0.08),
             inset 0 -2px 4px rgba(0, 0, 0, 0.3),
-            0 0 6px rgba(227, 183, 93, 0.3);
+            0 0 6px rgba(239, 186, 115, 0.3);
     }
 
     .portrait-letter {
         font-family: 'Cinzel', 'Georgia', serif;
         font-size: 18px;
         font-weight: 700;
-        color: #94a977;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        color: #567b51;
+        text-shadow: 0 1px 2px rgba(43, 63, 43, 0.28);
         line-height: 1;
     }
 
     :host([active]) .portrait-letter {
-        color: #f4d585;
-        text-shadow: 0 0 8px rgba(244, 213, 133, 0.4);
+        color: #efba73;
+        text-shadow: 0 0 8px rgba(239, 186, 115, 0.35);
     }
 
     /* ---- STATS COLUMN ---- */
@@ -189,7 +189,7 @@ TEMPLATE.innerHTML = `
         font-family: 'Cinzel', 'Georgia', serif;
         font-weight: 600;
         font-size: 13px;
-        color: #c5d2a9;
+        color: #45674b;
         letter-spacing: 0.5px;
         text-transform: uppercase;
         transition: color 0.3s, text-shadow 0.3s;
@@ -199,21 +199,21 @@ TEMPLATE.innerHTML = `
     }
 
     :host([active]) .name {
-        color: #f4d585;
-        text-shadow: 0 0 8px rgba(244, 213, 133, 0.3);
+        color: #ba7d4f;
+        text-shadow: 0 0 8px rgba(239, 186, 115, 0.22);
     }
 
     .active-badge {
         display: none;
         font-size: 7px;
-        color: #e3b75d;
+        color: #ba7d4f;
         letter-spacing: 1px;
         font-weight: 700;
         text-transform: uppercase;
         padding: 1px 5px;
-        border: 1px solid rgba(227, 183, 93, 0.35);
+        border: 1px solid rgba(239, 186, 115, 0.4);
         border-radius: 2px;
-        background: rgba(227, 183, 93, 0.12);
+        background: rgba(239, 186, 115, 0.16);
         white-space: nowrap;
     }
 
@@ -231,6 +231,10 @@ TEMPLATE.innerHTML = `
 
     .hp-bar {
         flex: 1;
+        --life-bar-bg: #eef7e8;
+        --life-bar-frame: #8cae86;
+        --life-bar-label: #5f7f5d;
+        --life-bar-text: #2c4632;
     }
 
     /* ---- MANA ---- */
@@ -247,7 +251,7 @@ TEMPLATE.innerHTML = `
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.6px;
-        color: #93aa7e;
+        color: #5c7a5f;
     }
 
     .mana-gems {
@@ -259,7 +263,7 @@ TEMPLATE.innerHTML = `
     .mana-text {
         font-size: 11px;
         font-weight: 700;
-        color: #6fd1b5;
+        color: #3f9f7e;
         font-variant-numeric: tabular-nums;
         min-width: 28px;
         text-align: right;
@@ -274,16 +278,16 @@ TEMPLATE.innerHTML = `
 
     .mana-gem.filled {
         background:
-            linear-gradient(145deg, #b9e87a, #6ec35a, #3f9a3c);
-        filter: drop-shadow(0 0 4px rgba(138, 216, 112, 0.65));
+            linear-gradient(145deg, #d7f09e, #85cf75, #57a35e);
+        filter: drop-shadow(0 0 4px rgba(133, 207, 117, 0.62));
         animation: gem-sparkle 3s ease-in-out infinite;
         animation-delay: var(--gem-delay, 0s);
     }
 
     .mana-gem.spent {
         background:
-            linear-gradient(145deg, #22301b, #182114);
-        filter: drop-shadow(0 0 1px rgba(42, 58, 34, 0.3));
+            linear-gradient(145deg, #9bb096, #7f937a);
+        filter: drop-shadow(0 0 1px rgba(61, 89, 63, 0.26));
     }
 
     /* ---- COUNTERS ---- */
@@ -294,7 +298,7 @@ TEMPLATE.innerHTML = `
         gap: 2px;
         margin-left: auto;
         font-size: 12px;
-        color: #7b8f66;
+        color: #587153;
         flex-shrink: 0;
     }
 
@@ -304,8 +308,8 @@ TEMPLATE.innerHTML = `
         gap: 4px;
         padding: 2px 6px;
         border-radius: 2px;
-        background: rgba(30, 40, 22, 0.65);
-        border: 1px solid rgba(82, 108, 66, 0.45);
+        background: rgba(219, 236, 208, 0.8);
+        border: 1px solid rgba(128, 166, 126, 0.5);
     }
 
     .counter-icon {
@@ -319,13 +323,13 @@ TEMPLATE.innerHTML = `
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        color: #94a77b;
+        color: #5f7d5e;
     }
 
     .counter-value {
         font-size: 12px;
         font-weight: 700;
-        color: #d6e2be;
+        color: #395c3f;
         font-variant-numeric: tabular-nums;
         min-width: 12px;
         text-align: right;
