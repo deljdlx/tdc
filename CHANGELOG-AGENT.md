@@ -5,6 +5,14 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-21
 
+### fix(ui): layer petales place en vrai background page
+
+**Agent**: `codex` | **PR**: —
+
+Le canvas fullscreen des petales est maintenant monte sur `document.body`
+avec un z-index de fond dedie, afin qu'il reste derriere toute l'UI
+(cartes, HUD, tabs) et se comporte comme un vrai background anime.
+
 ### style(ui): polish command graph panel design
 
 **Agent**: `claude` | **PR**: —
