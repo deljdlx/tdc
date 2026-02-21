@@ -256,7 +256,7 @@ export default class GameRenderer {
             const btn = document.createElement('button')
             btn.className = 'tab-btn'
             btn.setAttribute('data-tab', tab.id)
-            btn.innerHTML = `<span class="tab-icon">${tab.icon}</span>${tab.label}`
+            btn.innerHTML = `<span class="tab-icon">${tab.icon}</span><span class="tab-label">${tab.label}</span>`
             bar.appendChild(btn)
         }
 

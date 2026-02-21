@@ -5,6 +5,16 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-21
 
+### style(ui): tabs basses plus compactes avec rendu premium
+
+**Agent**: `codex` | **PR**: —
+
+Refonte de la tab bar mobile pour reduire l'encombrement vertical et
+ameliorer la qualite percue: conteneur flottant plus compact, boutons
+horizontaux icone + label, et etats hover/active plus nets. L'objectif
+est d'augmenter la lisibilite et le confort d'usage sans toucher a la
+logique de navigation.
+
 ### style(ui): refonte premium des bordures et design des cartes
 
 **Agent**: `copilot` | **PR**: #30

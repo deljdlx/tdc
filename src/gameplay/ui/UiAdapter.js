@@ -236,7 +236,7 @@ export default class UiAdapter {
 
         for (const tab of tabs) {
             const btn = this._el('button', `tab-btn${this._activePanel === tab.id ? ' active' : ''}`)
-            btn.innerHTML = `<span class="tab-icon">${tab.icon}</span>${tab.label}`
+            btn.innerHTML = `<span class="tab-icon">${tab.icon}</span><span class="tab-label">${tab.label}</span>`
             btn.addEventListener('click', () => {
                 this._activePanel = tab.id
                 this.render()
