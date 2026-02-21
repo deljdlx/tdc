@@ -139,7 +139,7 @@ body::before {
     display: flex;
     padding: 5px;
     gap: 5px;
-    border-radius: 14px;
+    border-radius: 10px;
     background:
         linear-gradient(
             165deg,
@@ -160,9 +160,9 @@ body::before {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 5px;
     border: none;
-    border-radius: 10px;
+    border-radius: 6px;
     background:
         linear-gradient(
             150deg,
@@ -174,22 +174,12 @@ body::before {
     font-size: 11px;
     font-weight: 600;
     font-family: fonts.$font-family-display;
-    letter-spacing: 0.9px;
+    letter-spacing: 0.7px;
     text-transform: uppercase;
     cursor: pointer;
-    transition: color 0.2s, background 0.2s, text-shadow 0.2s, box-shadow 0.2s, transform 0.16s, filter 0.2s;
+    transition: color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.16s;
     position: relative;
     overflow: hidden;
-
-    &::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(120deg, rgba($gold, 0) 0%, rgba($gold, 0.13) 48%, rgba($gold, 0) 100%);
-        transform: translateX(-120%);
-        transition: transform 0.35s ease;
-        pointer-events: none;
-    }
 
     &:hover {
         background:
@@ -199,43 +189,25 @@ body::before {
                 rgba($bg-card, 0.9) 50%,
                 rgba(color.adjust($bg-mid, $lightness: -4%), 0.92) 100%
             );
-        color: color.adjust($text, $lightness: 2%);
+        color: $text;
         transform: translateY(-1px);
         box-shadow:
             inset 0 1px 0 rgba(white, 0.08),
             inset 0 -1px 0 rgba($gold, 0.25);
-        filter: saturate(1.08);
-
-        &::before {
-            transform: translateX(120%);
-        }
     }
 
     &.active {
-        color: $gold;
-        text-shadow: 0 0 10px rgba($gold, 0.55);
+        color: color.adjust($text, $lightness: 8%);
         background:
             linear-gradient(
                 155deg,
-                rgba(color.adjust($accent, $lightness: 14%), 0.84) 0%,
-                rgba(color.adjust($accent, $lightness: 4%), 0.78) 44%,
-                rgba(color.adjust($accent, $lightness: -6%), 0.7) 100%
+                rgba(color.adjust($accent, $lightness: 8%), 0.62) 0%,
+                rgba(color.adjust($accent, $lightness: 0%), 0.6) 44%,
+                rgba(color.adjust($accent, $lightness: -8%), 0.56) 100%
             );
         box-shadow:
             inset 0 1px 0 rgba(white, 0.12),
-            inset 0 -1px 0 rgba($gold, 0.4),
-            0 0 16px rgba($accent, 0.28);
-
-        &::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 20%;
-            right: 20%;
-            height: 2px;
-            background: linear-gradient(to right, transparent, $gold, transparent);
-            border-radius: 0 0 2px 2px;
-        }
+            inset 0 -1px 0 rgba($gold, 0.28);
     }
 }
 
@@ -303,25 +275,24 @@ body::before {
     padding: 10px 20px;
     border: 1px solid rgba(white, 0.24);
     border-bottom: 3px solid rgba(black, 0.48);
-    border-radius: 6px;
+    border-radius: 3px;
     cursor: pointer;
     font-size: 12px;
     font-weight: 700;
     font-family: fonts.$font-family-display;
     text-transform: uppercase;
-    letter-spacing: 1.4px;
-    text-shadow: 0 1px 3px rgba(black, 0.55);
+    letter-spacing: 1px;
+    text-shadow: 0 1px 2px rgba(black, 0.45);
     position: relative;
     overflow: hidden;
-    clip-path: polygon(0 18%, 12% 0, 100% 0, 100% 82%, 88% 100%, 0 100%);
-    transition: transform 0.12s, box-shadow 0.22s, filter 0.2s, border-color 0.2s, background 0.2s;
+    transition: transform 0.12s, box-shadow 0.22s, border-color 0.2s, background 0.2s;
 
     &::before {
         content: '';
         position: absolute;
         inset: -40% -20% auto -20%;
         height: 80%;
-        background: linear-gradient(120deg, transparent, rgba(white, 0.35), transparent);
+        background: linear-gradient(120deg, transparent, rgba(white, 0.2), transparent);
         opacity: 0;
         transform: translateY(-10px);
         transition: opacity 0.25s, transform 0.35s;
@@ -329,7 +300,7 @@ body::before {
     }
 
     &:hover:not(:disabled) {
-        transform: translateY(-1px) scale(1.01);
+        transform: translateY(-1px);
 
         &::before {
             opacity: 0.9;
@@ -372,16 +343,14 @@ body::before {
     border-color: color.adjust($accent, $lightness: -15%);
     border-top-color: color.adjust($accent, $lightness: 14%);
     box-shadow:
-        0 6px 16px rgba($accent, 0.42),
-        0 0 20px rgba($accent, 0.32),
+        0 6px 14px rgba($accent, 0.32),
         inset 0 1px 0 rgba(white, 0.25);
 
     &:hover:not(:disabled) {
         box-shadow:
-            0 10px 22px rgba($accent, 0.48),
-            0 0 32px rgba($accent, 0.42),
+            0 8px 18px rgba($accent, 0.38),
             inset 0 1px 0 rgba(white, 0.3);
-        filter: brightness(1.12) saturate(1.08);
+        filter: brightness(1.06);
         border-color: color.adjust($accent, $lightness: 2%);
     }
 }
