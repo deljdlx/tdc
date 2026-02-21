@@ -23,6 +23,7 @@ import MouseTrail from '../../fx/MouseTrail.js'
 import DragDropManager from './DragDropManager.js'
 import GhostAnimator from './GhostAnimator.js'
 import FxController from './FxController.js'
+import CommandGraphRenderer from './CommandGraphRenderer.js'
 import '../../components/TcgCard.js'
 import '../../components/CardZone.js'
 import '../../components/PlayerLifeBar.js'
@@ -96,6 +97,7 @@ export default class UiAdapter {
         this._landingCardId = null
         this._cardModal = this._createCardModal()
         this._trailStatusMessage = ''
+        this._graphRenderer = new CommandGraphRenderer()
 
         this._setupMouseTrail()
         this._setupCardInspect()
@@ -223,6 +225,14 @@ export default class UiAdapter {
         trailPanel.appendChild(this._renderTrailSettings())
         this._root.appendChild(trailPanel)
 
+        const graphPanel = this._el('div', `panel graph-panel${this._activePanel === 'graph' ? ' active' : ''}`)
+        this._root.appendChild(graphPanel)
+        if (this._activePanel === 'graph') {
+            this._graphRenderer.render(graphPanel)
+        } else {
+            this._graphRenderer.destroy()
+        }
+
         this._root.appendChild(this._renderTabBar())
     }
 
@@ -231,7 +241,8 @@ export default class UiAdapter {
         const tabs = [
             { id: 'game', icon: '⚔', label: 'Game' },
             { id: 'log', icon: '📋', label: 'Log' },
-            { id: 'trail', icon: '✨', label: 'Trail FX' }
+            { id: 'trail', icon: '✨', label: 'Trail FX' },
+            { id: 'graph', icon: '◈', label: 'Graph' }
         ]
 
         for (const tab of tabs) {

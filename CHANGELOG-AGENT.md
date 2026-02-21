@@ -5,6 +5,17 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-21
 
+### feat(ui): graphe oriente des commandes avec Cytoscape.js
+
+**Agent**: `claude` | **PR**: —
+
+Ajout d'un 4e onglet "Graph" affichant le graphe de dependances entre les
+11 commandes du moteur. Les noeuds sont colores par categorie (game flow,
+player action, effect, terminal) et les aretes conditionnelles sont en
+pointilles. Utilise Cytoscape.js avec layout dagre hierarchique (top-down).
+
+**Impact**: ajout de 2 dependances runtime (cytoscape, cytoscape-dagre).
+
 ### style(ui): tabs basses plus compactes avec rendu premium
 
 **Agent**: `codex` | **PR**: —
