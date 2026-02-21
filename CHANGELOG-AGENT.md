@@ -5,14 +5,14 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-21
 
-### style(ui): tab bar en footer pleine largeur
+### style(ui): tab bar en footer dans le flux
 
 **Agent**: `claude` | **PR**: —
 
-Remplacement de la tab bar flottante (pill arrondie, shadow-3, marges
-laterales) par un footer classique colle au bas de l'ecran. Hauteur
-reduite de 46px a 38px, layout vertical icone + label, onglet actif
-indique par couleur primaire sans fond colore.
+Tab bar retiree du positionnement fixe et integree dans le flux normal
+du document. Le conteneur #app utilise un layout flex column avec
+min-height 100dvh, le panel actif prend l'espace restant (flex: 1),
+et la tab bar reste naturellement en bas sans position fixed.
 
 ### feat(fx): petales avec brise legere et rendu pseudo-3D
 
