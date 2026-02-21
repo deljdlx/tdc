@@ -352,6 +352,15 @@ export default class UiAdapter {
         hud.setAttribute('max-mana', player.attributes.maxMana ?? 0)
         hud.setAttribute('deck-count', this._cardsInZone(state, `deck_${playerId}`).length)
         hud.setAttribute('grave-count', this._cardsInZone(state, `graveyard_${playerId}`).length)
+
+        // Heros du joueur
+        const heroes = state.heroes
+            ? Object.values(state.heroes).filter(h => h.playerId === playerId)
+            : []
+        if (heroes.length > 0) {
+            hud.setAttribute('heroes', JSON.stringify(heroes))
+        }
+
         if (isActive) hud.setAttribute('active', '')
 
         if (!isActive && !isGameOver) {

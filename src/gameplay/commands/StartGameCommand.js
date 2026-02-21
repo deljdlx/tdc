@@ -6,8 +6,10 @@
  */
 
 import { CARD_DEFINITIONS } from '../definitions/cards.js'
+import { HERO_DEFINITIONS } from '../definitions/heroes.js'
 
 const DECK_SIZE = 15
+const HEROES_PER_PLAYER = 2
 const ZONE_TYPES = ['deck', 'hand', 'board', 'graveyard']
 
 export default class StartGameCommand {
@@ -56,6 +58,35 @@ export default class StartGameCommand {
                 { type: 'SET_ATTRIBUTE', target: playerId, payload: { key: 'mana', value: 0 } },
                 { type: 'SET_ATTRIBUTE', target: playerId, payload: { key: 'maxMana', value: 0 } }
             )
+        }
+
+        // Creer les heros pour chaque joueur
+        for (const playerId of playerIds) {
+            for (let i = 0; i < HEROES_PER_PLAYER; i++) {
+                const defIndex = ctx.random.nextInt(0, HERO_DEFINITIONS.length - 1)
+                const def = HERO_DEFINITIONS[defIndex]
+                const heroId = ctx.idGenerator.next('hero')
+
+                patches.push({
+                    type: 'CREATE_ENTITY',
+                    target: heroId,
+                    payload: {
+                        entityType: 'hero',
+                        data: {
+                            heroDefId: def.id,
+                            playerId,
+                            attributes: {
+                                hp: def.hp,
+                                ap: 0,
+                                maxAp: def.maxAp,
+                                mana: 0,
+                                maxMana: 0,
+                                speed: def.speed
+                            }
+                        }
+                    }
+                })
+            }
         }
 
         // Générer les decks (15 cartes random par joueur)

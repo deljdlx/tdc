@@ -50,6 +50,25 @@ export default class StartTurnCommand {
             )
         }
 
+        // Recharger AP et mana des heros du joueur actif
+        const heroes = ctx.query.getHeroesForPlayer(playerId)
+        for (const hero of heroes) {
+            const currentAp = hero.attributes.ap || 0
+            const speed = hero.attributes.speed || 0
+            const maxAp = hero.attributes.maxAp || 0
+            patches.push({
+                type: 'SET_ATTRIBUTE',
+                target: hero.id,
+                payload: { key: 'ap', value: Math.min(currentAp + speed, maxAp) }
+            })
+
+            const heroMaxMana = Math.min((hero.attributes.maxMana || 0) + 1, 10)
+            patches.push(
+                { type: 'SET_ATTRIBUTE', target: hero.id, payload: { key: 'maxMana', value: heroMaxMana } },
+                { type: 'SET_ATTRIBUTE', target: hero.id, payload: { key: 'mana', value: heroMaxMana } }
+            )
+        }
+
         // Phase main
         patches.push({
             type: 'SET_TURN_STATE', target: 'turnState', payload: { field: 'phase', value: 'main' }
