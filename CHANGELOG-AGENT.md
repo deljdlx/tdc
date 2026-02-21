@@ -16,6 +16,15 @@ pointilles. Utilise Cytoscape.js avec layout dagre hierarchique (top-down).
 
 **Impact**: ajout de 2 dependances runtime (cytoscape, cytoscape-dagre).
 
+### style(ui): boutons plus sobres et moins arrondis
+
+**Agent**: `codex` | **PR**: —
+
+Ajustement de la direction visuelle des boutons pour reduire l'aspect
+"jouet": angles plus nets, suppression des effets trop brillants, et
+contrastes plus maitrises sur les etats hover/active. Le comportement
+reste identique, seul le rendu est rendu plus mature.
+
 ### style(ui): tabs basses plus compactes avec rendu premium
 
 **Agent**: `codex` | **PR**: —
