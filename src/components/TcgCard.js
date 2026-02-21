@@ -3,7 +3,7 @@
  *
  * Attributes observés :
  *   name, cost, type, power, hp, effect, definition-id,
- *   playable, can-attack, selected, summoning-sickness, has-attacked
+ *   playable, can-attack, selected, summoning-sickness, has-acted
  *
  * L'illustration utilise Lorem Picsum avec un seed basé sur definition-id
  * pour garantir la même image par type de carte.
@@ -328,6 +328,32 @@ TEMPLATE.innerHTML = `
         background: #5B8C5A;
     }
 
+    .armor {
+        background: #60a5fa;
+    }
+
+    /* ==================================================
+       DEFENDING & TARGETABLE STATES
+       ================================================== */
+
+    .card-border.defending {
+        background: #60a5fa;
+    }
+
+    .card-border.targetable {
+        background: #F0A030;
+        animation: targetPulse 1s ease-in-out infinite;
+    }
+
+    .frame.targetable {
+        cursor: pointer;
+    }
+
+    @keyframes targetPulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
     /* ==================================================
        STATUS OVERLAY
        ================================================== */
@@ -355,6 +381,10 @@ TEMPLATE.innerHTML = `
     .status-overlay.done {
         color: #6b7280;
     }
+
+    .status-overlay.defending {
+        color: #60a5fa;
+    }
 </style>
 
 <div class="card-border">
@@ -378,7 +408,8 @@ export default class TcgCard extends HTMLElement {
         return [
             'name', 'cost', 'type', 'power', 'hp', 'effect',
             'definition-id', 'playable', 'can-attack', 'selected',
-            'summoning-sickness', 'has-attacked'
+            'summoning-sickness', 'has-acted', 'is-defending',
+            'armor', 'targetable'
         ]
     }
 
@@ -496,18 +527,27 @@ export default class TcgCard extends HTMLElement {
         this._els.effect.textContent = effect
 
         // Stats (heroes)
+        const armor = this.getAttribute('armor')
         if ((type === 'creature' || type === 'hero') && power !== null && hp !== null) {
-            this._els.stats.innerHTML =
+            let statsHtml =
                 `<span class="stat power">${power}</span>` +
                 `<span class="stat hp">${hp}</span>`
+            if (armor && Number(armor) > 0) {
+                statsHtml += `<span class="stat armor">${armor}</span>`
+            }
+            this._els.stats.innerHTML = statsHtml
         } else {
             this._els.stats.innerHTML = ''
         }
 
         // Status overlay
         const sick = this.hasAttribute('summoning-sickness')
-        const done = this.hasAttribute('has-attacked')
-        if (sick) {
+        const done = this.hasAttribute('has-acted')
+        const defending = this.hasAttribute('is-defending')
+        if (defending) {
+            this._els.status.textContent = 'defending'
+            this._els.status.className = 'status-overlay defending'
+        } else if (sick) {
             this._els.status.textContent = 'zzz'
             this._els.status.className = 'status-overlay zzz'
         } else if (done) {
@@ -525,18 +565,23 @@ export default class TcgCard extends HTMLElement {
         const isPlayable = this.hasAttribute('playable')
         const isCanAttack = this.hasAttribute('can-attack')
         const isSelected = this.hasAttribute('selected')
+        const isTargetable = this.hasAttribute('targetable')
 
         // Border classes (affect gradient color)
         border.classList.toggle('spell', isSpell)
         border.classList.toggle('playable', isPlayable)
         border.classList.toggle('can-attack', isCanAttack)
         border.classList.toggle('selected', isSelected)
+        border.classList.toggle('targetable', isTargetable)
+        border.classList.toggle('defending', defending)
 
         // Frame classes (affect inner content and states)
         frame.classList.toggle('spell', isSpell)
         frame.classList.toggle('playable', isPlayable)
         frame.classList.toggle('can-attack', isCanAttack)
         frame.classList.toggle('selected', isSelected)
+        frame.classList.toggle('targetable', isTargetable)
+        frame.classList.toggle('defending', defending)
         frame.classList.toggle('sick', sick)
         frame.classList.toggle('exhausted', done)
     }

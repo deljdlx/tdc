@@ -83,7 +83,10 @@ export default class StartGameCommand {
                                 mana: 0,
                                 maxMana: 0,
                                 speed: def.speed,
-                                hasAttacked: false
+                                hasActed: false,
+                                armor: 0,
+                                isDefending: false,
+                                activeBuffs: '[]'
                             }
                         }
                     }

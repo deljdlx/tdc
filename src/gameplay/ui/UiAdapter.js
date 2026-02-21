@@ -15,8 +15,11 @@
 import { startGame, createGame } from '../setup.js'
 import PlaySpellCommand from '../commands/PlaySpellCommand.js'
 import AttackCommand from '../commands/AttackCommand.js'
+import DefendCommand from '../commands/DefendCommand.js'
+import UsePowerCommand from '../commands/UsePowerCommand.js'
 import EndTurnCommand from '../commands/EndTurnCommand.js'
 import { getCardDefinition, CardType } from '../definitions/cards.js'
+import { getPowersForClass } from '../definitions/powers.js'
 import FxCanvas from '../../fx/FxCanvas.js'
 import MouseTrail from '../../fx/MouseTrail.js'
 import CherryBlossoms from '../../fx/CherryBlossoms.js'
@@ -30,6 +33,7 @@ import '../../components/CardZone.js'
 import '../../components/PlayerLifeBar.js'
 import '../../components/PlayerHud.js'
 import CardModal from '../../components/CardModal.js'
+import RadialMenu from '../../components/RadialMenu.js'
 
 const EFFECT_TEXT = {
     DEAL_DAMAGE: (v) => `Deal ${v} damage`,
@@ -85,6 +89,12 @@ export default class UiAdapter {
     /** @type {CherryBlossoms|null} Effet de fond permanent de pétales */
     _cherryBlossoms
 
+    /** @type {RadialMenu} Menu radial d'actions hero */
+    _radialMenu
+
+    /** @type {Object|null} État de ciblage en cours { action, heroId, playerId, powerId, targetType } */
+    _targetingState
+
     constructor(rootElement) {
         this._root = rootElement
         this._eventLog = []
@@ -100,6 +110,8 @@ export default class UiAdapter {
         this._activePanel = 'game'
         this._landingCardId = null
         this._cardModal = this._createCardModal()
+        this._radialMenu = this._createRadialMenu()
+        this._targetingState = null
         this._trailStatusMessage = ''
         this._graphRenderer = new CommandGraphRenderer()
         this._cherryBlossoms = null
@@ -107,6 +119,7 @@ export default class UiAdapter {
         this._setupBackgroundEffects()
         this._setupMouseTrail()
         this._setupCardInspect()
+        this._setupRadialMenu()
         this._dragDropManager.init()
     }
 
@@ -118,6 +131,66 @@ export default class UiAdapter {
         const modal = new CardModal()
         document.body.appendChild(modal)
         return modal
+    }
+
+    /**
+     * Crée et attache le menu radial à document.body.
+     */
+    _createRadialMenu() {
+        const menu = new RadialMenu()
+        document.body.appendChild(menu)
+        return menu
+    }
+
+    /**
+     * Écoute les actions du menu radial et gère le ciblage.
+     */
+    _setupRadialMenu() {
+        this._radialMenu.addEventListener('hero-action', (e) => {
+            const { action, heroId, playerId, powerId, targetType } = e.detail
+
+            if (action === 'defend') {
+                const heroEl = this._root.querySelector(`[data-card-id="${heroId}"]`)
+                if (heroEl) this._fxController.fxDefend(heroEl)
+                this._engine.enqueueCommand(new DefendCommand({ playerId, heroId }))
+                this._engine.runUntilIdle()
+                this.render()
+                return
+            }
+
+            if (action === 'attack') {
+                this._enterTargeting({ action: 'attack', heroId, playerId, targetType: 'enemy_hero' })
+                return
+            }
+
+            if (action === 'power') {
+                if (targetType === 'self' || targetType === 'all_enemies') {
+                    const heroEl = this._root.querySelector(`[data-card-id="${heroId}"]`)
+                    if (heroEl) this._fxController.fxPower(heroEl)
+                    this._engine.enqueueCommand(new UsePowerCommand({ playerId, heroId, powerId }))
+                    this._engine.runUntilIdle()
+                    this.render()
+                    return
+                }
+                this._enterTargeting({ action: 'power', heroId, playerId, powerId, targetType })
+            }
+        })
+    }
+
+    /**
+     * Active le mode ciblage : les héros valides deviennent cliquables.
+     */
+    _enterTargeting(state) {
+        this._targetingState = state
+        this.render()
+    }
+
+    /**
+     * Annule le mode ciblage.
+     */
+    _cancelTargeting() {
+        this._targetingState = null
+        this.render()
     }
 
     /**
@@ -137,8 +210,10 @@ export default class UiAdapter {
                     definitionId: hero.heroDefId,
                     power: hero.attributes.power,
                     hp: hero.attributes.hp,
-                    hasAttacked: hero.attributes.hasAttacked,
-                    canAttack: !hero.attributes.hasAttacked,
+                    armor: hero.attributes.armor,
+                    isDefending: hero.attributes.isDefending,
+                    hasActed: hero.attributes.hasActed,
+                    canAttack: !hero.attributes.hasActed,
                 })
                 return
             }
@@ -233,6 +308,16 @@ export default class UiAdapter {
 
         gamePanel.appendChild(this._renderControls(activePlayer, isGameOver))
         gamePanel.appendChild(this._renderStatusBar(state))
+
+        if (this._targetingState) {
+            const hint = this._el('div', 'targeting-hint')
+            hint.textContent = `Select a target (${this._targetingState.targetType.replace('_', ' ')})`
+            const cancelBtn = this._el('button', 'btn btn-secondary btn-sm')
+            cancelBtn.textContent = 'Cancel'
+            cancelBtn.addEventListener('click', () => this._cancelTargeting())
+            hint.appendChild(cancelBtn)
+            gamePanel.appendChild(hint)
+        }
 
         const board = this._el('div', 'game-board')
         board.appendChild(this._renderPlayerArea(state, playerIds[1], activePlayer, true))
@@ -419,41 +504,64 @@ export default class UiAdapter {
         el.setAttribute('type', 'hero')
         el.setAttribute('power', hero.attributes.power)
         el.setAttribute('hp', hero.attributes.hp)
-        if (hero.attributes.hasAttacked) el.setAttribute('has-attacked', '')
+        if (hero.attributes.hasActed) el.setAttribute('has-acted', '')
+        if (hero.attributes.isDefending) el.setAttribute('is-defending', '')
+        if (hero.attributes.armor > 0) el.setAttribute('armor', hero.attributes.armor)
 
-        const canAttack = isActive && !hero.attributes.hasAttacked && !isGameOver
+        const canAct = isActive && !hero.attributes.hasActed && !isGameOver
 
-        if (canAttack) {
-            el.setAttribute('can-attack', '')
-            this._dragDropManager.makeDraggable(el, {
-                action: 'attack',
-                cardId: hero.id,
-                playerId
+        // Clic sur un hero allié actif → ouvre le menu radial
+        if (isActive && !isGameOver) {
+            if (canAct) el.setAttribute('can-attack', '')
+
+            el.addEventListener('click', (e) => {
+                // Si en mode targeting, traiter comme cible alliée
+                if (this._targetingState) {
+                    if (this._targetingState.targetType === 'ally_hero' && hero.playerId === this._targetingState.playerId) {
+                        this._resolveTargeting(hero.id, el)
+                    } else {
+                        this._cancelTargeting()
+                    }
+                    return
+                }
+
+                e.stopPropagation()
+                const powers = getPowersForClass(hero.heroDefId)
+                const rect = el.getBoundingClientRect()
+                this._radialMenu.open({
+                    heroId: hero.id,
+                    playerId,
+                    heroClass: hero.heroDefId,
+                    x: rect.right + 4,
+                    y: rect.top,
+                    ap: hero.attributes.ap || 0,
+                    hasActed: hero.attributes.hasActed,
+                    powers
+                })
             })
         }
 
-        // Héros ennemis : cible d'attaques et de sorts offensifs
+        // Héros ennemis : cible d'attaques (targeting) et de sorts offensifs (drag)
         if (!isActive && !isGameOver) {
+            // Mode targeting : clic sur hero ennemi = résoudre l'action
+            if (this._targetingState && this._targetingState.targetType === 'enemy_hero') {
+                el.setAttribute('targetable', '')
+                el.addEventListener('click', () => {
+                    this._resolveTargeting(hero.id, el)
+                })
+            }
+
+            // Drop targets pour sorts offensifs (drag spell)
             this._dragDropManager.registerDropTarget(el, 'drop-target',
                 (drag) =>
-                    drag.action === 'attack' ||
-                    (drag.action === 'play' && drag.cardType === CardType.SPELL && drag.effect === 'DEAL_DAMAGE'),
+                    drag.action === 'play' && drag.cardType === CardType.SPELL && drag.effect === 'DEAL_DAMAGE',
                 (drag) => {
-                    if (drag.action === 'attack') {
-                        this._fxController.fxAttack(el)
-                        this._engine.enqueueCommand(new AttackCommand({
-                            playerId: drag.playerId,
-                            attackerId: drag.cardId,
-                            targetId: hero.id
-                        }))
-                    } else {
-                        this._fxController.fxSpell(el)
-                        this._engine.enqueueCommand(new PlaySpellCommand({
-                            playerId: drag.playerId,
-                            cardId: drag.cardId,
-                            targetId: hero.id
-                        }))
-                    }
+                    this._fxController.fxSpell(el)
+                    this._engine.enqueueCommand(new PlaySpellCommand({
+                        playerId: drag.playerId,
+                        cardId: drag.cardId,
+                        targetId: hero.id
+                    }))
                     this._engine.runUntilIdle()
                     this._consumeGhost()
                     this.render()
@@ -461,7 +569,7 @@ export default class UiAdapter {
             )
         }
 
-        // Héros alliés : cible de sorts de soin
+        // Héros alliés : cible de sorts de soin (drag spell)
         if (isActive && !isGameOver) {
             this._dragDropManager.registerDropTarget(el, 'drop-target',
                 (drag) =>
@@ -483,6 +591,35 @@ export default class UiAdapter {
         }
 
         return el
+    }
+
+    /**
+     * Résout une action de ciblage sur un héro cible.
+     */
+    _resolveTargeting(targetId, targetEl) {
+        const ts = this._targetingState
+        if (!ts) return
+
+        if (ts.action === 'attack') {
+            this._fxController.fxAttack(targetEl)
+            this._engine.enqueueCommand(new AttackCommand({
+                playerId: ts.playerId,
+                attackerId: ts.heroId,
+                targetId
+            }))
+        } else if (ts.action === 'power') {
+            this._fxController.fxPower(targetEl)
+            this._engine.enqueueCommand(new UsePowerCommand({
+                playerId: ts.playerId,
+                heroId: ts.heroId,
+                powerId: ts.powerId,
+                targetId
+            }))
+        }
+
+        this._targetingState = null
+        this._engine.runUntilIdle()
+        this.render()
     }
 
     _renderHandCard(card, playerId, state) {

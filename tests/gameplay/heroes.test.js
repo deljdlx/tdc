@@ -49,7 +49,10 @@ describe('Hero System', () => {
             expect(hero.attributes.ap).toBe(0)
             expect(hero.attributes.mana).toBe(0)
             expect(hero.attributes.maxMana).toBe(0)
-            expect(hero.attributes.hasAttacked).toBe(false)
+            expect(hero.attributes.hasActed).toBe(false)
+            expect(hero.attributes.armor).toBe(0)
+            expect(hero.attributes.isDefending).toBe(false)
+            expect(hero.attributes.activeBuffs).toBe('[]')
         }
     })
 
@@ -86,12 +89,12 @@ describe('Hero System', () => {
         }
     })
 
-    it('should reset hasAttacked on turn start', () => {
+    it('should reset hasActed on turn start', () => {
         const engine = startGame({ seed: 100 })
 
-        // All heroes start with hasAttacked: false
+        // All heroes start with hasActed: false
         for (const hero of Object.values(engine.state.heroes)) {
-            expect(hero.attributes.hasAttacked).toBe(false)
+            expect(hero.attributes.hasActed).toBe(false)
         }
 
         // End two turns to come back to player1
@@ -100,10 +103,10 @@ describe('Hero System', () => {
         engine.enqueueCommand(new EndTurnCommand({ playerId: 'player2' }))
         engine.runUntilIdle()
 
-        // Player1 heroes should have hasAttacked reset
+        // Player1 heroes should have hasActed reset
         const heroes1 = heroesForPlayer(engine.state, 'player1')
         for (const hero of heroes1) {
-            expect(hero.attributes.hasAttacked).toBe(false)
+            expect(hero.attributes.hasActed).toBe(false)
         }
     })
 

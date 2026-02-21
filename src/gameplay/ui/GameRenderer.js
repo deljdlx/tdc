@@ -139,9 +139,9 @@ export default class GameRenderer {
         el.setAttribute('type', 'hero')
         el.setAttribute('power', hero.attributes.power)
         el.setAttribute('hp', hero.attributes.hp)
-        if (hero.attributes.hasAttacked) el.setAttribute('has-attacked', '')
+        if (hero.attributes.hasActed) el.setAttribute('has-acted', '')
 
-        const canAttack = isActive && !hero.attributes.hasAttacked && !isGameOver
+        const canAttack = isActive && !hero.attributes.hasActed && !isGameOver
         if (canAttack) {
             el.setAttribute('can-attack', '')
             el.setAttribute('draggable', 'true')

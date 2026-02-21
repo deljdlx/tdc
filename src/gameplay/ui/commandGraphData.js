@@ -16,6 +16,9 @@ import DealDamageCommand from '../commands/DealDamageCommand.js'
 import RestoreHpCommand from '../commands/RestoreHpCommand.js'
 import DestroyHeroCommand from '../commands/DestroyHeroCommand.js'
 import CheckWinConditionCommand from '../commands/CheckWinConditionCommand.js'
+import DefendCommand from '../commands/DefendCommand.js'
+import UsePowerCommand from '../commands/UsePowerCommand.js'
+import ApplyBuffCommand from '../commands/ApplyBuffCommand.js'
 
 /** Categories de noeuds pour la coloration. */
 const CATEGORY = {
@@ -35,7 +38,10 @@ const ALL_COMMANDS = [
     DealDamageCommand,
     RestoreHpCommand,
     DestroyHeroCommand,
-    CheckWinConditionCommand
+    CheckWinConditionCommand,
+    DefendCommand,
+    UsePowerCommand,
+    ApplyBuffCommand
 ]
 
 /** Convertit UPPER_SNAKE_CASE en Title Case lisible. */

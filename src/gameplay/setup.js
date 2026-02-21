@@ -16,6 +16,9 @@ import EndTurnCommand from './commands/EndTurnCommand.js'
 import DealDamageCommand from './commands/DealDamageCommand.js'
 import RestoreHpCommand from './commands/RestoreHpCommand.js'
 import CheckWinConditionCommand from './commands/CheckWinConditionCommand.js'
+import DefendCommand from './commands/DefendCommand.js'
+import UsePowerCommand from './commands/UsePowerCommand.js'
+import ApplyBuffCommand from './commands/ApplyBuffCommand.js'
 
 /**
  * Crée et configure un Engine prêt à jouer le scénario.
@@ -46,6 +49,9 @@ export function createGame({ seed = 42, player1 = 'player1', player2 = 'player2'
     engine.commandRegistry.register(DealDamageCommand)
     engine.commandRegistry.register(RestoreHpCommand)
     engine.commandRegistry.register(CheckWinConditionCommand)
+    engine.commandRegistry.register(DefendCommand)
+    engine.commandRegistry.register(UsePowerCommand)
+    engine.commandRegistry.register(ApplyBuffCommand)
 
     // Enregistrer les IntentResolvers
     engine.intentResolver.register('DRAW_CARDS', (intent) => {
@@ -70,6 +76,10 @@ export function createGame({ seed = 42, player1 = 'player1', player2 = 'player2'
 
     engine.intentResolver.register('CHECK_WIN_CONDITION', (intent) => {
         return new CheckWinConditionCommand(intent.payload)
+    })
+
+    engine.intentResolver.register('RESOLVE_APPLY_BUFF', (intent) => {
+        return new ApplyBuffCommand(intent.payload)
     })
 
     // Initialiser le state

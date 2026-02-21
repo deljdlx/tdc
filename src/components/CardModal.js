@@ -255,6 +255,18 @@ TEMPLATE.innerHTML = `
         border: 1px solid rgba(233, 69, 96, 0.3);
     }
 
+    .status-badge.defending {
+        background: rgba(96, 165, 250, 0.15);
+        color: #60a5fa;
+        border: 1px solid rgba(96, 165, 250, 0.3);
+    }
+
+    .status-badge.armor {
+        background: rgba(96, 165, 250, 0.15);
+        color: #60a5fa;
+        border: 1px solid rgba(96, 165, 250, 0.3);
+    }
+
     /* ---- ANIMATIONS ---- */
 
     @keyframes fadeIn {
@@ -333,7 +345,7 @@ export default class CardModal extends HTMLElement {
      * @param {string} [data.effect]
      * @param {number} [data.effectValue]
      * @param {boolean} [data.summoningSickness]
-     * @param {boolean} [data.hasAttacked]
+     * @param {boolean} [data.hasActed]
      * @param {boolean} [data.canAttack]
      */
     open(data) {
@@ -396,8 +408,10 @@ export default class CardModal extends HTMLElement {
 
         // Status badges
         const badges = []
+        if (data.isDefending) badges.push('<span class="status-badge defending">Defending</span>')
+        if (data.armor > 0) badges.push(`<span class="status-badge armor">Armor: ${data.armor}</span>`)
         if (data.summoningSickness) badges.push('<span class="status-badge sick">Summoning Sickness</span>')
-        if (data.hasAttacked) badges.push('<span class="status-badge exhausted">Exhausted</span>')
+        if (data.hasActed) badges.push('<span class="status-badge exhausted">Exhausted</span>')
         if (data.canAttack) badges.push('<span class="status-badge can-attack">Ready to Attack</span>')
         statusSection.innerHTML = badges.join('')
         statusSection.style.display = badges.length ? '' : 'none'

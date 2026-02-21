@@ -38,7 +38,7 @@ describe('Game Setup', () => {
         for (const hero of Object.values(state.heroes)) {
             expect(hero.attributes.power).toBeGreaterThan(0)
             expect(hero.attributes.maxHp).toBe(hero.attributes.hp)
-            expect(hero.attributes.hasAttacked).toBe(false)
+            expect(hero.attributes.hasActed).toBe(false)
         }
 
         // Joueur 1 pioche 3, joueur 2 pioche 4
@@ -118,11 +118,11 @@ describe('Combat', () => {
             heroes: {
                 h1: {
                     id: 'h1', heroDefId: 'WARRIOR', playerId: 'player1',
-                    attributes: { hp: 30, maxHp: 30, power: 4, ap: 5, maxAp: 5, mana: 0, maxMana: 0, speed: 3, hasAttacked: false }
+                    attributes: { hp: 30, maxHp: 30, power: 4, ap: 5, maxAp: 5, mana: 0, maxMana: 0, speed: 3, hasActed: false }
                 },
                 h2: {
                     id: 'h2', heroDefId: 'MAGE', playerId: 'player2',
-                    attributes: { hp: 15, maxHp: 15, power: 2, ap: 0, maxAp: 8, mana: 0, maxMana: 0, speed: 2, hasAttacked: false }
+                    attributes: { hp: 15, maxHp: 15, power: 2, ap: 0, maxAp: 8, mana: 0, maxMana: 0, speed: 2, hasActed: false }
                 }
             },
             zones: {
@@ -148,7 +148,7 @@ describe('Combat', () => {
         // Degats mutuels : h2 perd 4 HP (power de h1), h1 perd 2 HP (power de h2)
         expect(engine.state.heroes.h2.attributes.hp).toBe(11)
         expect(engine.state.heroes.h1.attributes.hp).toBe(28)
-        expect(engine.state.heroes.h1.attributes.hasAttacked).toBe(true)
+        expect(engine.state.heroes.h1.attributes.hasActed).toBe(true)
 
         // COMBAT_RESOLVED emis
         expect(events.some(e => e.type === 'COMBAT_RESOLVED')).toBe(true)
@@ -168,11 +168,11 @@ describe('Combat', () => {
             heroes: {
                 h1: {
                     id: 'h1', heroDefId: 'WARRIOR', playerId: 'player1',
-                    attributes: { hp: 30, maxHp: 30, power: 4, ap: 5, maxAp: 5, mana: 0, maxMana: 0, speed: 3, hasAttacked: true }
+                    attributes: { hp: 30, maxHp: 30, power: 4, ap: 5, maxAp: 5, mana: 0, maxMana: 0, speed: 3, hasActed: true }
                 },
                 h2: {
                     id: 'h2', heroDefId: 'MAGE', playerId: 'player2',
-                    attributes: { hp: 15, maxHp: 15, power: 2, ap: 0, maxAp: 8, mana: 0, maxMana: 0, speed: 2, hasAttacked: false }
+                    attributes: { hp: 15, maxHp: 15, power: 2, ap: 0, maxAp: 8, mana: 0, maxMana: 0, speed: 2, hasActed: false }
                 }
             },
             zones: {
@@ -222,11 +222,11 @@ describe('Spells', () => {
             heroes: {
                 h1: {
                     id: 'h1', heroDefId: 'WARRIOR', playerId: 'player1',
-                    attributes: { hp: 30, maxHp: 30, power: 4, ap: 5, maxAp: 5, mana: 0, maxMana: 0, speed: 3, hasAttacked: false }
+                    attributes: { hp: 30, maxHp: 30, power: 4, ap: 5, maxAp: 5, mana: 0, maxMana: 0, speed: 3, hasActed: false }
                 },
                 h2: {
                     id: 'h2', heroDefId: 'MAGE', playerId: 'player2',
-                    attributes: { hp: 15, maxHp: 15, power: 2, ap: 0, maxAp: 8, mana: 0, maxMana: 0, speed: 2, hasAttacked: false }
+                    attributes: { hp: 15, maxHp: 15, power: 2, ap: 0, maxAp: 8, mana: 0, maxMana: 0, speed: 2, hasActed: false }
                 }
             },
             zones: {
@@ -274,7 +274,7 @@ describe('Spells', () => {
             heroes: {
                 h1: {
                     id: 'h1', heroDefId: 'WARRIOR', playerId: 'player1',
-                    attributes: { hp: 10, maxHp: 30, power: 4, ap: 5, maxAp: 5, mana: 0, maxMana: 0, speed: 3, hasAttacked: false }
+                    attributes: { hp: 10, maxHp: 30, power: 4, ap: 5, maxAp: 5, mana: 0, maxMana: 0, speed: 3, hasActed: false }
                 }
             },
             zones: {
@@ -320,11 +320,11 @@ describe('Win Condition', () => {
             heroes: {
                 h1: {
                     id: 'h1', heroDefId: 'WARRIOR', playerId: 'player1',
-                    attributes: { hp: 30, maxHp: 30, power: 10, ap: 5, maxAp: 5, mana: 0, maxMana: 0, speed: 3, hasAttacked: false }
+                    attributes: { hp: 30, maxHp: 30, power: 10, ap: 5, maxAp: 5, mana: 0, maxMana: 0, speed: 3, hasActed: false }
                 },
                 h2: {
                     id: 'h2', heroDefId: 'MAGE', playerId: 'player2',
-                    attributes: { hp: 2, maxHp: 15, power: 1, ap: 0, maxAp: 8, mana: 0, maxMana: 0, speed: 2, hasAttacked: false }
+                    attributes: { hp: 2, maxHp: 15, power: 1, ap: 0, maxAp: 8, mana: 0, maxMana: 0, speed: 2, hasActed: false }
                 }
             },
             zones: {
