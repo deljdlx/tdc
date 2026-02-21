@@ -5,6 +5,19 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-21
 
+### fix(fx): pétales de cerisiers maintenant visibles au démarrage
+
+**Agent**: `copilot` | **PR**: #41
+
+Correction du bug d'affichage des pétales de cerisiers : les dimensions
+du canvas sont maintenant transmises à la méthode `update()` de tous les
+effets, permettant à CherryBlossoms de synchroniser ses dimensions dès
+le premier frame. Le timer de spawn initial est également réglé à 1.0s
+pour forcer la création de pétales dès le premier cycle.
+
+**Impact**: modification de `FxCanvas._loop()` pour passer le canvas à
+`update(dt, canvas)` (rétrocompatible avec tous les effets existants).
+
 ### style(ui): HUD joueur printanier et harmonise
 
 **Agent**: `codex` | **PR**: —
