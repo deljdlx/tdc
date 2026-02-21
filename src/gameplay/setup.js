@@ -81,6 +81,7 @@ export function createGame({ seed = 42, player1 = 'player1', player2 = 'player2'
             [player2]: { id: player2, name: 'Player 2', attributes: {} }
         },
         cards: {},
+        heroes: {},
         zones: {},
         turnState: { activePlayerId: null, turnNumber: 0, phase: null }
     })

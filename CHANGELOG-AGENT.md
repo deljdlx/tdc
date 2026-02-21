@@ -5,6 +5,21 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-21
 
+### feat(engine): systeme de heros avec compteurs AP et mana
+
+**Agent**: `claude` | **PR**: —
+
+Ajout du concept de hero au moteur. Chaque joueur recoit 2 heros
+aleatoires parmi 4 archetypes (Warrior, Mage, Ranger, Priest). Les
+heros ont des compteurs AP (action points) et mana independants.
+L'AP se recharge a chaque debut de tour selon la stat speed du hero,
+le mana croit de 1 par tour (cap 10). L'UI affiche les barres AP/mana
+de chaque hero dans le HUD joueur.
+
+**Impact**: nouvelle collection `heroes` dans le state, extension de
+PatchApplier et QueryAPI pour supporter les entites hero, 7 nouveaux
+tests, affichage dans PlayerHud.
+
 ### style(ui): couleur corail distincte pour les elements interactifs
 
 **Agent**: `claude` | **PR**: —

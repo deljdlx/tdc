@@ -207,12 +207,25 @@ export default class QueryAPI {
     _getBaseValue(entityId, key) {
         const entity =
             this._state.players[entityId] ||
-            this._state.cards[entityId]
+            this._state.cards[entityId] ||
+            this._state.heroes?.[entityId]
 
         if (!entity) {
             return undefined
         }
 
         return entity.attributes ? entity.attributes[key] : undefined
+    }
+
+    /**
+     * Retourne les heros appartenant a un joueur.
+     *
+     * @param {string} playerId
+     * @returns {Object[]}
+     */
+    getHeroesForPlayer(playerId) {
+        if (!this._state.heroes) return []
+        return Object.values(this._state.heroes)
+            .filter(hero => hero.playerId === playerId)
     }
 }

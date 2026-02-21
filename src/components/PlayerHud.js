@@ -275,6 +275,81 @@ TEMPLATE.innerHTML = `
         text-align: right;
     }
 
+    /* ---- HEROES ---- */
+
+    .heroes {
+        display: flex;
+        gap: 6px;
+        padding: 6px 10px;
+        overflow-x: auto;
+    }
+
+    .hero-card {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        padding: 6px 8px;
+        border-radius: 6px;
+        background: #FAFAF7;
+        border: 1px solid #E8E6E1;
+    }
+
+    .hero-name {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #2D3436;
+    }
+
+    .hero-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .hero-label {
+        font-size: 8px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: #7F8C8D;
+        min-width: 18px;
+    }
+
+    .hero-bar {
+        flex: 1;
+        height: 6px;
+        border-radius: 3px;
+        background: #EDEBE6;
+        overflow: hidden;
+    }
+
+    .hero-bar-fill {
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.3s;
+    }
+
+    .hero-bar-fill.ap {
+        background: #7BA7CC;
+    }
+
+    .hero-bar-fill.mana {
+        background: linear-gradient(90deg, #7BAF7A, #5B8C5A);
+    }
+
+    .hero-value {
+        font-size: 9px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        color: #2D3436;
+        min-width: 24px;
+        text-align: right;
+    }
+
     /* ---- CONTENT SLOT ---- */
 
     .content {
@@ -319,6 +394,7 @@ TEMPLATE.innerHTML = `
         </div>
     </div>
 </div>
+<div class="heroes"></div>
 <div class="content">
     <slot></slot>
 </div>
@@ -327,7 +403,7 @@ TEMPLATE.innerHTML = `
 export default class PlayerHud extends HTMLElement {
 
     static get observedAttributes() {
-        return ['name', 'hp', 'max-hp', 'mana', 'max-mana', 'deck-count', 'grave-count', 'active', 'mirrored']
+        return ['name', 'hp', 'max-hp', 'mana', 'max-mana', 'deck-count', 'grave-count', 'active', 'mirrored', 'heroes']
     }
 
     constructor() {
@@ -343,7 +419,8 @@ export default class PlayerHud extends HTMLElement {
             manaGems: this.shadowRoot.querySelector('.mana-gems'),
             manaText: this.shadowRoot.querySelector('.mana-text'),
             deckVal: this.shadowRoot.querySelector('.deck-val'),
-            graveVal: this.shadowRoot.querySelector('.grave-val')
+            graveVal: this.shadowRoot.querySelector('.grave-val'),
+            heroes: this.shadowRoot.querySelector('.heroes')
         }
 
         this._els.header.addEventListener('click', () => {
@@ -381,6 +458,9 @@ export default class PlayerHud extends HTMLElement {
         // Counters
         this._els.deckVal.textContent = deckCount
         this._els.graveVal.textContent = graveCount
+
+        // Heroes
+        this._renderHeroes()
     }
 
     /**
@@ -398,6 +478,51 @@ export default class PlayerHud extends HTMLElement {
             }
             container.appendChild(gem)
         }
+    }
+
+    /** Rend les cartes hero avec barres AP et mana. */
+    _renderHeroes() {
+        const container = this._els.heroes
+        container.innerHTML = ''
+
+        const raw = this.getAttribute('heroes')
+        if (!raw) return
+
+        let heroes
+        try { heroes = JSON.parse(raw) } catch { return }
+        if (!heroes.length) return
+
+        for (const hero of heroes) {
+            const a = hero.attributes
+            const card = document.createElement('div')
+            card.className = 'hero-card'
+            card.innerHTML = this._heroCardHTML(hero.heroDefId, a)
+            container.appendChild(card)
+        }
+    }
+
+    /** @returns {string} HTML interne d'une carte hero. */
+    _heroCardHTML(defId, a) {
+        const apPct = a.maxAp ? Math.round((a.ap / a.maxAp) * 100) : 0
+        const manaPct = a.maxMana ? Math.round((a.mana / a.maxMana) * 100) : 0
+
+        return `
+            <span class="hero-name">${defId}</span>
+            <div class="hero-row">
+                <span class="hero-label">AP</span>
+                <div class="hero-bar">
+                    <div class="hero-bar-fill ap" style="width:${apPct}%"></div>
+                </div>
+                <span class="hero-value">${a.ap}/${a.maxAp}</span>
+            </div>
+            <div class="hero-row">
+                <span class="hero-label">MP</span>
+                <div class="hero-bar">
+                    <div class="hero-bar-fill mana" style="width:${manaPct}%"></div>
+                </div>
+                <span class="hero-value">${a.mana}/${a.maxMana}</span>
+            </div>
+        `
     }
 
 }

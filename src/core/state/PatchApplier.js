@@ -21,11 +21,11 @@
 const PATCH_HANDLERS = {
 
     /**
-     * SET_ATTRIBUTE — modifie un attribut d'une entité (player ou card).
+     * SET_ATTRIBUTE — modifie un attribut d'une entité (player, card ou hero).
      * payload: {key, value}
      */
     SET_ATTRIBUTE(state, target, { key, value }) {
-        // Cherche dans players puis dans cards
+        // Cherche dans players, cards puis heroes
         if (state.players[target]) {
             return {
                 ...state,
@@ -51,6 +51,22 @@ const PATCH_HANDLERS = {
                         ...state.cards[target],
                         attributes: {
                             ...state.cards[target].attributes,
+                            [key]: value
+                        }
+                    }
+                }
+            }
+        }
+
+        if (state.heroes?.[target]) {
+            return {
+                ...state,
+                heroes: {
+                    ...state.heroes,
+                    [target]: {
+                        ...state.heroes[target],
+                        attributes: {
+                            ...state.heroes[target].attributes,
                             [key]: value
                         }
                     }
@@ -114,7 +130,7 @@ const PATCH_HANDLERS = {
      */
     REMOVE_ENTITY(state, target) {
         // Cherche dans chaque collection
-        for (const collectionKey of ['players', 'cards', 'zones']) {
+        for (const collectionKey of ['players', 'cards', 'zones', 'heroes']) {
             if (state[collectionKey][target]) {
                 const { [target]: _discarded, ...rest } = state[collectionKey]
                 return {
@@ -170,7 +186,8 @@ const PATCH_HANDLERS = {
 const ENTITY_TYPE_TO_COLLECTION = {
     player: 'players',
     card: 'cards',
-    zone: 'zones'
+    zone: 'zones',
+    hero: 'heroes'
 }
 
 export default class PatchApplier {
