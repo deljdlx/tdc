@@ -19,7 +19,7 @@ TEMPLATE.innerHTML = `
 <style>
     :host {
         display: block;
-        font-family: 'Segoe UI', system-ui, sans-serif;
+        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
     }
 
     .zone {
@@ -30,7 +30,7 @@ TEMPLATE.innerHTML = `
         flex-wrap: wrap;
         align-items: flex-start;
         position: relative;
-        border-top: 1px solid rgba(255, 255, 255, 0.04);
+        border-top: 1px solid #E8E6E1;
     }
 
     /* ---- TYPE : board ---- */
@@ -44,7 +44,7 @@ TEMPLATE.innerHTML = `
 
     :host([type="hand"]) .zone {
         padding-top: 22px;
-        background: rgba(255, 255, 255, 0.015);
+        background: rgba(245, 243, 239, 0.5);
         border-radius: 0 0 6px 6px;
         justify-content: center;
     }
@@ -56,7 +56,7 @@ TEMPLATE.innerHTML = `
         top: 5px;
         left: 10px;
         font-size: 9px;
-        color: #4a5c7a;
+        color: #7F8C8D;
         text-transform: uppercase;
         letter-spacing: 1.5px;
         font-weight: 600;
@@ -68,7 +68,7 @@ TEMPLATE.innerHTML = `
         width: 100%;
         text-align: center;
         padding: 16px;
-        color: #3a4a6a;
+        color: #7F8C8D;
         font-size: 11px;
         font-style: italic;
     }
@@ -76,14 +76,14 @@ TEMPLATE.innerHTML = `
     /* ---- DROP TARGET ---- */
 
     :host([drop-hint]) .zone {
-        outline: 2px dashed rgba(74, 222, 128, 0.3);
+        outline: 2px dashed rgba(91, 140, 90, 0.3);
         outline-offset: -2px;
     }
 
     :host([drop-active]) .zone {
-        outline: 2px solid #4ade80;
+        outline: 2px solid #5B8C5A;
         outline-offset: -2px;
-        background: rgba(74, 222, 128, 0.06);
+        background: rgba(91, 140, 90, 0.06);
     }
 </style>
 

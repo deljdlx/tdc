@@ -13,22 +13,22 @@ TEMPLATE.innerHTML = `
         --life-bar-height: 12px;
         --life-bar-font: 11px;
         --life-bar-radius: 6px;
-        --life-bar-color: #22c55e;
-        --life-bar-glow: rgba(34, 197, 94, 0.35);
-        --life-fluid-core: rgba(110, 231, 183, 0.9);
-        --life-fluid-edge: rgba(21, 128, 61, 0.95);
-        --life-pulse-duration: 2.6s;
-        --life-pulse-strength: 0.15;
-        --life-shimmer-duration: 3.2s;
+        --life-bar-color: #5B8C5A;
+        --life-bar-glow: transparent;
+        --life-fluid-core: #7BAF7A;
+        --life-fluid-edge: #3D6B3C;
+        --life-pulse-duration: 0s;
+        --life-pulse-strength: 0;
+        --life-shimmer-duration: 0s;
         --life-change-boost: 0.2;
-        --life-bar-bg: #231a12;
-        --life-bar-frame: #5f4a2c;
-        --life-bar-label: #cbb898;
-        --life-bar-text: #f4e6c9;
+        --life-bar-bg: #EDEBE6;
+        --life-bar-frame: #D5D2CC;
+        --life-bar-label: #7F8C8D;
+        --life-bar-text: #2D3436;
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        font-family: 'Cinzel', 'Orbitron', serif;
+        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
         text-transform: uppercase;
         letter-spacing: 0.4px;
     }
@@ -59,196 +59,63 @@ TEMPLATE.innerHTML = `
         min-width: 36px;
         text-align: right;
         font-variant-numeric: tabular-nums;
-        text-shadow: 0 1px 4px rgba(45, 28, 12, 0.7);
     }
 
     .bar-frame {
         width: var(--life-bar-width);
         height: var(--life-bar-height);
         border-radius: var(--life-bar-radius);
-        background:
-            linear-gradient(180deg, rgba(255, 241, 214, 0.12), rgba(255, 255, 255, 0) 42%),
-            linear-gradient(180deg, #322418 0%, var(--life-bar-bg) 55%, #1a120b 100%);
-        border: 1px solid color-mix(in srgb, var(--life-bar-frame) 80%, #f6ead2 20%);
-        box-shadow:
-            inset 0 1px 1px rgba(255, 242, 214, 0.12),
-            inset 0 -1px 2px rgba(0, 0, 0, 0.5),
-            0 2px 7px rgba(28, 16, 7, 0.5),
-            0 0 calc(3px + 8px * var(--life-pulse-strength)) var(--life-bar-glow);
-        animation: glow-pulse var(--life-pulse-duration) ease-in-out infinite;
+        background: var(--life-bar-bg);
+        border: 1px solid var(--life-bar-frame);
         position: relative;
         overflow: hidden;
-        transition: box-shadow 0.25s ease, border-color 0.25s ease;
-    }
-
-    .bar-frame::before {
-        content: '';
-        position: absolute;
-        inset: 1px 2px auto 2px;
-        height: 48%;
-        border-radius: calc(var(--life-bar-radius) - 1px);
-        background: linear-gradient(180deg, rgba(255, 236, 196, 0.26), rgba(255, 255, 255, 0));
-        opacity: 0.55;
-        pointer-events: none;
-    }
-
-    .bar-frame::after {
-        content: '';
-        position: absolute;
-        inset: 1px;
-        border-radius: calc(var(--life-bar-radius) - 1px);
-        border: 1px solid rgba(244, 228, 197, 0.14);
-        pointer-events: none;
+        transition: border-color 0.25s ease;
     }
 
     .fill {
         height: 100%;
         width: 0;
         border-radius: inherit;
-        background:
-            linear-gradient(
-                90deg,
-                color-mix(in srgb, var(--life-fluid-edge) 85%, #0b1120 15%) 0%,
-                var(--life-fluid-core) 35%,
-                var(--life-bar-color) 65%,
-                color-mix(in srgb, var(--life-fluid-edge) 92%, #020617 8%) 100%
-            );
-        box-shadow:
-            inset 0 1px 2px rgba(255, 255, 255, 0.24),
-            inset 0 -2px 3px rgba(2, 6, 23, 0.3),
-            0 0 8px var(--life-bar-glow);
+        background: var(--life-bar-color);
         transition: width 0.45s cubic-bezier(0.2, 0.75, 0.25, 1), background 0.35s ease;
         position: relative;
         overflow: hidden;
     }
 
-    .fill::before {
-        content: '';
-        position: absolute;
-        inset: 1px 6% auto 6%;
-        height: 45%;
-        border-radius: inherit;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0));
-        opacity: 0.6;
-    }
-
-    .fill::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 50%);
-        mix-blend-mode: screen;
-        opacity: 0.7;
-    }
-
     .shimmer {
-        position: absolute;
-        top: 0;
-        left: -30%;
-        width: 30%;
-        height: 100%;
-        background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.12), transparent);
-        animation: sweep var(--life-shimmer-duration) ease-in-out infinite;
-        pointer-events: none;
-        opacity: 0.65;
+        display: none;
     }
 
     .scanlines {
-        position: absolute;
-        inset: 0;
-        background: repeating-linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.06) 0px,
-            rgba(255, 255, 255, 0.02) 1px,
-            transparent 2px,
-            transparent 4px
-        );
-        opacity: 0.25;
-        pointer-events: none;
-    }
-
-    :host([variant="arcade"]) .bar-frame {
-        border-color: color-mix(in srgb, var(--life-bar-frame) 80%, #f8e9cb 20%);
-        background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 38%),
-            linear-gradient(
-                180deg,
-                color-mix(in srgb, var(--life-bar-bg) 78%, #ffffff 22%) 0%,
-                var(--life-bar-bg) 56%,
-                color-mix(in srgb, var(--life-bar-bg) 88%, #0f1d13 12%) 100%
-            );
-        box-shadow:
-            inset 0 1px 1px rgba(255, 242, 214, 0.12),
-            inset 0 -1px 2px rgba(0, 0, 0, 0.5),
-            0 2px 8px rgba(28, 16, 7, 0.55),
-            0 0 calc(5px + 9px * var(--life-pulse-strength)) var(--life-bar-glow);
-    }
-
-    :host([variant="neon"]) .bar-frame {
-        border-color: #d1b57a;
-        box-shadow:
-            inset 0 1px 2px rgba(0, 0, 0, 0.65),
-            0 0 14px rgba(209, 181, 122, 0.35);
-    }
-
-    :host([variant="steel"]) .bar-frame {
-        border-color: #7b6848;
-        background: linear-gradient(180deg, #2f2519 0%, #261e14 55%, #1a130c 100%);
+        display: none;
     }
 
     :host([low]) .bar-frame {
-        border-color: rgba(183, 58, 37, 0.78);
+        border-color: #E94560;
     }
 
     .bar-frame.hp-hit {
-        animation:
-            glow-pulse var(--life-pulse-duration) ease-in-out infinite,
-            hp-hit 0.44s ease;
+        animation: hp-hit 0.44s ease;
     }
 
     .bar-frame.hp-heal {
-        animation:
-            glow-pulse var(--life-pulse-duration) ease-in-out infinite,
-            hp-heal 0.44s ease;
+        animation: hp-heal 0.44s ease;
     }
 
     :host([show-text="false"]) .value {
         display: none;
     }
 
-    @keyframes sweep {
-        0% { transform: translateX(0); }
-        50% { transform: translateX(280%); }
-        100% { transform: translateX(280%); }
-    }
-
-    @keyframes glow-pulse {
-        0%, 100% {
-            box-shadow:
-                inset 0 1px 1px rgba(255, 242, 214, 0.12),
-                inset 0 -1px 2px rgba(0, 0, 0, 0.5),
-                0 2px 7px rgba(28, 16, 7, 0.5),
-                0 0 calc(3px + 8px * var(--life-pulse-strength)) var(--life-bar-glow);
-        }
-        50% {
-            box-shadow:
-                inset 0 1px 1px rgba(255, 242, 214, 0.18),
-                inset 0 -1px 2px rgba(0, 0, 0, 0.5),
-                0 3px 9px rgba(28, 16, 7, 0.6),
-                0 0 calc(7px + 14px * var(--life-pulse-strength)) var(--life-bar-glow);
-        }
-    }
-
     @keyframes hp-hit {
-        0% { filter: saturate(1); transform: translateY(0); }
-        35% { filter: saturate(calc(1 + var(--life-change-boost))); transform: translateY(0.4px); }
-        100% { filter: saturate(1); transform: translateY(0); }
+        0% { transform: translateY(0); }
+        35% { transform: translateY(0.4px); }
+        100% { transform: translateY(0); }
     }
 
     @keyframes hp-heal {
-        0% { filter: brightness(1); transform: translateY(0); }
-        35% { filter: brightness(calc(1 + var(--life-change-boost))); transform: translateY(-0.4px); }
-        100% { filter: brightness(1); transform: translateY(0); }
+        0% { transform: translateY(0); }
+        35% { transform: translateY(-0.4px); }
+        100% { transform: translateY(0); }
     }
 </style>
 
