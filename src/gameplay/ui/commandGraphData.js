@@ -67,4 +67,20 @@ const EDGES = ALL_COMMANDS.flatMap(Cmd =>
     }))
 )
 
-export { NODES, EDGES, CATEGORY }
+/** Couleurs par categorie de noeud. */
+const CATEGORY_COLORS = {
+    [CATEGORY.GAME_FLOW]: '#00aaff',
+    [CATEGORY.PLAYER_ACTION]: '#ffcc00',
+    [CATEGORY.EFFECT]: '#a78bfa',
+    [CATEGORY.TERMINAL]: '#e94560'
+}
+
+/** Labels lisibles pour chaque categorie. */
+const CATEGORY_LABELS = {
+    [CATEGORY.GAME_FLOW]: 'Game Flow',
+    [CATEGORY.PLAYER_ACTION]: 'Player Action',
+    [CATEGORY.EFFECT]: 'Effect',
+    [CATEGORY.TERMINAL]: 'Terminal'
+}
+
+export { NODES, EDGES, CATEGORY, CATEGORY_COLORS, CATEGORY_LABELS }

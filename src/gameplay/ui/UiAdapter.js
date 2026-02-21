@@ -25,6 +25,7 @@ import DragDropManager from './DragDropManager.js'
 import GhostAnimator from './GhostAnimator.js'
 import FxController from './FxController.js'
 import CommandGraphRenderer from './CommandGraphRenderer.js'
+import { CATEGORY, CATEGORY_COLORS, CATEGORY_LABELS } from './commandGraphData.js'
 import '../../components/TcgCard.js'
 import '../../components/CardZone.js'
 import '../../components/PlayerLifeBar.js'
@@ -241,9 +242,12 @@ export default class UiAdapter {
         this._root.appendChild(trailPanel)
 
         const graphPanel = this._el('div', `panel graph-panel${this._activePanel === 'graph' ? ' active' : ''}`)
+        graphPanel.appendChild(this._renderGraphHeader())
+        const graphCanvas = this._el('div', 'graph-canvas')
+        graphPanel.appendChild(graphCanvas)
         this._root.appendChild(graphPanel)
         if (this._activePanel === 'graph') {
-            this._graphRenderer.render(graphPanel)
+            this._graphRenderer.render(graphCanvas)
         } else {
             this._graphRenderer.destroy()
         }
@@ -270,6 +274,33 @@ export default class UiAdapter {
             bar.appendChild(btn)
         }
         return bar
+    }
+
+    _renderGraphHeader() {
+        const header = this._el('div', 'graph-header')
+
+        const title = this._el('div', 'graph-title')
+        title.textContent = 'Command Graph'
+        header.appendChild(title)
+
+        const legend = this._el('div', 'graph-legend')
+        for (const cat of Object.values(CATEGORY)) {
+            const item = this._el('span', 'graph-legend-item')
+            const dot = this._el('span', 'graph-legend-dot')
+            dot.style.backgroundColor = CATEGORY_COLORS[cat]
+            item.appendChild(dot)
+            item.appendChild(document.createTextNode(CATEGORY_LABELS[cat]))
+            legend.appendChild(item)
+        }
+
+        const dashItem = this._el('span', 'graph-legend-item')
+        const dashLine = this._el('span', 'graph-legend-dash')
+        dashItem.appendChild(dashLine)
+        dashItem.appendChild(document.createTextNode('Conditional'))
+        legend.appendChild(dashItem)
+
+        header.appendChild(legend)
+        return header
     }
 
     _renderControls(activePlayer, isGameOver) {

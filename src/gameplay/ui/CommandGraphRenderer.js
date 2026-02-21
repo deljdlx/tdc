@@ -7,16 +7,16 @@
 
 import cytoscape from 'cytoscape'
 import dagre from 'cytoscape-dagre'
-import { NODES, EDGES, CATEGORY } from './commandGraphData.js'
+import { NODES, EDGES, CATEGORY, CATEGORY_COLORS } from './commandGraphData.js'
 
 cytoscape.use(dagre)
 
-/** Couleurs par categorie de noeud. */
-const CATEGORY_COLORS = {
-    [CATEGORY.GAME_FLOW]: '#00aaff',
-    [CATEGORY.PLAYER_ACTION]: '#ffcc00',
-    [CATEGORY.EFFECT]: '#a78bfa',
-    [CATEGORY.TERMINAL]: '#e94560'
+/** Bordures plus foncees par categorie, pour donner du relief. */
+const CATEGORY_BORDER_COLORS = {
+    [CATEGORY.GAME_FLOW]: '#0080cc',
+    [CATEGORY.PLAYER_ACTION]: '#d4a000',
+    [CATEGORY.EFFECT]: '#7c5fc7',
+    [CATEGORY.TERMINAL]: '#c0324a'
 }
 
 export default class CommandGraphRenderer {
@@ -40,7 +40,7 @@ export default class CommandGraphRenderer {
                 edgeSep: 30,
                 animate: false,
                 fit: true,
-                padding: 20
+                padding: 30
             },
             style: this._buildStyle(),
             userZoomingEnabled: true,
@@ -68,50 +68,71 @@ export default class CommandGraphRenderer {
                     'text-valign': 'center',
                     'text-halign': 'center',
                     'font-size': '11px',
+                    'font-weight': '600',
+                    'font-family': "'Orbitron', 'Cinzel', sans-serif",
                     'color': '#ffffff',
-                    'text-outline-color': '#1a1a1a',
                     'text-outline-width': 2,
-                    'width': 110,
-                    'height': 40,
+                    'text-outline-opacity': 0.5,
+                    'width': 130,
+                    'height': 44,
                     'shape': 'round-rectangle',
                     'border-width': 2,
-                    'border-color': '#4a4a4a'
+                    'background-opacity': 0.92,
+                    'shadow-blur': 10,
+                    'shadow-offset-x': 0,
+                    'shadow-offset-y': 3,
+                    'shadow-opacity': 0.2
                 }
             },
             ...this._categorySelectors(),
             {
                 selector: 'edge',
                 style: {
-                    'width': 2,
-                    'line-color': '#6a6a6a',
-                    'target-arrow-color': '#6a6a6a',
+                    'width': 1.5,
+                    'line-color': '#8fb08d',
+                    'target-arrow-color': '#6a9468',
                     'target-arrow-shape': 'triangle',
+                    'arrow-scale': 0.9,
                     'curve-style': 'bezier',
                     'label': 'data(label)',
-                    'font-size': '9px',
-                    'color': '#a0a0a0',
+                    'font-size': '8px',
+                    'font-family': "'Exo 2', 'Trebuchet MS', sans-serif",
+                    'color': '#4a6a4e',
                     'text-rotation': 'autorotate',
-                    'text-outline-color': '#1a1a1a',
-                    'text-outline-width': 1.5
+                    'text-background-color': '#e9f6e3',
+                    'text-background-opacity': 0.85,
+                    'text-background-shape': 'roundrectangle',
+                    'text-background-padding': '3px'
                 }
             },
             {
                 selector: 'edge[?conditional]',
                 style: {
                     'line-style': 'dashed',
-                    'line-dash-pattern': [6, 3],
-                    'line-color': '#e9456080',
-                    'target-arrow-color': '#e9456080'
+                    'line-dash-pattern': [6, 4],
+                    'line-color': '#d4a0a8',
+                    'target-arrow-color': '#c07882',
+                    'color': '#8a4a52'
                 }
             }
         ]
     }
 
-    /** @returns {Array} Selecteurs de couleur par categorie. */
+    /** @returns {Array} Selecteurs de couleur et relief par categorie. */
     _categorySelectors() {
-        return Object.entries(CATEGORY_COLORS).map(([cat, color]) => ({
-            selector: `node[category = "${cat}"]`,
-            style: { 'background-color': color }
-        }))
+        return Object.entries(CATEGORY_COLORS).flatMap(([cat, color]) => {
+            const borderColor = CATEGORY_BORDER_COLORS[cat]
+            const isLight = cat === CATEGORY.PLAYER_ACTION
+            return [{
+                selector: `node[category = "${cat}"]`,
+                style: {
+                    'background-color': color,
+                    'border-color': borderColor,
+                    'text-outline-color': borderColor,
+                    'shadow-color': color,
+                    ...(isLight ? { 'color': '#3a3000', 'text-outline-color': '#f5e6b8' } : {})
+                }
+            }]
+        })
     }
 }

@@ -5,6 +5,23 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-21
 
+### style(ui): polish command graph panel design
+
+**Agent**: `claude` | **PR**: —
+
+Amelioration du design du panneau graphe de commandes pour un
+rendu plus professionnel et coherent avec le theme nature de l'app.
+
+- Noeuds : ombres, bordures colorees par categorie, texte lisible
+  (blanc avec outline categorie, doré fonce sur nœuds jaunes),
+  police Orbitron, taille agrandie (130×44)
+- Aretes : couleur vert nature (#8fb08d), labels avec fond pill
+  semi-transparent, aretes conditionnelles rose saumon
+- Panneau : barre de titre "Command Graph" + legende des categories
+  avec pastilles colorees et indicateur de trait conditionnel
+- Donnees : CATEGORY_COLORS et CATEGORY_LABELS exportes depuis
+  commandGraphData.js pour reutilisation dans la legende
+
 ### fix(ui): reinitialiser les petales apres reset FX
 
 **Agent**: `codex` | **PR**: —
