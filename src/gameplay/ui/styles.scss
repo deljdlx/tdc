@@ -9,16 +9,16 @@
 @use 'sass:color';
 @use 'fonts' as fonts;
 
-$bg-dark: #d7ebcf;
-$bg-mid: #bcdcb5;
-$bg-card: #e9f6e3;
-$accent: #56b88b;
-$gold: #f0b972;
-$text: #233429;
-$text-dim: #567062;
-$border: #8fb08d;
-$leaf: #7fbe74;
-$blossom: #efb9cd;
+$bg-dark: #c8cfc2;
+$bg-mid: #d4d8d0;
+$bg-card: #e6e8e2;
+$accent: #3d7a5a;
+$gold: #d4a24c;
+$text: #2a3029;
+$text-dim: #6b7065;
+$border: #9a9e96;
+$leaf: #5a9e6e;
+$blossom: #d4a0a8;
 
 $tab-bar-height: 46px;
 
@@ -87,14 +87,14 @@ $desktop: 1280px;
 
 body {
     background:
-        radial-gradient(circle at 14% 12%, rgba($gold, 0.24) 0%, rgba($gold, 0) 48%),
-        radial-gradient(circle at 86% 10%, rgba($accent, 0.24) 0%, rgba($accent, 0) 54%),
-        radial-gradient(circle at 76% 74%, rgba($leaf, 0.2) 0%, rgba($leaf, 0) 48%),
+        radial-gradient(circle at 14% 12%, rgba($gold, 0.18) 0%, rgba($gold, 0) 48%),
+        radial-gradient(circle at 86% 10%, rgba($accent, 0.12) 0%, rgba($accent, 0) 50%),
+        radial-gradient(circle at 76% 74%, rgba($blossom, 0.10) 0%, rgba($blossom, 0) 48%),
         linear-gradient(
             160deg,
-            color.adjust($bg-dark, $lightness: 4%) 0%,
+            color.adjust($bg-dark, $lightness: 3%) 0%,
             $bg-mid 56%,
-            color.adjust($leaf, $lightness: -14%) 100%
+            color.adjust($bg-dark, $lightness: -6%) 100%
         );
     color: $text;
     font-family: fonts.$font-family-base;
@@ -107,8 +107,8 @@ body::before {
     inset: 0;
     pointer-events: none;
     background:
-        linear-gradient(transparent 0%, rgba($bg-dark, 0.08) 36%, rgba($leaf, 0.2) 100%),
-        radial-gradient(circle at 50% 118%, rgba($blossom, 0.22) 0%, rgba($blossom, 0) 58%);
+        linear-gradient(transparent 0%, rgba($bg-dark, 0.06) 36%, rgba($accent, 0.06) 100%),
+        radial-gradient(circle at 50% 118%, rgba($blossom, 0.14) 0%, rgba($blossom, 0) 58%);
     z-index: 1;
 }
 
@@ -159,8 +159,8 @@ body::before {
         );
     border: 1px solid rgba($gold, 0.18);
     box-shadow:
-        0 12px 30px rgba(black, 0.38),
-        inset 0 1px 0 rgba(white, 0.08);
+        0 4px 12px rgba(black, 0.18),
+        inset 0 1px 0 rgba(white, 0.06);
     backdrop-filter: blur(8px);
     z-index: 200;
 }
@@ -184,7 +184,7 @@ body::before {
     color: color.adjust($text-dim, $lightness: 6%);
     font-size: 11px;
     font-weight: 600;
-    font-family: fonts.$font-family-display;
+    font-family: fonts.$font-family-heading;
     letter-spacing: 0.7px;
     text-transform: uppercase;
     cursor: pointer;
@@ -284,44 +284,25 @@ body::before {
 
 .btn {
     padding: 10px 20px;
-    border: 1px solid rgba(white, 0.24);
-    border-bottom: 3px solid rgba(black, 0.48);
-    border-radius: 3px;
+    border: 1px solid rgba(black, 0.12);
+    border-radius: 6px;
     cursor: pointer;
     font-size: 12px;
     font-weight: 700;
-    font-family: fonts.$font-family-display;
+    font-family: fonts.$font-family-heading;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    text-shadow: 0 1px 2px rgba(black, 0.45);
+    letter-spacing: 0.6px;
+    text-shadow: 0 1px 1px rgba(black, 0.15);
     position: relative;
     overflow: hidden;
     transition: transform 0.12s, box-shadow 0.22s, border-color 0.2s, background 0.2s;
 
-    &::before {
-        content: '';
-        position: absolute;
-        inset: -40% -20% auto -20%;
-        height: 80%;
-        background: linear-gradient(120deg, transparent, rgba(white, 0.2), transparent);
-        opacity: 0;
-        transform: translateY(-10px);
-        transition: opacity 0.25s, transform 0.35s;
-        pointer-events: none;
-    }
-
     &:hover:not(:disabled) {
         transform: translateY(-1px);
-
-        &::before {
-            opacity: 0.9;
-            transform: translateY(4px);
-        }
     }
 
     &:active:not(:disabled) {
-        transform: translateY(2px) scale(0.98);
-        border-bottom-width: 2px;
+        transform: translateY(0px) scale(0.98);
     }
 
     &:disabled {
@@ -346,47 +327,43 @@ body::before {
 .btn-primary {
     background: linear-gradient(
         165deg,
-        color.adjust($accent, $lightness: 16%) 0%,
-        color.adjust($accent, $lightness: 4%) 36%,
-        color.adjust($accent, $lightness: -6%) 100%
+        color.adjust($accent, $lightness: 14%) 0%,
+        $accent 40%,
+        color.adjust($accent, $lightness: -8%) 100%
     );
     color: white;
-    border-color: color.adjust($accent, $lightness: -15%);
-    border-top-color: color.adjust($accent, $lightness: 14%);
+    border-color: color.adjust($accent, $lightness: -12%);
     box-shadow:
-        0 6px 14px rgba($accent, 0.32),
-        inset 0 1px 0 rgba(white, 0.25);
+        0 2px 6px rgba($accent, 0.25),
+        inset 0 1px 0 rgba(white, 0.18);
 
     &:hover:not(:disabled) {
         box-shadow:
-            0 8px 18px rgba($accent, 0.38),
-            inset 0 1px 0 rgba(white, 0.3);
+            0 4px 10px rgba($accent, 0.30),
+            inset 0 1px 0 rgba(white, 0.22);
         filter: brightness(1.06);
-        border-color: color.adjust($accent, $lightness: 2%);
+        border-color: color.adjust($accent, $lightness: -4%);
     }
 }
 
 .btn-secondary {
     background: linear-gradient(
         160deg,
-        color.adjust($bg-card, $lightness: 16%) 0%,
-        color.adjust($bg-card, $lightness: 6%) 42%,
-        color.adjust($bg-card, $lightness: -8%) 100%
+        color.adjust($bg-card, $lightness: 4%) 0%,
+        $bg-card 45%,
+        color.adjust($bg-card, $lightness: -6%) 100%
     );
     color: $text;
-    border-color: color.adjust($bg-card, $lightness: -8%);
-    border-top-color: color.adjust($bg-card, $lightness: 16%);
+    border-color: color.adjust($border, $lightness: -6%);
     box-shadow:
-        0 6px 14px rgba($bg-card, 0.35),
-        inset 0 1px 0 rgba(white, 0.12);
+        0 2px 6px rgba(black, 0.08),
+        inset 0 1px 0 rgba(white, 0.10);
 
     &:hover:not(:disabled) {
         box-shadow:
-            0 8px 18px rgba($bg-card, 0.45),
-            0 0 18px rgba($gold, 0.2),
-            inset 0 1px 0 rgba(white, 0.16);
-        border-top-color: rgba($gold, 0.35);
-        filter: brightness(1.12) saturate(1.05);
+            0 3px 8px rgba(black, 0.12),
+            inset 0 1px 0 rgba(white, 0.14);
+        filter: brightness(1.04);
     }
 }
 
@@ -394,7 +371,7 @@ body::before {
     color: $gold;
     font-size: 12px;
     margin-left: 8px;
-    font-family: fonts.$font-family-display;
+    font-family: fonts.$font-family-heading;
 }
 
 // =====================
@@ -444,13 +421,12 @@ body::before {
     font-size: 16px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
-    text-shadow: 0 2px 4px rgba(black, 0.5);
+    text-shadow: 0 1px 3px rgba(black, 0.35);
     border-radius: 6px;
     border: 1px solid color.adjust($accent, $lightness: -12%);
-    border-top-color: color.adjust($accent, $lightness: 10%);
     box-shadow:
-        0 0 16px rgba($accent, 0.3),
-        inset 0 1px 0 rgba(white, 0.15);
+        0 0 10px rgba($accent, 0.2),
+        inset 0 1px 0 rgba(white, 0.12);
     margin-bottom: 8px;
     font-family: fonts.$font-family-heading;
 }
