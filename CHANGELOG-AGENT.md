@@ -5,6 +5,15 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-21
 
+### style(ui): HUD joueur printanier et harmonise
+
+**Agent**: `codex` | **PR**: —
+
+Le HUD joueur adopte une direction printaniere plus lumineuse
+(fond vegetal clair, accents feuille et floral, compteurs adoucis)
+et la barre de vie arcade suit des variables de theme pour rester
+coherente avec la palette globale.
+
 ### feat(fx): fond animé discret avec pétales de cerisiers
 
 **Agent**: `copilot` | **PR**: #39
