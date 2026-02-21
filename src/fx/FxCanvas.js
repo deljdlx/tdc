@@ -48,14 +48,18 @@ export default class FxCanvas {
         this._canvas.className = 'fx-canvas'
         this._ctx = this._canvas.getContext('2d')
 
+        const mountParent = fullscreen ? document.body : parent
+
         if (fullscreen) {
+            this._canvas.classList.add('fx-canvas--background')
             this._canvas.style.position = 'fixed'
             this._canvas.style.top = '0'
             this._canvas.style.left = '0'
+        } else {
+            parent.style.position = 'relative'
         }
 
-        parent.style.position = 'relative'
-        parent.appendChild(this._canvas)
+        mountParent.appendChild(this._canvas)
 
         this._resize()
         this._onResize = () => this._resize()
