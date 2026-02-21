@@ -6,6 +6,10 @@
 
 export default class EndTurnCommand {
     static type = 'END_TURN'
+    static category = 'game_flow'
+    static edges = [
+        { target: 'START_TURN', label: 'START_TURN_INTENT' }
+    ]
 
     constructor(payload) {
         this.payload = payload

@@ -8,6 +8,8 @@
 
 export default class CheckWinConditionCommand {
     static type = 'CHECK_WIN_CONDITION'
+    static category = 'terminal'
+    static edges = []
 
     constructor(payload) {
         this.payload = payload

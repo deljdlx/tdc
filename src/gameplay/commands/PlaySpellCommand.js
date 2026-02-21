@@ -9,6 +9,11 @@ import { CardType } from '../definitions/cards.js'
 
 export default class PlaySpellCommand {
     static type = 'PLAY_SPELL'
+    static category = 'player_action'
+    static edges = [
+        { target: 'DEAL_DAMAGE_EFFECT', label: 'RESOLVE_DEAL_DAMAGE' },
+        { target: 'RESTORE_HP_EFFECT', label: 'RESOLVE_RESTORE_HP' }
+    ]
 
     constructor(payload) {
         this.payload = payload

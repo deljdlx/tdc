@@ -9,6 +9,10 @@
 
 export default class StartTurnCommand {
     static type = 'START_TURN'
+    static category = 'game_flow'
+    static edges = [
+        { target: 'DRAW_CARDS', label: 'DRAW_CARDS' }
+    ]
 
     constructor(payload) {
         this.payload = payload

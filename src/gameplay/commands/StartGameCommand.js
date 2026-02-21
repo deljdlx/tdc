@@ -12,6 +12,10 @@ const ZONE_TYPES = ['deck', 'hand', 'board', 'graveyard']
 
 export default class StartGameCommand {
     static type = 'START_GAME'
+    static category = 'game_flow'
+    static edges = [
+        { target: 'DRAW_CARDS', label: 'DRAW_CARDS' }
+    ]
 
     constructor(payload) {
         this.payload = payload || {}

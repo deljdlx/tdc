@@ -7,6 +7,11 @@
 
 export default class DealDamageCommand {
     static type = 'DEAL_DAMAGE_EFFECT'
+    static category = 'effect'
+    static edges = [
+        { target: 'CHECK_WIN_CONDITION', label: 'player damage' },
+        { target: 'DESTROY_CREATURE', label: 'hp \u2264 0', conditional: true }
+    ]
 
     constructor(payload) {
         this.payload = payload
