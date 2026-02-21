@@ -5,6 +5,20 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-21
 
+### feat(fx): fond animé discret avec pétales de cerisiers
+
+**Agent**: `copilot` | **PR**: #39
+
+Ajout d'un effet de fond permanent de pétales de cerisiers animés sur le
+canvas. L'effet utilise un système physique avec chute verticale (20-50px/s),
+oscillation horizontale sinusoïdale et rotation progressive. Chaque pétale a
+une taille aléatoire (3-7px), une opacité variable (0.4-0.8) et une couleur
+parmi 5 variations rose/blanc. La densité est contrôlée (0.3 pétales par
+10k px²) pour un rendu discret qui n'interfère pas avec le gameplay.
+
+**Impact**: nouvel effet `CherryBlossoms.js` compatible avec le système FxCanvas
+existant, spawn automatique dans `UiAdapter` au démarrage.
+
 ### refactor(commands): graphe de commandes auto-genere depuis les metadonnees
 
 **Agent**: `claude` | **PR**: —
