@@ -51,10 +51,9 @@ export default class StartGameCommand {
             }
         }
 
-        // Initialiser les attributs des joueurs
+        // Initialiser les attributs des joueurs (mana pour les sorts)
         for (const playerId of playerIds) {
             patches.push(
-                { type: 'SET_ATTRIBUTE', target: playerId, payload: { key: 'hp', value: 20 } },
                 { type: 'SET_ATTRIBUTE', target: playerId, payload: { key: 'mana', value: 0 } },
                 { type: 'SET_ATTRIBUTE', target: playerId, payload: { key: 'maxMana', value: 0 } }
             )
@@ -77,11 +76,14 @@ export default class StartGameCommand {
                             playerId,
                             attributes: {
                                 hp: def.hp,
+                                maxHp: def.hp,
+                                power: def.power,
                                 ap: 0,
                                 maxAp: def.maxAp,
                                 mana: 0,
                                 maxMana: 0,
-                                speed: def.speed
+                                speed: def.speed,
+                                hasAttacked: false
                             }
                         }
                     }
@@ -108,12 +110,8 @@ export default class StartGameCommand {
                             zoneId,
                             attributes: {
                                 cost: def.cost,
-                                ...(def.power != null ? { power: def.power } : {}),
-                                ...(def.hp != null ? { hp: def.hp } : {}),
                                 ...(def.effect ? { effect: def.effect, effectPayload: JSON.stringify(def.effectPayload) } : {}),
-                                type: def.type,
-                                hasAttacked: false,
-                                summoningSickness: false
+                                type: def.type
                             },
                             visibilityOverride: null
                         }

@@ -1,13 +1,12 @@
 /**
- * Définitions des cartes du scénario Hearthstone simplifié.
+ * Définitions des cartes (sorts uniquement).
  *
- * 5 créatures + 2 sorts = 7 cartes.
+ * Les créatures ont été remplacées par les héros.
  * Chaque définition est un template immuable.
  * Les instances de cartes sont créées au setup avec des IDs uniques.
  */
 
 export const CardType = Object.freeze({
-    CREATURE: 'creature',
     SPELL: 'spell'
 })
 
@@ -15,49 +14,6 @@ export const CardType = Object.freeze({
  * @type {Object[]} Définitions de toutes les cartes du jeu
  */
 export const CARD_DEFINITIONS = Object.freeze([
-    // Créatures
-    {
-        id: 'RECRUIT',
-        name: 'Recruit',
-        type: CardType.CREATURE,
-        cost: 1,
-        power: 1,
-        hp: 2
-    },
-    {
-        id: 'FIGHTER',
-        name: 'Fighter',
-        type: CardType.CREATURE,
-        cost: 2,
-        power: 2,
-        hp: 3
-    },
-    {
-        id: 'ARCHER',
-        name: 'Archer',
-        type: CardType.CREATURE,
-        cost: 2,
-        power: 3,
-        hp: 1
-    },
-    {
-        id: 'GUARDIAN',
-        name: 'Guardian',
-        type: CardType.CREATURE,
-        cost: 3,
-        power: 1,
-        hp: 5
-    },
-    {
-        id: 'CHAMPION',
-        name: 'Champion',
-        type: CardType.CREATURE,
-        cost: 5,
-        power: 4,
-        hp: 5
-    },
-
-    // Sorts
     {
         id: 'FIREBALL',
         name: 'Fireball',

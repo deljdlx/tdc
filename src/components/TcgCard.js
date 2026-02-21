@@ -495,8 +495,8 @@ export default class TcgCard extends HTMLElement {
         // Effect text
         this._els.effect.textContent = effect
 
-        // Stats (creatures only)
-        if (type === 'creature' && power !== null && hp !== null) {
+        // Stats (heroes)
+        if ((type === 'creature' || type === 'hero') && power !== null && hp !== null) {
             this._els.stats.innerHTML =
                 `<span class="stat power">${power}</span>` +
                 `<span class="stat hp">${hp}</span>`

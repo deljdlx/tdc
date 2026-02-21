@@ -9,11 +9,10 @@ import Engine from '../core/engine/Engine.js'
 import StartGameCommand from './commands/StartGameCommand.js'
 import StartTurnCommand from './commands/StartTurnCommand.js'
 import DrawCardsCommand from './commands/DrawCardsCommand.js'
-import PlayCreatureCommand from './commands/PlayCreatureCommand.js'
+import DestroyHeroCommand from './commands/DestroyHeroCommand.js'
 import PlaySpellCommand from './commands/PlaySpellCommand.js'
 import AttackCommand from './commands/AttackCommand.js'
 import EndTurnCommand from './commands/EndTurnCommand.js'
-import DestroyCreatureCommand from './commands/DestroyCreatureCommand.js'
 import DealDamageCommand from './commands/DealDamageCommand.js'
 import RestoreHpCommand from './commands/RestoreHpCommand.js'
 import CheckWinConditionCommand from './commands/CheckWinConditionCommand.js'
@@ -40,11 +39,10 @@ export function createGame({ seed = 42, player1 = 'player1', player2 = 'player2'
     engine.commandRegistry.register(StartGameCommand)
     engine.commandRegistry.register(StartTurnCommand)
     engine.commandRegistry.register(DrawCardsCommand)
-    engine.commandRegistry.register(PlayCreatureCommand)
     engine.commandRegistry.register(PlaySpellCommand)
     engine.commandRegistry.register(AttackCommand)
     engine.commandRegistry.register(EndTurnCommand)
-    engine.commandRegistry.register(DestroyCreatureCommand)
+    engine.commandRegistry.register(DestroyHeroCommand)
     engine.commandRegistry.register(DealDamageCommand)
     engine.commandRegistry.register(RestoreHpCommand)
     engine.commandRegistry.register(CheckWinConditionCommand)
@@ -58,8 +56,8 @@ export function createGame({ seed = 42, player1 = 'player1', player2 = 'player2'
         return new StartTurnCommand(intent.payload)
     })
 
-    engine.intentResolver.register('DESTROY_CREATURE', (intent) => {
-        return new DestroyCreatureCommand(intent.payload)
+    engine.intentResolver.register('DESTROY_HERO', (intent) => {
+        return new DestroyHeroCommand(intent.payload)
     })
 
     engine.intentResolver.register('RESOLVE_DEAL_DAMAGE', (intent) => {

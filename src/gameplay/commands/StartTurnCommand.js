@@ -4,7 +4,7 @@
  * - maxMana += 1 (cap à 10)
  * - mana courant = maxMana
  * - piocher 1 carte
- * - reset summoning sickness et hasAttacked des créatures du joueur actif
+ * - reset hasAttacked des héros du joueur actif
  */
 
 export default class StartTurnCommand {
@@ -41,26 +41,16 @@ export default class StartTurnCommand {
             { type: 'SET_ATTRIBUTE', target: playerId, payload: { key: 'mana', value: newMaxMana } }
         )
 
-        // Reset hasAttacked et summoning sickness pour les créatures du joueur sur le board
-        const boardCards = ctx.query.getCardsInZone(`board_${playerId}`)
-        for (const card of boardCards) {
-            patches.push(
-                { type: 'SET_ATTRIBUTE', target: card.id, payload: { key: 'hasAttacked', value: false } },
-                { type: 'SET_ATTRIBUTE', target: card.id, payload: { key: 'summoningSickness', value: false } }
-            )
-        }
-
-        // Recharger AP et mana des heros du joueur actif
+        // Recharger AP, mana et reset hasAttacked des heros du joueur actif
         const heroes = ctx.query.getHeroesForPlayer(playerId)
         for (const hero of heroes) {
             const currentAp = hero.attributes.ap || 0
             const speed = hero.attributes.speed || 0
             const maxAp = hero.attributes.maxAp || 0
-            patches.push({
-                type: 'SET_ATTRIBUTE',
-                target: hero.id,
-                payload: { key: 'ap', value: Math.min(currentAp + speed, maxAp) }
-            })
+            patches.push(
+                { type: 'SET_ATTRIBUTE', target: hero.id, payload: { key: 'ap', value: Math.min(currentAp + speed, maxAp) } },
+                { type: 'SET_ATTRIBUTE', target: hero.id, payload: { key: 'hasAttacked', value: false } }
+            )
 
             const heroMaxMana = Math.min((hero.attributes.maxMana || 0) + 1, 10)
             patches.push(

@@ -2,7 +2,7 @@
  * CheckWinConditionCommand — vérifie si un joueur a perdu.
  *
  * Conditions de défaite :
- * - HP ≤ 0
+ * - Tous les héros du joueur sont morts
  * - Deck vide au moment de piocher
  */
 
@@ -21,17 +21,17 @@ export default class CheckWinConditionCommand {
 
     apply(state) {
         const { loserId, reason } = this.payload
-        const player = state.players[loserId]
 
-        if (!player) {
+        if (!state.players[loserId]) {
             return { patches: [], domainEvents: [], intents: [] }
         }
 
-        // Vérifier si la condition de défaite est effective
         let hasLost = false
 
-        if (reason === 'hp_zero' && player.attributes.hp <= 0) {
-            hasLost = true
+        if (reason === 'heroes_dead') {
+            const remaining = Object.values(state.heroes || {})
+                .filter(h => h.playerId === loserId)
+            hasLost = remaining.length === 0
         }
 
         if (reason === 'deck_empty') {
@@ -42,7 +42,6 @@ export default class CheckWinConditionCommand {
             return { patches: [], domainEvents: [], intents: [] }
         }
 
-        // Trouver le gagnant
         const winnerId = Object.keys(state.players).find(id => id !== loserId)
 
         return {

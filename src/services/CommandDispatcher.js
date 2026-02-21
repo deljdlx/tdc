@@ -9,7 +9,6 @@
  * Réutilisable par tous les adapters.
  */
 
-import PlayCreatureCommand from '../gameplay/commands/PlayCreatureCommand.js'
 import PlaySpellCommand from '../gameplay/commands/PlaySpellCommand.js'
 import AttackCommand from '../gameplay/commands/AttackCommand.js'
 import EndTurnCommand from '../gameplay/commands/EndTurnCommand.js'
@@ -30,24 +29,11 @@ export default class CommandDispatcher {
     }
 
     /**
-     * Joue une créature.
-     *
-     * @param {string} playerId
-     * @param {string} cardId
-     */
-    playCreature(playerId, cardId) {
-        this._engine.enqueueCommand(new PlayCreatureCommand({
-            playerId,
-            cardId
-        }))
-    }
-
-    /**
      * Joue un sort.
      *
      * @param {string} playerId
      * @param {string} cardId
-     * @param {string} [targetId] - ID de la cible (joueur ou créature)
+     * @param {string} [targetId] - ID de la cible (héro)
      */
     playSpell(playerId, cardId, targetId) {
         this._engine.enqueueCommand(new PlaySpellCommand({
@@ -58,11 +44,11 @@ export default class CommandDispatcher {
     }
 
     /**
-     * Attaque avec une créature.
+     * Attaque avec un héro.
      *
      * @param {string} playerId
-     * @param {string} attackerId
-     * @param {string} targetId - ID de la cible (joueur ou créature)
+     * @param {string} attackerId - ID du héro attaquant
+     * @param {string} targetId - ID du héro cible
      */
     attack(playerId, attackerId, targetId) {
         this._engine.enqueueCommand(new AttackCommand({

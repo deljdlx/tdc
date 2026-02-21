@@ -1,16 +1,15 @@
 /**
- * DealDamageCommand — inflige des dégâts à une cible (créature ou joueur).
+ * DealDamageCommand — inflige des dégâts à un héro.
  *
  * Résout l'effet DEAL_DAMAGE du sort Fireball.
- * Vérifie la mort de la créature / la défaite du joueur.
+ * Vérifie la mort du héro après les dégâts.
  */
 
 export default class DealDamageCommand {
     static type = 'DEAL_DAMAGE_EFFECT'
     static category = 'effect'
     static edges = [
-        { target: 'CHECK_WIN_CONDITION', label: 'player damage' },
-        { target: 'DESTROY_CREATURE', label: 'hp \u2264 0', conditional: true }
+        { target: 'DESTROY_HERO', label: 'hp ≤ 0', conditional: true }
     ]
 
     constructor(payload) {
@@ -19,64 +18,37 @@ export default class DealDamageCommand {
 
     validate(state) {
         const { targetId } = this.payload
-        if (!state.players[targetId] && !state.cards[targetId]) {
-            return { valid: false, reason: `Target "${targetId}" not found` }
+        if (!state.heroes?.[targetId]) {
+            return { valid: false, reason: `Hero "${targetId}" not found` }
         }
         return { valid: true }
     }
 
     apply(state, ctx) {
         const { targetId, amount } = this.payload
-        const patches = []
-        const domainEvents = []
+
+        const currentHp = ctx.query.query(targetId, 'hp')
+        const newHp = currentHp - amount
+
+        const patches = [{
+            type: 'SET_ATTRIBUTE',
+            target: targetId,
+            payload: { key: 'hp', value: newHp }
+        }]
+
+        const domainEvents = [{
+            type: 'DAMAGE_DEALT',
+            payload: { targetId, amount, targetType: 'hero' },
+            sourceCommandType: 'DEAL_DAMAGE_EFFECT'
+        }]
+
         const intents = []
-
-        const targetPlayer = state.players[targetId]
-
-        if (targetPlayer) {
-            // Dégâts au joueur
-            patches.push({
-                type: 'SET_ATTRIBUTE',
-                target: targetId,
-                payload: { key: 'hp', value: targetPlayer.attributes.hp - amount }
-            })
-
-            domainEvents.push({
-                type: 'DAMAGE_DEALT',
-                payload: { targetId, amount, targetType: 'player' },
-                sourceCommandType: 'DEAL_DAMAGE_EFFECT'
-            })
-
+        if (newHp <= 0) {
             intents.push({
-                type: 'CHECK_WIN_CONDITION',
-                payload: { reason: 'hp_zero', loserId: targetId },
+                type: 'DESTROY_HERO',
+                payload: { heroId: targetId, playerId: state.heroes[targetId].playerId },
                 source: 'DEAL_DAMAGE_EFFECT'
             })
-        } else {
-            // Dégâts à une créature
-            const currentHp = ctx.query.query(targetId, 'hp')
-            const newHp = currentHp - amount
-
-            patches.push({
-                type: 'SET_ATTRIBUTE',
-                target: targetId,
-                payload: { key: 'hp', value: newHp }
-            })
-
-            domainEvents.push({
-                type: 'DAMAGE_DEALT',
-                payload: { targetId, amount, targetType: 'creature' },
-                sourceCommandType: 'DEAL_DAMAGE_EFFECT'
-            })
-
-            if (newHp <= 0) {
-                const card = state.cards[targetId]
-                intents.push({
-                    type: 'DESTROY_CREATURE',
-                    payload: { cardId: targetId, ownerId: card.ownerId },
-                    source: 'DEAL_DAMAGE_EFFECT'
-                })
-            }
         }
 
         return { patches, domainEvents, intents }
