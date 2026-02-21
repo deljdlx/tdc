@@ -1,7 +1,7 @@
 # Instructions Changelog Agents IA
 
 Ce document definit le format commun pour documenter les changements dans `CHANGELOG-AGENT.md`.
-Tous les agents (claude, copilot, codex) doivent suivre ce format.
+Tous les agents (claude, copilot, codex, gemini) doivent suivre ce format.
 
 ## Principes
 
@@ -28,7 +28,7 @@ Explication en 1-3 phrases: pourquoi ce changement, contexte si necessaire.
 | `type` | Categorie du changement (voir types ci-dessous) | `feat`, `fix` |
 | `scope` | Module ou zone affectee (court) | `fx`, `ui`, `core`, `docs` |
 | `description courte` | Resume en < 70 caracteres | `particules configurables` |
-| `Agent` | Identifiant de l'agent, minuscules, sans espace | `claude`, `copilot`, `codex` |
+| `Agent` | Identifiant de l'agent, minuscules, sans espace | `claude`, `copilot`, `codex`, `gemini` |
 | `PR` | Numero de la PR ou `—` si pas de PR | `#25`, `—` |
 | Description libre | 1-3 phrases: pourquoi, contexte | texte libre |
 
@@ -82,7 +82,7 @@ Adoucissement des teintes pour un rendu plus agreable.
 
 ## Regles
 
-1. **Identification obligatoire**: chaque entree doit contenir le champ `Agent` avec l'identifiant exact de l'agent (`claude`, `copilot`, `codex`). Jamais d'agent anonyme.
+1. **Identification obligatoire**: chaque entree doit contenir le champ `Agent` avec l'identifiant exact de l'agent (`claude`, `copilot`, `codex`, `gemini`). Jamais d'agent anonyme.
 2. **Placement**: inserer l'entree sous la section de date du jour. Si la date n'existe pas, creer la section en haut du fichier.
 3. **Quand documenter**:
    - **Obligatoire** quand l'utilisateur demande de "publier" (ou equivalent: "publish", "merge", "envoie la PR"). Mettre a jour le changelog **avant** de creer la PR.

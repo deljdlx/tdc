@@ -1,17 +1,17 @@
 # AI Agent Instructions (Shared)
 
-Ce fichier est le socle commun pour tous les agents (Claude, Copilot, Codex).
+Ce fichier est le socle commun pour tous les agents (Claude, Copilot, Codex, Gemini).
 Objectif: mutualiser les regles communes et eviter les divergences.
 
 ## Regles critiques (bloquantes)
 
 1. Interdiction de `git commit` et `git push` sur la branche `main`, sauf si l'utilisateur le demande expressement.
-2. `git commit` et `git push` sont autorises uniquement sur une branche dediee d'agent (`codex/*`, `claude/*`, `copilot/*`).
+2. `git commit` et `git push` sont autorises uniquement sur une branche dediee d'agent (`codex/*`, `claude/*`, `copilot/*`, `gemini/*`).
 3. Si l'agent n'est pas sur une branche dediee d'agent, il doit s'arreter et demander avant toute operation `commit/push`.
 4. Exception: Si l'utilisateur demande explicitement de merger et pusher sur `main`, l'agent peut executer ces operations.
 5. Avant tout merge vers `main`, l'agent doit mettre a jour sa branche de travail avec `origin/main` (rebase).
 6. Le merge vers `main` passe par une **Pull Request** via `gh pr create`, puis squash merge via `gh pr merge --squash`.
-7. Le titre de la PR doit etre prefixe par le nom de l'agent (`codex: ...`, `claude: ...`, `copilot: ...`).
+7. Le titre de la PR doit etre prefixe par le nom de l'agent (`codex: ...`, `claude: ...`, `copilot: ...`, `gemini: ...`).
 8. Ne jamais merger localement vers `main`. Toujours utiliser le workflow PR GitHub.
 9. Apres merge reussi de la PR, l'agent doit supprimer sa branche de travail locale (`git branch -d`). La branche remote est supprimee automatiquement par GitHub (via `--delete-branch`). Ne pas faire de `git push origin --delete` ni de `git fetch -p` manuellement.
 10. Si l'utilisateur demande de "publier le code" (ou formulation equivalente), suivre le **workflow de publication** (section 7).
@@ -52,8 +52,8 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 4. Si aucun worktree isole n'est disponible, l'agent doit demander avant de continuer.
 5. Le working tree principal est accessible en lecture/ecriture pour les edits de code uniquement, sauf demande explicite de mode autonome (voir regle 9).
 6. Chaque agent utilise un **worktree fixe unique** defini dans son fichier d'instructions specifique (ex: `/tmp/tgc-claude-worktree`). Ne pas creer un nouveau worktree par feature: reutiliser le meme worktree en changeant de branche entre les taches. Cela preserve `node_modules` et permet de lancer build/test/lint sans reinstallation.
-7. Convention de nommage des branches: `AGENT_NAME/FEATURE_NAME` (ex: `claude/fix-drag-drop`, `codex/add-tests`, `copilot/refactor-ui`).
-8. Convention de titre de PR: prefixer par `AGENT_NAME:` (ex: `claude: fix drag and drop`, `codex: improve button design`, `copilot: refactor ui adapter`).
+7. Convention de nommage des branches: `AGENT_NAME/FEATURE_NAME` (ex: `claude/fix-drag-drop`, `codex/add-tests`, `copilot/refactor-ui`, `gemini/add-feature`).
+8. Convention de titre de PR: prefixer par `AGENT_NAME:` (ex: `claude: fix drag and drop`, `codex: improve button design`, `copilot: refactor ui adapter`, `gemini: add feature`).
 9. Un agent ne travaille que dans ses propres branches. Interdit d'editer ou merger une branche d'un autre agent.
 10. Si l'utilisateur demande "en autonomie" (ou formulation equivalente: "mode autonome", "travaille en autonome", "fais-le en autonomie"), l'agent DOIT travailler dans son worktree isole uniquement.
 11. En mode autonome, l'agent DOIT utiliser une branche dediee a son nom au format `AGENT_NAME/FEATURE_NAME` dans son worktree isole.
@@ -150,7 +150,7 @@ Quand un agent recoit une tache en mode autonome, il execute les etapes suivante
 
 ### Etape 1 — Lecture des instructions
 
-1. Lire son fichier d'instructions specifique (`CLAUDE.md`, `AGENTS.md`, ou `.github/copilot-instructions.md`).
+1. Lire son fichier d'instructions specifique (`CLAUDE.md`, `AGENTS.md`, `.github/copilot-instructions.md`, ou `GEMINI.md`).
 2. Lire `doc/ai-agent-instructions.md` (ce fichier).
 3. Lire `doc/ai-code-style.md`.
 4. Confirmer la lecture de ces fichiers dans la reponse.
