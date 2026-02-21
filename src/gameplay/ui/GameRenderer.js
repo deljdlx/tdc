@@ -5,7 +5,7 @@
  * Permet de réutiliser le rendu même quand on change la logique.
  */
 
-import { CardType, getCardDefinition } from '../../gameplay/definitions/cards.js'
+import { CardType, getCardDefinition } from '../definitions/cards.js'
 
 export default class GameRenderer {
     /**

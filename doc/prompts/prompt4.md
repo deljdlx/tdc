@@ -41,7 +41,7 @@ REPLAY
 LIVRABLES
 =====================
 
-src/adapters/ui-dev/
+src/gameplay/ui/
 
 - index.html
 - main.js

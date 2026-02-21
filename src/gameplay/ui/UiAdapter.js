@@ -12,12 +12,12 @@
  * - FxController : effets visuels centralisés
  */
 
-import { startGame, createGame } from '../../gameplay/setup.js'
-import PlayCreatureCommand from '../../gameplay/commands/PlayCreatureCommand.js'
-import PlaySpellCommand from '../../gameplay/commands/PlaySpellCommand.js'
-import AttackCommand from '../../gameplay/commands/AttackCommand.js'
-import EndTurnCommand from '../../gameplay/commands/EndTurnCommand.js'
-import { getCardDefinition, CardType } from '../../gameplay/definitions/cards.js'
+import { startGame, createGame } from '../setup.js'
+import PlayCreatureCommand from '../commands/PlayCreatureCommand.js'
+import PlaySpellCommand from '../commands/PlaySpellCommand.js'
+import AttackCommand from '../commands/AttackCommand.js'
+import EndTurnCommand from '../commands/EndTurnCommand.js'
+import { getCardDefinition, CardType } from '../definitions/cards.js'
 import FxCanvas from '../../fx/FxCanvas.js'
 import MouseTrail from '../../fx/MouseTrail.js'
 import DragDropManager from './DragDropManager.js'

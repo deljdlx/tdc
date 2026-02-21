@@ -45,7 +45,7 @@ Objectif: produire un code tres lisible, coherent, et facile a review pour un hu
    - rendering pur
    - orchestration
    - IO / side effects
-4. Les modules "adapters/ui-dev" ne doivent pas repliquer la logique metier.
+4. Les modules "gameplay/ui" ne doivent pas repliquer la logique metier.
 5. Le moteur (`core/`) reste la source de verite des regles de jeu.
 
 ## 5. Commentaires et docs in-code
