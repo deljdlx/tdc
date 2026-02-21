@@ -142,6 +142,49 @@ export default class FxController {
     }
 
     /**
+     * Effet de défense (bouclier bleu/argent).
+     */
+    fxDefend(target) {
+        const { x, y } = this._centerOf(target)
+        this._canvas.spawn(new ShockwaveRing({
+            x, y,
+            color: '#60a5fa',
+            maxRadius: 80,
+            duration: 0.5,
+            rings: 2,
+            lineWidth: 3
+        }))
+        this._canvas.spawn(new ParticleBurst({
+            x, y,
+            colors: ['#60a5fa', '#93c5fd', '#c0c0c0', '#ffffff'],
+            count: 20,
+            speed: 100,
+            duration: 0.6,
+            size: 4
+        }))
+    }
+
+    /**
+     * Effet d'activation de pouvoir (doré).
+     */
+    fxPower(target) {
+        const { x, y } = this._centerOf(target)
+        this._canvas.spawn(new ArcaneOrbitBurst({
+            x, y,
+            count: 16,
+            duration: 0.6
+        }))
+        this._canvas.spawn(new ParticleBurst({
+            x, y,
+            colors: ['#fbbf24', '#f59e0b', '#fde68a', '#ffffff'],
+            count: 24,
+            speed: 160,
+            duration: 0.5,
+            size: 4
+        }))
+    }
+
+    /**
      * Effet de brûlure / feu sur une cible.
      */
     fxBurn(target) {

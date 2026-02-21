@@ -12,6 +12,8 @@
 import PlaySpellCommand from '../gameplay/commands/PlaySpellCommand.js'
 import AttackCommand from '../gameplay/commands/AttackCommand.js'
 import EndTurnCommand from '../gameplay/commands/EndTurnCommand.js'
+import DefendCommand from '../gameplay/commands/DefendCommand.js'
+import UsePowerCommand from '../gameplay/commands/UsePowerCommand.js'
 
 export default class CommandDispatcher {
     /**
@@ -66,6 +68,36 @@ export default class CommandDispatcher {
     endTurn(playerId) {
         this._engine.enqueueCommand(new EndTurnCommand({
             playerId
+        }))
+    }
+
+    /**
+     * Un hero se defend.
+     *
+     * @param {string} playerId
+     * @param {string} heroId
+     */
+    defend(playerId, heroId) {
+        this._engine.enqueueCommand(new DefendCommand({
+            playerId,
+            heroId
+        }))
+    }
+
+    /**
+     * Un hero utilise un pouvoir.
+     *
+     * @param {string} playerId
+     * @param {string} heroId
+     * @param {string} powerId
+     * @param {string} [targetId]
+     */
+    usePower(playerId, heroId, powerId, targetId) {
+        this._engine.enqueueCommand(new UsePowerCommand({
+            playerId,
+            heroId,
+            powerId,
+            targetId
         }))
     }
 

@@ -4,7 +4,8 @@
  * - maxMana += 1 (cap à 10)
  * - mana courant = maxMana
  * - piocher 1 carte
- * - reset hasAttacked des héros du joueur actif
+ * - reset hasActed, armor, isDefending des héros du joueur actif
+ * - nettoyer les buffs expirés
  */
 
 export default class StartTurnCommand {
@@ -41,16 +42,42 @@ export default class StartTurnCommand {
             { type: 'SET_ATTRIBUTE', target: playerId, payload: { key: 'mana', value: newMaxMana } }
         )
 
-        // Recharger AP, mana et reset hasAttacked des heros du joueur actif
+        // Recharger AP, mana et reset action state des heros du joueur actif
         const heroes = ctx.query.getHeroesForPlayer(playerId)
+        const turnNumber = state.turnState.turnNumber
+
         for (const hero of heroes) {
             const currentAp = hero.attributes.ap || 0
             const speed = hero.attributes.speed || 0
             const maxAp = hero.attributes.maxAp || 0
             patches.push(
                 { type: 'SET_ATTRIBUTE', target: hero.id, payload: { key: 'ap', value: Math.min(currentAp + speed, maxAp) } },
-                { type: 'SET_ATTRIBUTE', target: hero.id, payload: { key: 'hasAttacked', value: false } }
+                { type: 'SET_ATTRIBUTE', target: hero.id, payload: { key: 'hasActed', value: false } },
+                { type: 'SET_ATTRIBUTE', target: hero.id, payload: { key: 'armor', value: 0 } },
+                { type: 'SET_ATTRIBUTE', target: hero.id, payload: { key: 'isDefending', value: false } }
             )
+
+            // Nettoyer les buffs expirés
+            const buffs = JSON.parse(hero.attributes.activeBuffs || '[]')
+            const remaining = []
+            for (const buff of buffs) {
+                if (buff.expiresTurn <= turnNumber) {
+                    patches.push({
+                        type: 'SET_ATTRIBUTE',
+                        target: hero.id,
+                        payload: { key: buff.attribute, value: (hero.attributes[buff.attribute] || 0) - buff.delta }
+                    })
+                } else {
+                    remaining.push(buff)
+                }
+            }
+            if (buffs.length > 0) {
+                patches.push({
+                    type: 'SET_ATTRIBUTE',
+                    target: hero.id,
+                    payload: { key: 'activeBuffs', value: JSON.stringify(remaining) }
+                })
+            }
 
             const heroMaxMana = Math.min((hero.attributes.maxMana || 0) + 1, 10)
             patches.push(
