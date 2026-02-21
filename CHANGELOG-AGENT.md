@@ -15,6 +15,15 @@ decrire leurs dependances directement dans le code. Le fichier
 de ces metadonnees au lieu de donnees hardcodees. Inclut le fix
 d'espacement des noeuds (nodeSep/rankSep augmentes).
 
+### style(ui): theme printanier global pour l'interface
+
+**Agent**: `codex` | **PR**: —
+
+Refonte de la palette principale vers des tons printaniers (verts doux,
+creme et accents floraux) avec ajustement des degrades de fond et des
+contrastes de navigation. L'objectif est un rendu plus lumineux, naturel
+et chaleureux sans modifier le comportement du jeu.
+
 ### style(ui): bordures visibles et CSS refactoré pour les cartes
 
 **Agent**: `copilot` | **PR**: #35
