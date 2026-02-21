@@ -20,6 +20,7 @@ import EndTurnCommand from '../commands/EndTurnCommand.js'
 import { getCardDefinition, CardType } from '../definitions/cards.js'
 import FxCanvas from '../../fx/FxCanvas.js'
 import MouseTrail from '../../fx/MouseTrail.js'
+import CherryBlossoms from '../../fx/CherryBlossoms.js'
 import DragDropManager from './DragDropManager.js'
 import GhostAnimator from './GhostAnimator.js'
 import FxController from './FxController.js'
@@ -81,6 +82,9 @@ export default class UiAdapter {
     /** @type {Object} Surcharges manuelles des paramètres du trail */
     _mouseTrailOverrides
 
+    /** @type {CherryBlossoms|null} Effet de fond permanent de pétales */
+    _cherryBlossoms
+
     constructor(rootElement) {
         this._root = rootElement
         this._eventLog = []
@@ -98,7 +102,9 @@ export default class UiAdapter {
         this._cardModal = this._createCardModal()
         this._trailStatusMessage = ''
         this._graphRenderer = new CommandGraphRenderer()
+        this._cherryBlossoms = null
 
+        this._setupBackgroundEffects()
         this._setupMouseTrail()
         this._setupCardInspect()
         this._dragDropManager.init()
@@ -142,6 +148,14 @@ export default class UiAdapter {
                     card.zoneId?.startsWith('board_'),
             })
         })
+    }
+
+    /**
+     * Configure les effets de fond permanents (pétales, etc.)
+     */
+    _setupBackgroundEffects() {
+        this._cherryBlossoms = new CherryBlossoms({ density: 0.3 })
+        this._fx.spawn(this._cherryBlossoms)
     }
 
     /**
