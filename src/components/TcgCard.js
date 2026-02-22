@@ -333,25 +333,11 @@ TEMPLATE.innerHTML = `
     }
 
     /* ==================================================
-       DEFENDING & TARGETABLE STATES
+       DEFENDING STATE
        ================================================== */
 
     .card-border.defending {
         background: #60a5fa;
-    }
-
-    .card-border.targetable {
-        background: #F0A030;
-        animation: targetPulse 1s ease-in-out infinite;
-    }
-
-    .frame.targetable {
-        cursor: pointer;
-    }
-
-    @keyframes targetPulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.7; }
     }
 
     /* ==================================================
@@ -409,7 +395,7 @@ export default class TcgCard extends HTMLElement {
             'name', 'cost', 'type', 'power', 'hp', 'effect',
             'definition-id', 'playable', 'can-attack', 'selected',
             'summoning-sickness', 'has-acted', 'is-defending',
-            'armor', 'targetable'
+            'armor'
         ]
     }
 
@@ -565,14 +551,12 @@ export default class TcgCard extends HTMLElement {
         const isPlayable = this.hasAttribute('playable')
         const isCanAttack = this.hasAttribute('can-attack')
         const isSelected = this.hasAttribute('selected')
-        const isTargetable = this.hasAttribute('targetable')
 
         // Border classes (affect gradient color)
         border.classList.toggle('spell', isSpell)
         border.classList.toggle('playable', isPlayable)
         border.classList.toggle('can-attack', isCanAttack)
         border.classList.toggle('selected', isSelected)
-        border.classList.toggle('targetable', isTargetable)
         border.classList.toggle('defending', defending)
 
         // Frame classes (affect inner content and states)
@@ -580,7 +564,6 @@ export default class TcgCard extends HTMLElement {
         frame.classList.toggle('playable', isPlayable)
         frame.classList.toggle('can-attack', isCanAttack)
         frame.classList.toggle('selected', isSelected)
-        frame.classList.toggle('targetable', isTargetable)
         frame.classList.toggle('defending', defending)
         frame.classList.toggle('sick', sick)
         frame.classList.toggle('exhausted', done)
