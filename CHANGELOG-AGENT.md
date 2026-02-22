@@ -5,23 +5,24 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-22
 
-### style(ui): template d'ecran uniforme et skinnable
+### style(ui): template d'ecran uniforme avec cadre skinnable
 
 **Agent**: `claude` | **PR**: #68
 
 Mise en place d'un systeme de theming via CSS custom properties
-(prefixees `--theme-`) et d'un template d'ecran uniforme partage
-par tous les ecrans de menu (Home, Heroes, Deck, Splash).
+(`--theme-*` pour la palette, `--frame-*` pour le cadre) et d'un
+template d'ecran uniforme partage par les 4 ecrans de menu.
 
-Le template comprend : barre de navigation avec logo et titre,
-bandeau decoratif "hero section" avec ornement, et zone de contenu.
-Les ecrans utilisent `screenLayout()` de kit.js qui compose ces
-elements automatiquement. Changer de theme (dark, neon, etc.)
-revient a redefinir les custom properties sur `:root`.
+Le template comprend : cadre decoratif (`frame()`) avec double
+bordure, coins ornementes L-shape et lisere gradient tri-couleur ;
+barre de navigation avec logo et titre ; bandeau "hero section"
+avec ornement losange ; zone de contenu scrollable. Changer de
+skin revient a redefinir les custom properties sur `:root`.
 
 **Impact**: les classes CSS `.screen-header`, `.screen-back-btn`,
 `.screen-title` sont remplacees par `.screen-nav`, `.screen-nav-back`,
-`.screen-nav-title`.
+`.screen-nav-title`. Nouvelle classe `.screen-frame` avec 12
+custom properties `--frame-*`.
 
 ## 2026-02-21
 
