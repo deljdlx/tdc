@@ -82,9 +82,73 @@ $desktop: 1280px;
     box-sizing: border-box;
 }
 
-// Tailles de cartes responsive via CSS variables
+// =====================
+// THEME — CSS custom properties (skinnable)
+// =====================
+// Pour changer de theme : redefinir ces proprietes sur :root
+// ou via une classe (.theme-dark, .theme-neon, etc.)
+
 :root {
-    // Mobile petit écran
+    // Palette
+    --theme-primary: #{$primary};
+    --theme-primary-light: #{$primary-light};
+    --theme-primary-dark: #{$primary-dark};
+    --theme-secondary: #{$secondary};
+    --theme-secondary-light: #{$secondary-light};
+    --theme-secondary-dark: #{$secondary-dark};
+    --theme-tertiary: #{$tertiary};
+    --theme-accent: #8b5cf6;
+
+    // Surfaces
+    --theme-bg-page: #{$bg-page};
+    --theme-bg-surface: #{$bg-surface};
+    --theme-bg-raised: #{$bg-raised};
+    --theme-bg-muted: #{$bg-muted};
+
+    // Texte
+    --theme-text: #{$text};
+    --theme-text-dim: #{$text-dim};
+
+    // Bordures
+    --theme-border: #{$border};
+    --theme-border-light: #{$border-light};
+
+    // Signaux
+    --theme-danger: #{$danger};
+    --theme-warning: #{$warning};
+    --theme-success: #{$success};
+
+    // Ombres
+    --theme-shadow-sm: #{$shadow-1};
+    --theme-shadow-md: #{$shadow-2};
+    --theme-shadow-lg: #{$shadow-3};
+    --theme-shadow-xl: #{$shadow-4};
+
+    // Rayons de bordure
+    --theme-radius-sm: 6px;
+    --theme-radius-md: 10px;
+    --theme-radius-lg: 16px;
+
+    // Fontes
+    --theme-font-base: #{fonts.$font-family-base};
+    --theme-font-heading: #{fonts.$font-family-heading};
+
+    // Cadre d'ecran (skinnable)
+    --frame-border-width: 2px;
+    --frame-border-color: #{$primary-light};
+    --frame-inner-border-color: #{$border-light};
+    --frame-corner-size: 18px;
+    --frame-corner-thickness: 2px;
+    --frame-corner-color: #{$primary};
+    --frame-radius: 14px;
+    --frame-shadow: #{$shadow-4};
+    --frame-bg: #{$bg-surface};
+    --frame-accent-from: #{$primary};
+    --frame-accent-via: #{$secondary};
+    --frame-accent-to: #{$tertiary};
+    --frame-margin: 12px;
+
+    // Tailles de cartes responsive
     --card-width: 80px;
     --card-gap: 6px;
     --zone-padding: 8px;
@@ -115,9 +179,9 @@ $desktop: 1280px;
 }
 
 body {
-    background: $bg-page;
-    color: $text;
-    font-family: fonts.$font-family-base;
+    background: var(--theme-bg-page);
+    color: var(--theme-text);
+    font-family: var(--theme-font-base);
     font-size: 14px;
 }
 
@@ -645,146 +709,397 @@ body {
 }
 
 // =====================
-// UI KIT — composants reutilisables
 // =====================
+// UI KIT — template d'ecran uniforme (skinnable)
+// =====================
+
+// =====================
+// SCREEN FRAME — cadre decoratif skinnable
+// =====================
+// Personnaliser via les custom properties --frame-* sur :root
+// ou via un selecteur specifique (.screen-frame.dark-theme)
+
+.screen-frame {
+    position: relative;
+    margin: var(--frame-margin);
+    border: var(--frame-border-width) solid var(--frame-border-color);
+    border-radius: var(--frame-radius);
+    background: var(--frame-bg);
+    box-shadow: var(--frame-shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    // Lisere decoratif en haut du cadre (gradient tri-couleur)
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(
+            90deg,
+            var(--frame-accent-from),
+            var(--frame-accent-via),
+            var(--frame-accent-to)
+        );
+        z-index: 2;
+    }
+
+    // Bordure interieure (double cadre)
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 4px;
+        border: 1px solid var(--frame-inner-border-color);
+        border-radius: calc(var(--frame-radius) - 5px);
+        pointer-events: none;
+        z-index: 1;
+    }
+}
+
+// Conteneur des 4 coins decoratifs
+.screen-frame-corners {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+}
+
+// Coin decoratif (L-shape)
+.screen-frame-corner {
+    position: absolute;
+    width: var(--frame-corner-size);
+    height: var(--frame-corner-size);
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        background: var(--frame-corner-color);
+    }
+
+    // Branche horizontale
+    &::before {
+        height: var(--frame-corner-thickness);
+        width: 100%;
+    }
+
+    // Branche verticale
+    &::after {
+        width: var(--frame-corner-thickness);
+        height: 100%;
+    }
+
+    // Top-left
+    &:nth-child(1) {
+        top: 6px;
+        left: 6px;
+        &::before { top: 0; left: 0; }
+        &::after { top: 0; left: 0; }
+    }
+
+    // Top-right
+    &:nth-child(2) {
+        top: 6px;
+        right: 6px;
+        &::before { top: 0; right: 0; }
+        &::after { top: 0; right: 0; }
+    }
+
+    // Bottom-left
+    &:nth-child(3) {
+        bottom: 6px;
+        left: 6px;
+        &::before { bottom: 0; left: 0; }
+        &::after { bottom: 0; left: 0; }
+    }
+
+    // Bottom-right
+    &:nth-child(4) {
+        bottom: 6px;
+        right: 6px;
+        &::before { bottom: 0; right: 0; }
+        &::after { bottom: 0; right: 0; }
+    }
+}
+
+// Contenu du cadre (positionne au-dessus de ::after)
+.screen-frame-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+// Ornement horizontal
+.screen-ornament {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 280px;
+
+    &::before,
+    &::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            var(--theme-border) 40%,
+            var(--theme-primary-light) 50%,
+            var(--theme-border) 60%,
+            transparent
+        );
+    }
+}
+
+.screen-ornament-diamond {
+    width: 8px;
+    height: 8px;
+    background: var(--theme-primary-light);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+// Navigation bar (bandeau haut)
+.screen-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    background: var(--theme-bg-surface);
+    border-bottom: 1px solid var(--theme-border-light);
+    box-shadow: var(--theme-shadow-sm);
+    position: relative;
+    z-index: 10;
+    animation: screenNavIn 0.35s ease-out;
+}
+
+.screen-nav-back {
+    padding: 6px 14px;
+    border: 1px solid var(--theme-border);
+    border-radius: var(--theme-radius-sm);
+    background: transparent;
+    color: var(--theme-text-dim);
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--theme-font-heading);
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+    &:hover {
+        background: var(--theme-bg-muted);
+        color: var(--theme-text);
+        border-color: var(--theme-text-dim);
+    }
+
+    &::before {
+        content: '\2190';
+        margin-right: 6px;
+    }
+}
+
+.screen-nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.screen-nav-logo {
+    font-size: 16px;
+    font-weight: 800;
+    font-family: var(--theme-font-heading);
+    letter-spacing: 3px;
+    color: var(--theme-primary-dark);
+}
+
+.screen-nav-sep {
+    width: 1px;
+    height: 16px;
+    background: var(--theme-border);
+}
+
+.screen-nav-title {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: var(--theme-font-heading);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--theme-text-dim);
+}
 
 // Layout ecran generique
 .screen {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 16px;
 }
 
-.screen-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
+// Section hero de l'ecran (bandeau decoratif sous la nav)
+.screen-hero {
+    padding: 24px 20px;
+    text-align: center;
+    background: linear-gradient(
+        180deg,
+        var(--theme-bg-surface) 0%,
+        var(--theme-bg-page) 100%
+    );
+    border-bottom: 1px solid var(--theme-border-light);
+    animation: screenHeroIn 0.4s ease-out;
 }
 
-.screen-back-btn {
-    padding: 6px 16px;
-    border: 1px solid $border;
-    border-radius: 6px;
-    background: $bg-surface;
-    color: $text-dim;
+.screen-hero-title {
+    font-size: 26px;
+    font-weight: 800;
+    font-family: var(--theme-font-heading);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--theme-primary-dark);
+    margin-bottom: 4px;
+}
+
+.screen-hero-subtitle {
     font-size: 12px;
     font-weight: 600;
-    font-family: fonts.$font-family-heading;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-
-    &:hover {
-        background: $bg-muted;
-        color: $text;
-    }
-}
-
-.screen-title {
-    font-size: 22px;
-    font-weight: 800;
-    font-family: fonts.$font-family-heading;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: $primary-dark;
+    color: var(--theme-text-dim);
+}
+
+// Corps de l'ecran (contenu scrollable)
+.screen-body {
+    flex: 1;
+    padding: 20px;
+    animation: screenBodyIn 0.45s ease-out;
 }
 
 // Grille responsive avec largeur min configurable
 .screen-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(var(--grid-min, 160px), 1fr));
-    gap: 14px;
-    animation: gridFadeIn 0.4s ease-out;
+    gap: 16px;
+}
+
+// Compteur d'elements dans la grille
+.screen-count {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    color: var(--theme-text-dim);
+    text-transform: uppercase;
+    margin-bottom: 14px;
 }
 
 // Carte generique avec hover
 .card {
-    border-radius: 12px;
-    background: $bg-surface;
-    border: 1px solid $border;
-    box-shadow: $shadow-2;
+    border-radius: var(--theme-radius-md);
+    background: var(--theme-bg-surface);
+    border: 1px solid var(--theme-border);
+    box-shadow: var(--theme-shadow-md);
     overflow: hidden;
-    transition: transform 0.15s, box-shadow 0.2s;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 
     &:hover {
-        transform: translateY(-3px);
-        box-shadow: $shadow-3;
+        transform: translateY(-4px);
+        box-shadow: var(--theme-shadow-lg);
+        border-color: var(--theme-primary-light);
     }
 }
 
 // Badges de stats
 .stat-badge {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 26px;
-    height: 20px;
+    min-width: 28px;
+    height: 22px;
+    padding: 0 6px;
     border-radius: 4px;
     font-size: 11px;
     font-weight: 800;
     color: white;
+    letter-spacing: 0.3px;
 }
 
-.stat-badge--power { background: $danger; }
-.stat-badge--hp { background: $primary; }
-.stat-badge--speed { background: $tertiary; }
-.stat-badge--ap { background: $warning; }
-.stat-badge--mana { background: #8b5cf6; }
+.stat-badge--power { background: var(--theme-danger); }
+.stat-badge--hp { background: var(--theme-primary); }
+.stat-badge--speed { background: var(--theme-tertiary); }
+.stat-badge--ap { background: var(--theme-warning); }
+.stat-badge--mana { background: var(--theme-accent); }
 
 // Boutons reutilisables
 .ui-btn {
     display: inline-block;
-    border-radius: 8px;
+    border-radius: var(--theme-radius-sm);
     font-weight: 700;
-    font-family: fonts.$font-family-heading;
+    font-family: var(--theme-font-heading);
     text-transform: uppercase;
     cursor: pointer;
     transition: transform 0.15s, box-shadow 0.2s, background 0.2s, color 0.2s, border-color 0.2s;
 
     &:active {
-        transform: translateY(0) scale(0.98);
+        transform: translateY(0) scale(0.97);
     }
 }
 
 .ui-btn--primary {
     padding: 12px 48px;
     border: none;
-    background: $secondary;
+    background: var(--theme-secondary);
     color: white;
     font-size: 15px;
     letter-spacing: 1.5px;
-    box-shadow: $shadow-2;
+    box-shadow: var(--theme-shadow-md);
 
     &:hover {
         transform: translateY(-2px) scale(1.03);
-        box-shadow: $shadow-3;
-        background: $secondary-light;
+        box-shadow: var(--theme-shadow-lg);
+        background: var(--theme-secondary-light);
     }
 
     &:active {
-        box-shadow: $shadow-1;
+        box-shadow: var(--theme-shadow-sm);
     }
 }
 
 .ui-btn--secondary {
     padding: 8px 36px;
-    border: 1px solid $border;
+    border: 1px solid var(--theme-border);
     background: transparent;
-    color: $text-dim;
+    color: var(--theme-text-dim);
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 1.2px;
 
     &:hover {
         transform: translateY(-1px);
-        color: $text;
-        border-color: $text-dim;
+        color: var(--theme-text);
+        border-color: var(--theme-text-dim);
     }
 }
 
-@keyframes gridFadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+@keyframes screenNavIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes screenHeroIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes screenBodyIn {
+    from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -797,36 +1112,46 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    background: linear-gradient(
+        160deg,
+        var(--theme-bg-surface) 0%,
+        var(--theme-bg-page) 50%,
+        var(--theme-bg-muted) 100%
+    );
 }
 
 .splash-content {
     text-align: center;
-    animation: splashFadeIn 0.6s ease-out;
+    animation: splashFadeIn 0.8s ease-out;
 }
 
 .splash-title {
-    font-size: 56px;
+    font-size: 64px;
     font-weight: 800;
-    font-family: fonts.$font-family-heading;
-    letter-spacing: 6px;
-    color: $primary-dark;
+    font-family: var(--theme-font-heading);
+    letter-spacing: 8px;
+    color: var(--theme-primary-dark);
 }
 
 .splash-subtitle {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
-    letter-spacing: 3px;
+    letter-spacing: 4px;
     text-transform: uppercase;
-    color: $text-dim;
+    color: var(--theme-text-dim);
     margin-top: 4px;
 }
 
+.splash-ornament {
+    margin: 20px auto;
+}
+
 .splash-loader {
-    width: 180px;
-    height: 4px;
-    margin: 28px auto 0;
+    width: 200px;
+    height: 3px;
+    margin: 8px auto 0;
     border-radius: 2px;
-    background: $border-light;
+    background: var(--theme-border-light);
     overflow: hidden;
 }
 
@@ -834,14 +1159,14 @@ body {
     width: 100%;
     height: 100%;
     border-radius: 2px;
-    background: $secondary;
+    background: linear-gradient(90deg, var(--theme-primary), var(--theme-secondary));
     transform-origin: left;
     animation: splashLoad 2s ease-in-out forwards;
 }
 
 @keyframes splashFadeIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(16px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes splashLoad {
@@ -858,34 +1183,40 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    background: linear-gradient(
+        160deg,
+        var(--theme-bg-surface) 0%,
+        var(--theme-bg-page) 50%,
+        var(--theme-bg-muted) 100%
+    );
 }
 
 .home-card {
     text-align: center;
-    padding: 40px 48px;
-    border-radius: 16px;
-    background: $bg-surface;
-    border: 1px solid $border;
-    box-shadow: $shadow-4;
-    animation: homeSlideUp 0.4s ease-out;
+    padding: 44px 52px;
+    animation: homeSlideUp 0.5s ease-out;
 }
 
 .home-title {
-    font-size: 48px;
+    font-size: 52px;
     font-weight: 800;
-    font-family: fonts.$font-family-heading;
-    letter-spacing: 5px;
-    color: $primary-dark;
+    font-family: var(--theme-font-heading);
+    letter-spacing: 6px;
+    color: var(--theme-primary-dark);
 }
 
 .home-subtitle {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
-    letter-spacing: 2.5px;
+    letter-spacing: 3px;
     text-transform: uppercase;
-    color: $text-dim;
+    color: var(--theme-text-dim);
     margin-top: 2px;
-    margin-bottom: 28px;
+    margin-bottom: 8px;
+}
+
+.home-ornament {
+    margin-bottom: 24px;
 }
 
 .home-buttons {
@@ -896,7 +1227,7 @@ body {
 }
 
 @keyframes homeSlideUp {
-    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+    from { opacity: 0; transform: translateY(24px) scale(0.95); }
     to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
@@ -904,21 +1235,37 @@ body {
 // HEROES SCREEN (specifique)
 // =====================
 
+.hero-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 14px 16px;
+    cursor: default;
+}
+
 .hero-portrait {
-    width: 72px;
-    height: 72px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    background: $bg-muted center / cover no-repeat;
-    border: 2px solid $border-light;
-    margin-bottom: 10px;
+    background: var(--theme-bg-muted) center / cover no-repeat;
+    border: 3px solid var(--theme-border-light);
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    .card:hover & {
+        border-color: var(--theme-primary-light);
+        box-shadow: 0 2px 12px rgba(91, 140, 90, 0.2);
+    }
 }
 
 .hero-name {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
-    font-family: fonts.$font-family-heading;
-    color: $text;
-    margin-bottom: 8px;
+    font-family: var(--theme-font-heading);
+    color: var(--theme-text);
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
 }
 
 .hero-stats {
@@ -928,51 +1275,48 @@ body {
     justify-content: center;
 }
 
-// Hero card — extends .card avec centrage
-.hero-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 16px 12px;
-}
-
 // =====================
 // DECK SCREEN (specifique)
 // =====================
 
 .deck-card-art {
     position: relative;
-    height: 100px;
-    background: $bg-muted center / cover no-repeat;
+    height: 110px;
+    background: var(--theme-bg-muted) center / cover no-repeat;
+    transition: transform 0.3s ease;
+
+    .card:hover & {
+        transform: scale(1.03);
+    }
 }
 
 .deck-card-cost {
     position: absolute;
     top: 8px;
     left: 8px;
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    background: #8b5cf6;
+    background: var(--theme-accent);
     color: white;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: $shadow-1;
+    box-shadow: 0 2px 6px rgba(139, 92, 246, 0.35);
 }
 
 .deck-card-body {
-    padding: 10px 12px;
+    padding: 12px 14px;
 }
 
 .deck-card-name {
     font-size: 14px;
     font-weight: 700;
-    font-family: fonts.$font-family-heading;
-    color: $text;
-    margin-bottom: 2px;
+    font-family: var(--theme-font-heading);
+    color: var(--theme-text);
+    margin-bottom: 3px;
 }
 
 .deck-card-type {
@@ -980,13 +1324,13 @@ body {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.8px;
-    color: $text-dim;
+    color: var(--theme-text-dim);
     margin-bottom: 6px;
 }
 
 .deck-card-effect {
     font-size: 12px;
-    color: $secondary-dark;
+    color: var(--theme-secondary-dark);
     font-weight: 500;
 }
 

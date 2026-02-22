@@ -22,9 +22,15 @@ export default class DeckScreen {
             .map(c => this._cardTile(c))
             .join('')
 
-        root.innerHTML = screenLayout('Collection', grid(cards, { minWidth: '180px' }))
+        const count = `<div class="screen-count">${CARD_DEFINITIONS.length} spells</div>`
 
-        root.querySelector('.screen-back-btn')
+        root.innerHTML = screenLayout(
+            'Collection',
+            count + grid(cards, { minWidth: '180px' }),
+            { subtitle: 'Browse your spell library' }
+        )
+
+        root.querySelector('.js-back')
             .addEventListener('click', () => this._router.navigate('home'))
     }
 

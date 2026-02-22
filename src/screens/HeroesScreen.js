@@ -21,9 +21,15 @@ export default class HeroesScreen {
             .map(h => this._heroCard(h))
             .join('')
 
-        root.innerHTML = screenLayout('Heroes', grid(cards))
+        const count = `<div class="screen-count">${HERO_DEFINITIONS.length} heroes</div>`
 
-        root.querySelector('.screen-back-btn')
+        root.innerHTML = screenLayout(
+            'Heroes',
+            count + grid(cards),
+            { subtitle: 'Your champions await' }
+        )
+
+        root.querySelector('.js-back')
             .addEventListener('click', () => this._router.navigate('home'))
     }
 
