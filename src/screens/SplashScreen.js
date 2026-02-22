@@ -5,6 +5,8 @@
  * Apres un delai simule, navigue automatiquement vers l'ecran home.
  */
 
+import { ornament } from '../ui/kit.js'
+
 const LOAD_DURATION_MS = 2000
 
 export default class SplashScreen {
@@ -19,6 +21,7 @@ export default class SplashScreen {
                 <div class="splash-content">
                     <h1 class="splash-title">TGC</h1>
                     <p class="splash-subtitle">Tactical Card Game</p>
+                    <div class="splash-ornament">${ornament()}</div>
                     <div class="splash-loader">
                         <div class="splash-loader-bar"></div>
                     </div>

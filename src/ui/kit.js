@@ -3,28 +3,83 @@
  *
  * Chaque fonction retourne une chaine HTML. Les classes CSS
  * correspondantes sont dans styles.scss (section UI KIT).
+ *
+ * Le template uniforme utilise des CSS custom properties
+ * (prefixees --theme-) pour un skinning facile.
  */
 
 /**
- * Layout d'ecran avec header optionnel (titre + bouton retour).
+ * Ornement decoratif horizontal (losange + lignes).
+ */
+export function ornament() {
+    return `
+        <div class="screen-ornament">
+            <span class="screen-ornament-diamond"></span>
+        </div>
+    `
+}
+
+/**
+ * Barre de navigation commune a tous les ecrans.
+ *
+ * @param {string} title - Titre de l'ecran
+ * @param {Object} [opts]
+ * @param {boolean} [opts.backButton=true]
+ */
+export function navBar(title, { backButton = true } = {}) {
+    const back = backButton
+        ? '<button class="screen-nav-back js-back">Back</button>'
+        : ''
+
+    return `
+        <nav class="screen-nav">
+            ${back}
+            <div class="screen-nav-brand">
+                <span class="screen-nav-logo">TGC</span>
+                <span class="screen-nav-sep"></span>
+                <span class="screen-nav-title">${title}</span>
+            </div>
+        </nav>
+    `
+}
+
+/**
+ * Section hero decorative (bandeau sous la nav).
+ *
+ * @param {string} title
+ * @param {string} [subtitle='']
+ */
+export function heroSection(title, subtitle = '') {
+    const sub = subtitle
+        ? `<div class="screen-hero-subtitle">${subtitle}</div>`
+        : ''
+
+    return `
+        <div class="screen-hero">
+            <div class="screen-hero-title">${title}</div>
+            ${sub}
+            ${ornament()}
+        </div>
+    `
+}
+
+/**
+ * Layout d'ecran uniforme : nav + hero + body.
  *
  * @param {string} title
  * @param {string} content - HTML du corps
  * @param {Object} [opts]
  * @param {boolean} [opts.backButton=true]
+ * @param {string} [opts.subtitle='']
  */
-export function screenLayout(title, content, { backButton = true } = {}) {
-    const back = backButton
-        ? '<button class="screen-back-btn">Back</button>'
-        : ''
-
+export function screenLayout(title, content, { backButton = true, subtitle = '' } = {}) {
     return `
         <div class="screen">
-            <div class="screen-header">
-                ${back}
-                <h1 class="screen-title">${title}</h1>
+            ${navBar(title, { backButton })}
+            ${heroSection(title, subtitle)}
+            <div class="screen-body">
+                ${content}
             </div>
-            ${content}
         </div>
     `
 }

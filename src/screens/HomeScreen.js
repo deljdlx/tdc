@@ -4,7 +4,7 @@
  * Affiche le titre du jeu et les boutons de navigation.
  */
 
-import { primaryBtn, secondaryBtn } from '../ui/kit.js'
+import { primaryBtn, secondaryBtn, ornament } from '../ui/kit.js'
 
 export default class HomeScreen {
     constructor(router) {
@@ -17,6 +17,7 @@ export default class HomeScreen {
                 <div class="home-card">
                     <h1 class="home-title">TGC</h1>
                     <p class="home-subtitle">Tactical Card Game</p>
+                    <div class="home-ornament">${ornament()}</div>
                     <div class="home-buttons">
                         ${primaryBtn('Play', 'js-play')}
                         ${secondaryBtn('Heroes', 'js-heroes')}
