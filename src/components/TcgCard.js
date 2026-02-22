@@ -55,11 +55,15 @@ export default class TcgCard extends HTMLElement {
 
     constructor() {
         super()
-        this.innerHTML = INNER_HTML
-
         this._loadedArtId = ''
         this._longPressTimer = null
         this._dragStarted = false
+        this._els = null
+    }
+
+    connectedCallback() {
+        if (this._els) return
+        this.innerHTML = INNER_HTML
         this._els = {
             border: this.querySelector('.card-border'),
             frame: this.querySelector('.frame'),
@@ -71,8 +75,8 @@ export default class TcgCard extends HTMLElement {
             stats: this.querySelector('.stats'),
             status: this.querySelector('.status-overlay'),
         }
-
         this._setupInspectListeners()
+        this._update()
     }
 
     /**
@@ -122,6 +126,7 @@ export default class TcgCard extends HTMLElement {
     }
 
     _update() {
+        if (!this._els) return
         const defId = this.getAttribute('definition-id') || ''
         const name = this.getAttribute('name') || defId
         const cost = this.getAttribute('cost') || ''
