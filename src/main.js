@@ -15,4 +15,4 @@ router.register('game', new GameScreen())
 router.register('heroes', new HeroesScreen(router))
 router.register('deck', new DeckScreen(router))
 
-router.navigate('splash')
+router.start('splash')
