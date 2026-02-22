@@ -8,13 +8,9 @@
 
 import { CARD_DEFINITIONS } from '../gameplay/definitions/cards.js'
 import { screenLayout, grid, card } from '../ui/kit.js'
+import { EFFECT_LABELS } from '../gameplay/definitions/effectLabels.js'
 
 const PICSUM = 'https://picsum.photos/seed'
-
-const EFFECT_LABELS = {
-    DEAL_DAMAGE: (p) => `Deal ${p.amount} damage`,
-    RESTORE_HP: (p) => `Restore ${p.amount} HP`
-}
 
 export default class DeckScreen {
     constructor(router) {
@@ -39,7 +35,7 @@ export default class DeckScreen {
     _cardTile(def) {
         const effectFn = EFFECT_LABELS[def.effect]
         const effectText = effectFn
-            ? effectFn(def.effectPayload)
+            ? effectFn(def.effectPayload?.amount)
             : def.effect
 
         return card(`

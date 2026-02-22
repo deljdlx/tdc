@@ -79,6 +79,10 @@ export default class TcgCard extends HTMLElement {
         this._update()
     }
 
+    disconnectedCallback() {
+        this._cancelLongPress()
+    }
+
     /**
      * Configure les listeners pour l'inspection de carte :
      * - Clic droit (contextmenu) → dispatch card-inspect

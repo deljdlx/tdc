@@ -298,15 +298,15 @@ TEMPLATE.innerHTML = `
 </div>
 `
 
-const EFFECT_LABELS = {
-    DEAL_DAMAGE: (v) => `Deal ${v} damage`,
-    RESTORE_HP: (v) => `Restore ${v} HP`
-}
+import { EFFECT_LABELS } from '../gameplay/definitions/effectLabels.js'
 
 export default class CardModal extends HTMLElement {
 
     /** @type {Object} Refs vers les éléments internes */
     _els
+
+    /** @type {HTMLImageElement|null} Image en cours de chargement */
+    _pendingImg
 
     constructor() {
         super()
@@ -326,6 +326,7 @@ export default class CardModal extends HTMLElement {
             statusSection: this.shadowRoot.querySelector('.status-section'),
         }
 
+        this._pendingImg = null
         this._els.backdrop.addEventListener('click', () => this.close())
         this._onKeyDown = (e) => {
             if (e.key === 'Escape') this.close()
@@ -368,7 +369,8 @@ export default class CardModal extends HTMLElement {
         // Coût
         cost.textContent = data.cost
 
-        // Illustration
+        // Illustration (annule le chargement précédent pour éviter une race)
+        if (this._pendingImg) this._pendingImg.onload = null
         art.classList.remove('loaded')
         if (data.definitionId) {
             const url = `${PICSUM}/${data.definitionId}/240/160`
@@ -376,6 +378,7 @@ export default class CardModal extends HTMLElement {
             img.onload = () => art.classList.add('loaded')
             img.src = url
             art.style.backgroundImage = `url(${url})`
+            this._pendingImg = img
         }
 
         // Nom et type

@@ -28,6 +28,7 @@ import GhostAnimator from './GhostAnimator.js'
 import FxController from './FxController.js'
 import CommandGraphRenderer from './CommandGraphRenderer.js'
 import { CATEGORY, CATEGORY_COLORS, CATEGORY_LABELS } from './commandGraphData.js'
+import { EFFECT_LABELS } from '../definitions/effectLabels.js'
 import '../../components/TcgCard.js'
 import '../../components/CardZone.js'
 import '../../components/PlayerLifeBar.js'
@@ -35,11 +36,6 @@ import '../../components/PlayerHud.js'
 import CardModal from '../../components/CardModal.js'
 import RadialMenu from '../../components/RadialMenu.js'
 import TargetModal from '../../components/TargetModal.js'
-
-const EFFECT_TEXT = {
-    DEAL_DAMAGE: (v) => `Deal ${v} damage`,
-    RESTORE_HP: (v) => `Restore ${v} HP`
-}
 
 export default class UiAdapter {
     /** @type {import('../../core/engine/Engine.js').default} */
@@ -635,7 +631,7 @@ export default class UiAdapter {
         el.setAttribute('cost', card.attributes.cost)
         el.setAttribute('type', card.attributes.type)
 
-        const fmt = EFFECT_TEXT[card.attributes.effect]
+        const fmt = EFFECT_LABELS[card.attributes.effect]
         el.setAttribute('effect', fmt ? fmt(def?.effectValue) : card.attributes.effect)
 
         if (canPlay) {
