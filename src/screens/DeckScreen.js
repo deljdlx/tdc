@@ -7,6 +7,7 @@
  */
 
 import { CARD_DEFINITIONS } from '../gameplay/definitions/cards.js'
+import { screenLayout, grid, card } from '../ui/kit.js'
 
 const PICSUM = 'https://picsum.photos/seed'
 
@@ -25,17 +26,9 @@ export default class DeckScreen {
             .map(c => this._cardTile(c))
             .join('')
 
-        root.innerHTML = `
-            <div class="deck-screen">
-                <div class="deck-header">
-                    <button class="deck-back-btn">Back</button>
-                    <h1 class="deck-title">Collection</h1>
-                </div>
-                <div class="deck-grid">${cards}</div>
-            </div>
-        `
+        root.innerHTML = screenLayout('Collection', grid(cards, { minWidth: '180px' }))
 
-        root.querySelector('.deck-back-btn')
+        root.querySelector('.screen-back-btn')
             .addEventListener('click', () => this._router.navigate('home'))
     }
 
@@ -43,24 +36,22 @@ export default class DeckScreen {
         // Pas de ressources a nettoyer
     }
 
-    _cardTile(card) {
-        const effectFn = EFFECT_LABELS[card.effect]
+    _cardTile(def) {
+        const effectFn = EFFECT_LABELS[def.effect]
         const effectText = effectFn
-            ? effectFn(card.effectPayload)
-            : card.effect
+            ? effectFn(def.effectPayload)
+            : def.effect
 
-        return `
-            <div class="deck-card">
-                <div class="deck-card-art"
-                     style="background-image:url(${PICSUM}/${card.id}/160/100)">
-                    <span class="deck-card-cost">${card.cost}</span>
-                </div>
-                <div class="deck-card-body">
-                    <div class="deck-card-name">${card.name}</div>
-                    <div class="deck-card-type">${card.type}</div>
-                    <div class="deck-card-effect">${effectText}</div>
-                </div>
+        return card(`
+            <div class="deck-card-art"
+                 style="background-image:url(${PICSUM}/${def.id}/160/100)">
+                <span class="deck-card-cost">${def.cost}</span>
             </div>
-        `
+            <div class="deck-card-body">
+                <div class="deck-card-name">${def.name}</div>
+                <div class="deck-card-type">${def.type}</div>
+                <div class="deck-card-effect">${effectText}</div>
+            </div>
+        `)
     }
 }

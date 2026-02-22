@@ -4,6 +4,8 @@
  * Affiche le titre du jeu et les boutons de navigation.
  */
 
+import { primaryBtn, secondaryBtn } from '../ui/kit.js'
+
 export default class HomeScreen {
     constructor(router) {
         this._router = router
@@ -16,19 +18,19 @@ export default class HomeScreen {
                     <h1 class="home-title">TGC</h1>
                     <p class="home-subtitle">Tactical Card Game</p>
                     <div class="home-buttons">
-                        <button class="home-play-btn">Play</button>
-                        <button class="home-heroes-btn">Heroes</button>
-                        <button class="home-deck-btn">Deck</button>
+                        ${primaryBtn('Play', 'js-play')}
+                        ${secondaryBtn('Heroes', 'js-heroes')}
+                        ${secondaryBtn('Deck', 'js-deck')}
                     </div>
                 </div>
             </div>
         `
 
-        root.querySelector('.home-play-btn')
+        root.querySelector('.js-play')
             .addEventListener('click', () => this._router.navigate('game'))
-        root.querySelector('.home-heroes-btn')
+        root.querySelector('.js-heroes')
             .addEventListener('click', () => this._router.navigate('heroes'))
-        root.querySelector('.home-deck-btn')
+        root.querySelector('.js-deck')
             .addEventListener('click', () => this._router.navigate('deck'))
     }
 

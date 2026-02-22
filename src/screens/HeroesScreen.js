@@ -7,6 +7,7 @@
  */
 
 import { HERO_DEFINITIONS } from '../gameplay/definitions/heroes.js'
+import { screenLayout, grid, card, statBadge } from '../ui/kit.js'
 
 const PICSUM = 'https://picsum.photos/seed'
 
@@ -20,17 +21,9 @@ export default class HeroesScreen {
             .map(h => this._heroCard(h))
             .join('')
 
-        root.innerHTML = `
-            <div class="heroes-screen">
-                <div class="heroes-header">
-                    <button class="heroes-back-btn">Back</button>
-                    <h1 class="heroes-title">Heroes</h1>
-                </div>
-                <div class="heroes-grid">${cards}</div>
-            </div>
-        `
+        root.innerHTML = screenLayout('Heroes', grid(cards))
 
-        root.querySelector('.heroes-back-btn')
+        root.querySelector('.screen-back-btn')
             .addEventListener('click', () => this._router.navigate('home'))
     }
 
@@ -39,25 +32,18 @@ export default class HeroesScreen {
     }
 
     _heroCard(hero) {
-        return `
-            <div class="hero-card">
-                <div class="hero-portrait"
-                     style="background-image:url(${PICSUM}/${hero.id}/120/120)">
-                </div>
-                <div class="hero-name">${hero.name}</div>
-                <div class="hero-stats">
-                    <span class="hero-stat hero-stat--power"
-                          title="Power">${hero.power}</span>
-                    <span class="hero-stat hero-stat--hp"
-                          title="HP">${hero.hp}</span>
-                    <span class="hero-stat hero-stat--speed"
-                          title="Speed">${hero.speed}</span>
-                    <span class="hero-stat hero-stat--ap"
-                          title="Action Points">${hero.maxAp}</span>
-                    <span class="hero-stat hero-stat--mana"
-                          title="Mana">${hero.maxMana}</span>
-                </div>
+        return card(`
+            <div class="hero-portrait"
+                 style="background-image:url(${PICSUM}/${hero.id}/120/120)">
             </div>
-        `
+            <div class="hero-name">${hero.name}</div>
+            <div class="hero-stats">
+                ${statBadge(hero.power, 'power', 'Power')}
+                ${statBadge(hero.hp, 'hp', 'HP')}
+                ${statBadge(hero.speed, 'speed', 'Speed')}
+                ${statBadge(hero.maxAp, 'ap', 'Action Points')}
+                ${statBadge(hero.maxMana, 'mana', 'Mana')}
+            </div>
+        `, 'hero-card')
     }
 }
