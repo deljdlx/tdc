@@ -1,378 +1,21 @@
 /**
- * <tcg-card> — Web Component réutilisable pour l'affichage d'une carte TCG.
+ * <tcg-card> — Custom Element pour l'affichage d'une carte TCG.
  *
  * Attributes observés :
  *   name, cost, type, power, hp, effect, definition-id,
- *   playable, can-attack, selected, summoning-sickness, has-acted
+ *   playable, can-attack, selected, summoning-sickness, has-acted,
+ *   is-defending, armor
  *
  * L'illustration utilise Lorem Picsum avec un seed basé sur definition-id
  * pour garantir la même image par type de carte.
  *
  * Theming via CSS custom properties :
- *   --card-width  (défaut 130px)
+ *   --card-width  (défaut 100px)
  */
 
 const PICSUM = 'https://picsum.photos/seed'
 
-const TEMPLATE = document.createElement('template')
-TEMPLATE.innerHTML = `
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
-    :host {
-        display: inline-block;
-        width: var(--card-width, 100px);
-        height: calc(var(--card-width, 100px) * 1.4);
-        user-select: none;
-        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-    }
-
-    /* ==================================================
-       CARD BORDER (wrapper with solid color)
-       ================================================== */
-
-    .card-border {
-        position: relative;
-        height: 100%;
-        border-radius: 16px;
-        padding: 3px;
-        background: #D5D2CC;
-        transition: background 0.25s;
-    }
-
-    .card-border.spell {
-        background: #B8A9D4;
-    }
-
-    .card-border.playable {
-        background: #4CAF50;
-    }
-
-    .card-border.can-attack {
-        background: #E94560;
-    }
-
-    .card-border.selected {
-        background: #F0A030;
-        animation: selectedPulse 2s ease-in-out infinite;
-    }
-
-    @keyframes selectedPulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.8; }
-    }
-
-    .card-border.drop-hint {
-        background: #F0A030;
-        animation: dropHintPulse 1.5s ease-in-out infinite;
-    }
-
-    @keyframes dropHintPulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.75; }
-    }
-
-    .card-border.drop-target {
-        background: #E94560;
-    }
-
-    /* ==================================================
-       CARD FRAME (inner content)
-       ================================================== */
-
-    .frame {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        border-radius: 13px;
-        overflow: hidden;
-        background: #FFFFFF;
-        cursor: default;
-        transition: box-shadow 0.25s, transform 0.25s;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
-    }
-
-    .frame.spell {
-        background: #FAF8FF;
-    }
-
-    /* ==================================================
-       INTERACTIVE STATES
-       ================================================== */
-
-    .frame.playable {
-        cursor: pointer;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
-    }
-
-    .frame.playable:hover {
-        transform: translateY(-6px) scale(1.04);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
-    }
-
-    .frame.can-attack {
-        cursor: pointer;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
-    }
-
-    .frame.can-attack:hover {
-        transform: translateY(-6px) scale(1.04);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
-    }
-
-    .frame.selected {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
-    }
-
-    .frame.exhausted {
-        opacity: 0.55;
-        filter: grayscale(0.3);
-    }
-
-    .frame.sick {
-        filter: saturate(0.5) brightness(0.88);
-        transition: filter 1.2s ease-in;
-    }
-
-    /* ==================================================
-       DRAG & DROP STATES
-       ================================================== */
-
-    :host([draggable="true"]) .frame {
-        cursor: grab;
-    }
-
-    :host(.dragging) .frame {
-        opacity: 0.3;
-        filter: grayscale(0.5) brightness(0.6);
-        transform: scale(0.95);
-    }
-
-    :host([drop-hint]) .card-border {
-        background: #F0A030;
-        animation: dropHintPulse 1.5s ease-in-out infinite;
-    }
-
-    :host([drop-hint]) .frame {
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
-    }
-
-    :host([drop-target]) .card-border {
-        background: #E94560;
-    }
-
-    :host([drop-target]) .frame {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
-        transform: scale(1.04);
-    }
-
-    /* ==================================================
-       COST GEM
-       ================================================== */
-
-    .cost {
-        position: absolute;
-        top: 5px;
-        left: 5px;
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 11px;
-        font-weight: 800;
-        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-        color: white;
-        z-index: 3;
-        background: #7BA7CC;
-        border: 2px solid #5889B0;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
-    }
-
-    .spell .cost {
-        background: #9B8EC4;
-        border-color: #7A6DA8;
-    }
-
-    /* ==================================================
-       CARD ART
-       ================================================== */
-
-    .art-wrap {
-        position: relative;
-        margin: 6px 6px 0;
-        flex: 1;
-        min-height: 0;
-        border-radius: 6px;
-        overflow: hidden;
-        border: 1px solid #D5D2CC;
-    }
-
-    .spell .art-wrap {
-        border-color: #C4B8DA;
-    }
-
-    .art {
-        position: absolute;
-        inset: 0;
-        background: #EDEBE6 center / cover no-repeat;
-        opacity: 0;
-        transition: opacity 0.4s ease;
-    }
-
-    .art.loaded {
-        opacity: 1;
-    }
-
-    .art::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(180deg, transparent 60%, rgba(0, 0, 0, 0.3) 100%);
-        pointer-events: none;
-    }
-
-    /* ==================================================
-       TEXT SECTIONS
-       ================================================== */
-
-    .name {
-        padding: 4px 6px 3px;
-        font-size: 9px;
-        font-weight: 700;
-        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-        color: #2D3436;
-        text-align: center;
-        letter-spacing: 0.4px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        flex-shrink: 0;
-        background: #FAFAF7;
-        border-top: 1px solid #E8E6E1;
-        border-bottom: 1px solid #E8E6E1;
-    }
-
-    .spell .name {
-        color: #4A3D6B;
-    }
-
-    .type-line {
-        padding: 2px 6px;
-        font-size: 6.5px;
-        color: #7F8C8D;
-        text-align: center;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        flex-shrink: 0;
-        background: transparent;
-        border-bottom: 1px solid #E8E6E1;
-    }
-
-    .body {
-        padding: 4px 6px 4px;
-        min-height: 0;
-        flex-shrink: 0;
-        background: #FAFAF7;
-    }
-
-    .effect {
-        font-size: 7px;
-        color: #2D3436;
-        text-align: center;
-        font-style: italic;
-        line-height: 1.3;
-        font-weight: 500;
-    }
-
-    .effect:empty {
-        display: none;
-    }
-
-    /* ==================================================
-       STATS (POWER/HP)
-       ================================================== */
-
-    .stats {
-        display: flex;
-        justify-content: flex-end;
-        padding: 3px 6px 6px;
-        gap: 5px;
-        flex-shrink: 0;
-    }
-
-    .stats:empty {
-        display: none;
-    }
-
-    .stat {
-        width: 24px;
-        height: 20px;
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 11px;
-        font-weight: 800;
-        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-        color: white;
-    }
-
-    .power {
-        background: #E94560;
-    }
-
-    .hp {
-        background: #5B8C5A;
-    }
-
-    .armor {
-        background: #60a5fa;
-    }
-
-    /* ==================================================
-       DEFENDING STATE
-       ================================================== */
-
-    .card-border.defending {
-        background: #60a5fa;
-    }
-
-    /* ==================================================
-       STATUS OVERLAY
-       ================================================== */
-
-    .status-overlay {
-        position: absolute;
-        bottom: 32px;
-        right: 6px;
-        font-size: 10px;
-        font-weight: 600;
-        padding: 1px 5px;
-        border-radius: 3px;
-        background: rgba(0, 0, 0, 0.65);
-        z-index: 3;
-    }
-
-    .status-overlay:empty {
-        display: none;
-    }
-
-    .status-overlay.zzz {
-        color: #94a3b8;
-    }
-
-    .status-overlay.done {
-        color: #6b7280;
-    }
-
-    .status-overlay.defending {
-        color: #60a5fa;
-    }
-</style>
-
+const INNER_HTML = `
 <div class="card-border">
     <div class="frame">
         <div class="cost"></div>
@@ -385,8 +28,7 @@ TEMPLATE.innerHTML = `
         <div class="stats"></div>
         <div class="status-overlay"></div>
     </div>
-</div>
-`
+</div>`
 
 export default class TcgCard extends HTMLElement {
 
@@ -413,22 +55,21 @@ export default class TcgCard extends HTMLElement {
 
     constructor() {
         super()
-        this.attachShadow({ mode: 'open' })
-        this.shadowRoot.appendChild(TEMPLATE.content.cloneNode(true))
+        this.innerHTML = INNER_HTML
 
         this._loadedArtId = ''
         this._longPressTimer = null
         this._dragStarted = false
         this._els = {
-            border: this.shadowRoot.querySelector('.card-border'),
-            frame: this.shadowRoot.querySelector('.frame'),
-            cost: this.shadowRoot.querySelector('.cost'),
-            art: this.shadowRoot.querySelector('.art'),
-            name: this.shadowRoot.querySelector('.name'),
-            typeLine: this.shadowRoot.querySelector('.type-line'),
-            effect: this.shadowRoot.querySelector('.effect'),
-            stats: this.shadowRoot.querySelector('.stats'),
-            status: this.shadowRoot.querySelector('.status-overlay'),
+            border: this.querySelector('.card-border'),
+            frame: this.querySelector('.frame'),
+            cost: this.querySelector('.cost'),
+            art: this.querySelector('.art'),
+            name: this.querySelector('.name'),
+            typeLine: this.querySelector('.type-line'),
+            effect: this.querySelector('.effect'),
+            stats: this.querySelector('.stats'),
+            status: this.querySelector('.status-overlay'),
         }
 
         this._setupInspectListeners()
@@ -472,7 +113,6 @@ export default class TcgCard extends HTMLElement {
     _dispatchInspect() {
         this.dispatchEvent(new CustomEvent('card-inspect', {
             bubbles: true,
-            composed: true,
             detail: { cardId: this.getAttribute('data-card-id') }
         }))
     }
