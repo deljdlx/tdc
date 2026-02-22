@@ -5,6 +5,15 @@ Format defini dans `doc/ai-changelog.md`.
 
 ## 2026-02-22
 
+### docs(ai): conventions JavaScript detaillees pour le projet TGC
+
+**Agent**: `claude` | **PR**: #69
+
+Creation de `doc/ai-javascript-conventions.md` (~280 lignes, 14 sections) couvrant
+les patterns specifiques du projet: Command pattern (validate/apply), Domain Events,
+Patches immutables, QueryAPI, event buses, registries, tests Vitest, et anti-patterns.
+Reference ajoutee dans les sources de verite de `ai-agent-instructions.md`.
+
 ### style(ui): template d'ecran uniforme avec cadre skinnable
 
 **Agent**: `claude` | **PR**: #68
