@@ -34,6 +34,7 @@ import '../../components/PlayerLifeBar.js'
 import '../../components/PlayerHud.js'
 import CardModal from '../../components/CardModal.js'
 import RadialMenu from '../../components/RadialMenu.js'
+import TargetModal from '../../components/TargetModal.js'
 
 const EFFECT_TEXT = {
     DEAL_DAMAGE: (v) => `Deal ${v} damage`,
@@ -92,8 +93,11 @@ export default class UiAdapter {
     /** @type {RadialMenu} Menu radial d'actions hero */
     _radialMenu
 
-    /** @type {Object|null} État de ciblage en cours { action, heroId, playerId, powerId, targetType } */
-    _targetingState
+    /** @type {TargetModal} Modale de sélection de cible */
+    _targetModal
+
+    /** @type {Object|null} Action en attente de cible { action, heroId, playerId, powerId } */
+    _pendingAction
 
     constructor(rootElement) {
         this._root = rootElement
@@ -111,7 +115,8 @@ export default class UiAdapter {
         this._landingCardId = null
         this._cardModal = this._createCardModal()
         this._radialMenu = this._createRadialMenu()
-        this._targetingState = null
+        this._targetModal = this._createTargetModal()
+        this._pendingAction = null
         this._trailStatusMessage = ''
         this._graphRenderer = new CommandGraphRenderer()
         this._cherryBlossoms = null
@@ -120,6 +125,7 @@ export default class UiAdapter {
         this._setupMouseTrail()
         this._setupCardInspect()
         this._setupRadialMenu()
+        this._setupTargetModal()
         this._dragDropManager.init()
     }
 
@@ -143,6 +149,15 @@ export default class UiAdapter {
     }
 
     /**
+     * Crée et attache la modale de ciblage à document.body.
+     */
+    _createTargetModal() {
+        const modal = new TargetModal()
+        document.body.appendChild(modal)
+        return modal
+    }
+
+    /**
      * Écoute les actions du menu radial et gère le ciblage.
      */
     _setupRadialMenu() {
@@ -159,7 +174,7 @@ export default class UiAdapter {
             }
 
             if (action === 'attack') {
-                this._enterTargeting({ action: 'attack', heroId, playerId, targetType: 'enemy_hero' })
+                this._openTargetModal({ action: 'attack', heroId, playerId, targetType: 'enemy_hero' })
                 return
             }
 
@@ -172,25 +187,66 @@ export default class UiAdapter {
                     this.render()
                     return
                 }
-                this._enterTargeting({ action: 'power', heroId, playerId, powerId, targetType })
+                this._openTargetModal({ action: 'power', heroId, playerId, powerId, targetType })
             }
         })
     }
 
     /**
-     * Active le mode ciblage : les héros valides deviennent cliquables.
+     * Collecte les cibles éligibles et ouvre la modale de sélection.
      */
-    _enterTargeting(state) {
-        this._targetingState = state
-        this.render()
+    _openTargetModal({ action, heroId, playerId, powerId, targetType }) {
+        const heroes = Object.values(this._engine.state.heroes)
+        const isEnemy = targetType === 'enemy_hero'
+        const eligible = heroes.filter(h =>
+            isEnemy ? h.playerId !== playerId : h.playerId === playerId
+        )
+
+        const targets = eligible.map(h => ({
+            id: h.id,
+            heroDefId: h.heroDefId,
+            hp: h.attributes.hp,
+            maxHp: h.attributes.maxHp,
+            power: h.attributes.power,
+            armor: h.attributes.armor
+        }))
+
+        this._pendingAction = { action, heroId, playerId, powerId }
+        this._targetModal.open({ targets, action })
     }
 
     /**
-     * Annule le mode ciblage.
+     * Écoute la sélection de cible dans la modale.
      */
-    _cancelTargeting() {
-        this._targetingState = null
-        this.render()
+    _setupTargetModal() {
+        this._targetModal.addEventListener('target-selected', (e) => {
+            const pa = this._pendingAction
+            if (!pa) return
+
+            const targetId = e.detail.targetId
+            const targetEl = this._root.querySelector(`[data-card-id="${targetId}"]`)
+
+            if (pa.action === 'attack') {
+                if (targetEl) this._fxController.fxAttack(targetEl)
+                this._engine.enqueueCommand(new AttackCommand({
+                    playerId: pa.playerId,
+                    attackerId: pa.heroId,
+                    targetId
+                }))
+            } else if (pa.action === 'power') {
+                if (targetEl) this._fxController.fxPower(targetEl)
+                this._engine.enqueueCommand(new UsePowerCommand({
+                    playerId: pa.playerId,
+                    heroId: pa.heroId,
+                    powerId: pa.powerId,
+                    targetId
+                }))
+            }
+
+            this._pendingAction = null
+            this._engine.runUntilIdle()
+            this.render()
+        })
     }
 
     /**
@@ -308,16 +364,6 @@ export default class UiAdapter {
 
         gamePanel.appendChild(this._renderControls(activePlayer, isGameOver))
         gamePanel.appendChild(this._renderStatusBar(state))
-
-        if (this._targetingState) {
-            const hint = this._el('div', 'targeting-hint')
-            hint.textContent = `Select a target (${this._targetingState.targetType.replace('_', ' ')})`
-            const cancelBtn = this._el('button', 'btn btn-secondary btn-sm')
-            cancelBtn.textContent = 'Cancel'
-            cancelBtn.addEventListener('click', () => this._cancelTargeting())
-            hint.appendChild(cancelBtn)
-            gamePanel.appendChild(hint)
-        }
 
         const board = this._el('div', 'game-board')
         board.appendChild(this._renderPlayerArea(state, playerIds[1], activePlayer, true))
@@ -515,16 +561,6 @@ export default class UiAdapter {
             if (canAct) el.setAttribute('can-attack', '')
 
             el.addEventListener('click', (e) => {
-                // Si en mode targeting, traiter comme cible alliée
-                if (this._targetingState) {
-                    if (this._targetingState.targetType === 'ally_hero' && hero.playerId === this._targetingState.playerId) {
-                        this._resolveTargeting(hero.id, el)
-                    } else {
-                        this._cancelTargeting()
-                    }
-                    return
-                }
-
                 e.stopPropagation()
                 const powers = getPowersForClass(hero.heroDefId)
                 const rect = el.getBoundingClientRect()
@@ -541,16 +577,8 @@ export default class UiAdapter {
             })
         }
 
-        // Héros ennemis : cible d'attaques (targeting) et de sorts offensifs (drag)
+        // Héros ennemis : cible de sorts offensifs (drag)
         if (!isActive && !isGameOver) {
-            // Mode targeting : clic sur hero ennemi = résoudre l'action
-            if (this._targetingState && this._targetingState.targetType === 'enemy_hero') {
-                el.setAttribute('targetable', '')
-                el.addEventListener('click', () => {
-                    this._resolveTargeting(hero.id, el)
-                })
-            }
-
             // Drop targets pour sorts offensifs (drag spell)
             this._dragDropManager.registerDropTarget(el, 'drop-target',
                 (drag) =>
@@ -591,35 +619,6 @@ export default class UiAdapter {
         }
 
         return el
-    }
-
-    /**
-     * Résout une action de ciblage sur un héro cible.
-     */
-    _resolveTargeting(targetId, targetEl) {
-        const ts = this._targetingState
-        if (!ts) return
-
-        if (ts.action === 'attack') {
-            this._fxController.fxAttack(targetEl)
-            this._engine.enqueueCommand(new AttackCommand({
-                playerId: ts.playerId,
-                attackerId: ts.heroId,
-                targetId
-            }))
-        } else if (ts.action === 'power') {
-            this._fxController.fxPower(targetEl)
-            this._engine.enqueueCommand(new UsePowerCommand({
-                playerId: ts.playerId,
-                heroId: ts.heroId,
-                powerId: ts.powerId,
-                targetId
-            }))
-        }
-
-        this._targetingState = null
-        this._engine.runUntilIdle()
-        this.render()
     }
 
     _renderHandCard(card, playerId, state) {
