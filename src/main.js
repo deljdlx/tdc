@@ -1,5 +1,14 @@
 import './gameplay/ui/styles.scss'
-import UiAdapter from './gameplay/ui/UiAdapter.js'
+import Router from './screens/Router.js'
+import SplashScreen from './screens/SplashScreen.js'
+import HomeScreen from './screens/HomeScreen.js'
+import GameScreen from './screens/GameScreen.js'
 
-const ui = new UiAdapter(document.querySelector('#app'))
-ui.start()
+const root = document.querySelector('#app')
+const router = new Router(root)
+
+router.register('splash', new SplashScreen(router))
+router.register('home', new HomeScreen(router))
+router.register('game', new GameScreen())
+
+router.navigate('splash')
