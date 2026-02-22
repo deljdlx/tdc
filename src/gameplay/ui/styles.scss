@@ -989,3 +989,295 @@ body {
     color: $secondary-dark;
     font-weight: 500;
 }
+
+// =====================
+// TCG CARD
+// =====================
+
+$tcg-spell: #B8A9D4;
+$tcg-spell-light: #FAF8FF;
+$tcg-spell-cost: #9B8EC4;
+$tcg-spell-cost-border: #7A6DA8;
+$tcg-spell-art-border: #C4B8DA;
+$tcg-spell-text: #4A3D6B;
+$tcg-armor: #60a5fa;
+
+tcg-card {
+    display: inline-block;
+    width: var(--card-width, 100px);
+    height: calc(var(--card-width, 100px) * 1.4);
+    user-select: none;
+
+    // Drag & drop states (attributs posés sur le host)
+    &[draggable="true"] .frame {
+        cursor: grab;
+    }
+
+    &.dragging .frame {
+        opacity: 0.3;
+        filter: grayscale(0.5) brightness(0.6);
+        transform: scale(0.95);
+    }
+
+    &[drop-hint] {
+        .card-border {
+            background: $warning;
+            animation: dropHintPulse 1.5s ease-in-out infinite;
+        }
+
+        .frame { box-shadow: $shadow-2; }
+    }
+
+    &[drop-target] {
+        .card-border { background: $danger; }
+
+        .frame {
+            box-shadow: $shadow-3;
+            transform: scale(1.04);
+        }
+    }
+
+    // -- Card border (wrapper avec couleur solide) --
+
+    .card-border {
+        position: relative;
+        height: 100%;
+        border-radius: 16px;
+        padding: 3px;
+        background: $border;
+        transition: background 0.25s;
+
+        &.spell { background: $tcg-spell; }
+        &.playable { background: $success; }
+        &.can-attack { background: $danger; }
+
+        &.selected {
+            background: $warning;
+            animation: selectedPulse 2s ease-in-out infinite;
+        }
+
+        &.defending { background: $tcg-armor; }
+    }
+
+    // -- Frame (contenu interne) --
+
+    .frame {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        border-radius: 13px;
+        overflow: hidden;
+        background: $bg-surface;
+        cursor: default;
+        transition: box-shadow 0.25s, transform 0.25s;
+        box-shadow: $shadow-1;
+
+        &.spell { background: $tcg-spell-light; }
+
+        &.playable {
+            cursor: pointer;
+            box-shadow: $shadow-2;
+
+            &:hover {
+                transform: translateY(-6px) scale(1.04);
+                box-shadow: $shadow-3;
+            }
+        }
+
+        &.can-attack {
+            cursor: pointer;
+            box-shadow: $shadow-2;
+
+            &:hover {
+                transform: translateY(-6px) scale(1.04);
+                box-shadow: $shadow-3;
+            }
+        }
+
+        &.selected { box-shadow: $shadow-3; }
+
+        &.exhausted {
+            opacity: 0.55;
+            filter: grayscale(0.3);
+        }
+
+        &.sick {
+            filter: saturate(0.5) brightness(0.88);
+            transition: filter 1.2s ease-in;
+        }
+    }
+
+    // -- Gemme de coût --
+
+    .cost {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 800;
+        color: white;
+        z-index: 3;
+        background: $tertiary;
+        border: 2px solid $tertiary-dark;
+        box-shadow: $shadow-1;
+    }
+
+    .spell .cost {
+        background: $tcg-spell-cost;
+        border-color: $tcg-spell-cost-border;
+    }
+
+    // -- Illustration --
+
+    .art-wrap {
+        position: relative;
+        margin: 6px 6px 0;
+        flex: 1;
+        min-height: 0;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid $border;
+    }
+
+    .spell .art-wrap {
+        border-color: $tcg-spell-art-border;
+    }
+
+    .art {
+        position: absolute;
+        inset: 0;
+        background: $bg-muted center / cover no-repeat;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+
+        &.loaded { opacity: 1; }
+
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 60%, rgba(0, 0, 0, 0.3) 100%);
+            pointer-events: none;
+        }
+    }
+
+    // -- Sections texte --
+
+    .name {
+        padding: 4px 6px 3px;
+        font-size: 9px;
+        font-weight: 700;
+        color: $text;
+        text-align: center;
+        letter-spacing: 0.4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex-shrink: 0;
+        background: $bg-raised;
+        border-top: 1px solid $border-light;
+        border-bottom: 1px solid $border-light;
+    }
+
+    .spell .name {
+        color: $tcg-spell-text;
+    }
+
+    .type-line {
+        padding: 2px 6px;
+        font-size: 6.5px;
+        color: $text-dim;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        flex-shrink: 0;
+        background: transparent;
+        border-bottom: 1px solid $border-light;
+    }
+
+    .body {
+        padding: 4px 6px;
+        min-height: 0;
+        flex-shrink: 0;
+        background: $bg-raised;
+    }
+
+    .effect {
+        font-size: 7px;
+        color: $text;
+        text-align: center;
+        font-style: italic;
+        line-height: 1.3;
+        font-weight: 500;
+
+        &:empty { display: none; }
+    }
+
+    // -- Stats (power/hp/armor) --
+
+    .stats {
+        display: flex;
+        justify-content: flex-end;
+        padding: 3px 6px 6px;
+        gap: 5px;
+        flex-shrink: 0;
+
+        &:empty { display: none; }
+    }
+
+    .stat {
+        width: 24px;
+        height: 20px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 800;
+        color: white;
+    }
+
+    .power { background: $danger; }
+    .hp { background: $primary; }
+    .armor { background: $tcg-armor; }
+
+    // -- Defending --
+
+    .card-border.defending { background: $tcg-armor; }
+
+    // -- Status overlay --
+
+    .status-overlay {
+        position: absolute;
+        bottom: 32px;
+        right: 6px;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 1px 5px;
+        border-radius: 3px;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 3;
+
+        &:empty { display: none; }
+        &.zzz { color: #94a3b8; }
+        &.done { color: #6b7280; }
+        &.defending { color: $tcg-armor; }
+    }
+}
+
+@keyframes selectedPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+@keyframes dropHintPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.75; }
+}
