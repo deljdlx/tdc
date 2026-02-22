@@ -5,7 +5,7 @@
  * Apres un delai simule, navigue automatiquement vers l'ecran home.
  */
 
-import { ornament } from '../ui/kit.js'
+import { ornament, frame } from '../ui/kit.js'
 
 const LOAD_DURATION_MS = 2000
 
@@ -16,7 +16,7 @@ export default class SplashScreen {
     }
 
     mount(root) {
-        root.innerHTML = `
+        root.innerHTML = frame(`
             <div class="splash-screen">
                 <div class="splash-content">
                     <h1 class="splash-title">TGC</h1>
@@ -27,7 +27,7 @@ export default class SplashScreen {
                     </div>
                 </div>
             </div>
-        `
+        `)
 
         this._timer = setTimeout(() => {
             this._router.navigate('home')

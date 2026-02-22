@@ -9,6 +9,28 @@
  */
 
 /**
+ * Cadre decoratif d'ecran avec double bordure et coins ornementes.
+ * Skinnable via les custom properties --frame-* sur :root.
+ *
+ * @param {string} content - HTML du contenu encadre
+ */
+export function frame(content) {
+    return `
+        <div class="screen-frame">
+            <div class="screen-frame-corners">
+                <span class="screen-frame-corner"></span>
+                <span class="screen-frame-corner"></span>
+                <span class="screen-frame-corner"></span>
+                <span class="screen-frame-corner"></span>
+            </div>
+            <div class="screen-frame-content">
+                ${content}
+            </div>
+        </div>
+    `
+}
+
+/**
  * Ornement decoratif horizontal (losange + lignes).
  */
 export function ornament() {
@@ -73,7 +95,7 @@ export function heroSection(title, subtitle = '') {
  * @param {string} [opts.subtitle='']
  */
 export function screenLayout(title, content, { backButton = true, subtitle = '' } = {}) {
-    return `
+    return frame(`
         <div class="screen">
             ${navBar(title, { backButton })}
             ${heroSection(title, subtitle)}
@@ -81,7 +103,7 @@ export function screenLayout(title, content, { backButton = true, subtitle = '' 
                 ${content}
             </div>
         </div>
-    `
+    `)
 }
 
 /**

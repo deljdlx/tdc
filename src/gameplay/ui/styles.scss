@@ -133,6 +133,21 @@ $desktop: 1280px;
     --theme-font-base: #{fonts.$font-family-base};
     --theme-font-heading: #{fonts.$font-family-heading};
 
+    // Cadre d'ecran (skinnable)
+    --frame-border-width: 2px;
+    --frame-border-color: #{$primary-light};
+    --frame-inner-border-color: #{$border-light};
+    --frame-corner-size: 18px;
+    --frame-corner-thickness: 2px;
+    --frame-corner-color: #{$primary};
+    --frame-radius: 14px;
+    --frame-shadow: #{$shadow-4};
+    --frame-bg: #{$bg-surface};
+    --frame-accent-from: #{$primary};
+    --frame-accent-via: #{$secondary};
+    --frame-accent-to: #{$tertiary};
+    --frame-margin: 12px;
+
     // Tailles de cartes responsive
     --card-width: 80px;
     --card-gap: 6px;
@@ -698,6 +713,128 @@ body {
 // UI KIT — template d'ecran uniforme (skinnable)
 // =====================
 
+// =====================
+// SCREEN FRAME — cadre decoratif skinnable
+// =====================
+// Personnaliser via les custom properties --frame-* sur :root
+// ou via un selecteur specifique (.screen-frame.dark-theme)
+
+.screen-frame {
+    position: relative;
+    margin: var(--frame-margin);
+    border: var(--frame-border-width) solid var(--frame-border-color);
+    border-radius: var(--frame-radius);
+    background: var(--frame-bg);
+    box-shadow: var(--frame-shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    // Lisere decoratif en haut du cadre (gradient tri-couleur)
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(
+            90deg,
+            var(--frame-accent-from),
+            var(--frame-accent-via),
+            var(--frame-accent-to)
+        );
+        z-index: 2;
+    }
+
+    // Bordure interieure (double cadre)
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 4px;
+        border: 1px solid var(--frame-inner-border-color);
+        border-radius: calc(var(--frame-radius) - 5px);
+        pointer-events: none;
+        z-index: 1;
+    }
+}
+
+// Conteneur des 4 coins decoratifs
+.screen-frame-corners {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+}
+
+// Coin decoratif (L-shape)
+.screen-frame-corner {
+    position: absolute;
+    width: var(--frame-corner-size);
+    height: var(--frame-corner-size);
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        background: var(--frame-corner-color);
+    }
+
+    // Branche horizontale
+    &::before {
+        height: var(--frame-corner-thickness);
+        width: 100%;
+    }
+
+    // Branche verticale
+    &::after {
+        width: var(--frame-corner-thickness);
+        height: 100%;
+    }
+
+    // Top-left
+    &:nth-child(1) {
+        top: 6px;
+        left: 6px;
+        &::before { top: 0; left: 0; }
+        &::after { top: 0; left: 0; }
+    }
+
+    // Top-right
+    &:nth-child(2) {
+        top: 6px;
+        right: 6px;
+        &::before { top: 0; right: 0; }
+        &::after { top: 0; right: 0; }
+    }
+
+    // Bottom-left
+    &:nth-child(3) {
+        bottom: 6px;
+        left: 6px;
+        &::before { bottom: 0; left: 0; }
+        &::after { bottom: 0; left: 0; }
+    }
+
+    // Bottom-right
+    &:nth-child(4) {
+        bottom: 6px;
+        right: 6px;
+        &::before { bottom: 0; right: 0; }
+        &::after { bottom: 0; right: 0; }
+    }
+}
+
+// Contenu du cadre (positionne au-dessus de ::after)
+.screen-frame-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
 // Ornement horizontal
 .screen-ornament {
     display: flex;
@@ -1057,28 +1194,7 @@ body {
 .home-card {
     text-align: center;
     padding: 44px 52px;
-    border-radius: var(--theme-radius-lg);
-    background: var(--theme-bg-surface);
-    border: 1px solid var(--theme-border);
-    box-shadow: var(--theme-shadow-xl);
     animation: homeSlideUp 0.5s ease-out;
-    position: relative;
-
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(
-            90deg,
-            var(--theme-primary),
-            var(--theme-secondary),
-            var(--theme-tertiary)
-        );
-        border-radius: var(--theme-radius-lg) var(--theme-radius-lg) 0 0;
-    }
 }
 
 .home-title {

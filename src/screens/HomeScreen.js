@@ -4,7 +4,7 @@
  * Affiche le titre du jeu et les boutons de navigation.
  */
 
-import { primaryBtn, secondaryBtn, ornament } from '../ui/kit.js'
+import { primaryBtn, secondaryBtn, ornament, frame } from '../ui/kit.js'
 
 export default class HomeScreen {
     constructor(router) {
@@ -12,7 +12,7 @@ export default class HomeScreen {
     }
 
     mount(root) {
-        root.innerHTML = `
+        root.innerHTML = frame(`
             <div class="home-screen">
                 <div class="home-card">
                     <h1 class="home-title">TGC</h1>
@@ -25,7 +25,7 @@ export default class HomeScreen {
                     </div>
                 </div>
             </div>
-        `
+        `)
 
         root.querySelector('.js-play')
             .addEventListener('click', () => this._router.navigate('game'))
