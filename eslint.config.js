@@ -22,7 +22,8 @@ export default [
         CustomEvent: 'readonly',
         FileReader: 'readonly',
         Blob: 'readonly',
-        URL: 'readonly'
+        URL: 'readonly',
+        URLSearchParams: 'readonly'
       }
     },
     rules: {
