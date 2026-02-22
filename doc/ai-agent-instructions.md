@@ -19,9 +19,10 @@ Objectif: mutualiser les regles communes et eviter les divergences.
 ## 1. Sources de verite
 
 1. Lire `doc/ai-code-style.md` avant toute modification de code.
-2. Lire `doc/prompts/` pour les conventions et le modele metier.
-3. Lire `doc/stack.md` pour la stack et les scripts.
-4. Lire `doc/ai-changelog.md` pour le format de documentation des changements.
+2. Lire `doc/ai-javascript-conventions.md` pour les conventions JS detaillees (Commands, Events, Patches, tests).
+3. Lire `doc/prompts/` pour les conventions et le modele metier.
+4. Lire `doc/stack.md` pour la stack et les scripts.
+5. Lire `doc/ai-changelog.md` pour le format de documentation des changements.
 
 ## 2. Priorites
 
