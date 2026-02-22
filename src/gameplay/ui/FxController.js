@@ -186,7 +186,7 @@ export default class FxController {
 
     /**
      * Animation de lunge : l'attaquant se deplace vers la cible puis revient.
-     * Declenche fxAttack a l'impact.
+     * Declenche fxAttack + fxImpact a l'impact.
      */
     async fxLunge(attacker, target) {
         const src = this._centerOf(attacker)
@@ -207,18 +207,52 @@ export default class FxController {
         attacker.style.transform = `translate(${dx}px, ${dy}px) scale(1.08)`
         await new Promise(r => setTimeout(r, 180))
 
-        // Impact FX
+        // Impact FX (particules + shake/flash en parallele)
         this.fxAttack(target)
+        const impactDone = this.fxImpact(target)
 
-        // Return
+        // Return attacker (en parallele avec impact sur la cible)
         attacker.style.transition = 'transform 0.25s cubic-bezier(0.2, 0, 0.2, 1)'
         attacker.style.transform = 'translate(0, 0) scale(1)'
-        await new Promise(r => setTimeout(r, 250))
+        await Promise.all([impactDone, new Promise(r => setTimeout(r, 250))])
 
         // Cleanup
         attacker.style.transition = saved.transition
         attacker.style.transform = saved.transform
         attacker.style.zIndex = saved.zIndex
+    }
+
+    /**
+     * Tremblement + flash de couleur sur la cible a l'impact.
+     */
+    async fxImpact(target) {
+        const saved = {
+            transition: target.style.transition,
+            transform: target.style.transform,
+            filter: target.style.filter
+        }
+
+        target.style.transition = 'none'
+        const frames = 10
+        const interval = 35
+
+        for (let i = 0; i < frames; i++) {
+            const progress = i / frames
+            const amplitude = 4 * (1 - progress)
+            const ox = (Math.random() * 2 - 1) * amplitude
+            const oy = (Math.random() * 2 - 1) * amplitude
+            const brightness = 1 + 0.8 * (1 - progress)
+            const saturate = 1 + 1.0 * (1 - progress)
+
+            target.style.transform = `translate(${ox}px, ${oy}px)`
+            target.style.filter = `brightness(${brightness}) saturate(${saturate})`
+            await new Promise(r => setTimeout(r, interval))
+        }
+
+        // Cleanup
+        target.style.transition = saved.transition
+        target.style.transform = saved.transform
+        target.style.filter = saved.filter
     }
 
     /**
