@@ -219,15 +219,18 @@ export default class UiAdapter {
      * Écoute la sélection de cible dans la modale.
      */
     _setupTargetModal() {
-        this._targetModal.addEventListener('target-selected', (e) => {
+        this._targetModal.addEventListener('target-selected', async (e) => {
             const pa = this._pendingAction
             if (!pa) return
 
             const targetId = e.detail.targetId
             const targetEl = this._root.querySelector(`[data-card-id="${targetId}"]`)
+            const attackerEl = this._root.querySelector(`[data-card-id="${pa.heroId}"]`)
 
             if (pa.action === 'attack') {
-                if (targetEl) this._fxController.fxAttack(targetEl)
+                if (attackerEl && targetEl) {
+                    await this._fxController.fxLunge(attackerEl, targetEl)
+                }
                 this._engine.enqueueCommand(new AttackCommand({
                     playerId: pa.playerId,
                     attackerId: pa.heroId,

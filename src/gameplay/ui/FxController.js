@@ -185,6 +185,43 @@ export default class FxController {
     }
 
     /**
+     * Animation de lunge : l'attaquant se deplace vers la cible puis revient.
+     * Declenche fxAttack a l'impact.
+     */
+    async fxLunge(attacker, target) {
+        const src = this._centerOf(attacker)
+        const dst = this._centerOf(target)
+        const dx = (dst.x - src.x) * 0.6
+        const dy = (dst.y - src.y) * 0.6
+
+        const saved = {
+            transition: attacker.style.transition,
+            transform: attacker.style.transform,
+            zIndex: attacker.style.zIndex
+        }
+
+        attacker.style.zIndex = '50'
+
+        // Forward lunge
+        attacker.style.transition = 'transform 0.18s cubic-bezier(0.4, 0, 0.8, 1)'
+        attacker.style.transform = `translate(${dx}px, ${dy}px) scale(1.08)`
+        await new Promise(r => setTimeout(r, 180))
+
+        // Impact FX
+        this.fxAttack(target)
+
+        // Return
+        attacker.style.transition = 'transform 0.25s cubic-bezier(0.2, 0, 0.2, 1)'
+        attacker.style.transform = 'translate(0, 0) scale(1)'
+        await new Promise(r => setTimeout(r, 250))
+
+        // Cleanup
+        attacker.style.transition = saved.transition
+        attacker.style.transform = saved.transform
+        attacker.style.zIndex = saved.zIndex
+    }
+
+    /**
      * Effet de brûlure / feu sur une cible.
      */
     fxBurn(target) {
