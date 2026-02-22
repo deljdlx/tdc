@@ -7,136 +7,23 @@
  * Emet un CustomEvent 'hero-action' avec le detail de l'action choisie.
  */
 
-const TEMPLATE = document.createElement('template')
-TEMPLATE.innerHTML = `
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
-    :host {
-        position: fixed;
-        inset: 0;
-        z-index: 400;
-        display: none;
-        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-    }
-
-    :host(.visible) {
-        display: block;
-    }
-
-    .backdrop {
-        position: absolute;
-        inset: 0;
-    }
-
-    .menu {
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        padding: 6px;
-        background: rgba(20, 20, 30, 0.92);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 12px;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-        min-width: 140px;
-        animation: menuIn 0.15s ease-out;
-    }
-
-    @keyframes menuIn {
-        from {
-            opacity: 0;
-            transform: scale(0.85);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
-    }
-
-    .menu-title {
-        font-size: 9px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1.2px;
-        color: rgba(255, 255, 255, 0.45);
-        padding: 4px 8px 2px;
-    }
-
-    .separator {
-        height: 1px;
-        background: rgba(255, 255, 255, 0.08);
-        margin: 2px 4px;
-    }
-
-    .action-btn {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 10px;
-        border: none;
-        border-radius: 8px;
-        background: transparent;
-        color: #e8e8e8;
-        font-size: 12px;
-        font-weight: 600;
-        font-family: inherit;
-        cursor: pointer;
-        transition: background 0.12s;
-        text-align: left;
-    }
-
-    .action-btn:hover:not(:disabled) {
-        background: rgba(255, 255, 255, 0.1);
-    }
-
-    .action-btn:disabled {
-        opacity: 0.35;
-        cursor: not-allowed;
-    }
-
-    .action-icon {
-        width: 24px;
-        height: 24px;
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-        flex-shrink: 0;
-    }
-
-    .action-icon.attack { background: rgba(233, 69, 96, 0.25); color: #e94560; }
-    .action-icon.defend { background: rgba(96, 165, 250, 0.25); color: #60a5fa; }
-    .action-icon.power { background: rgba(251, 191, 36, 0.25); color: #fbbf24; }
-
-    .action-label {
-        flex: 1;
-    }
-
-    .action-cost {
-        font-size: 10px;
-        font-weight: 700;
-        color: rgba(255, 255, 255, 0.4);
-        padding: 2px 6px;
-        border-radius: 4px;
-        background: rgba(255, 255, 255, 0.06);
-    }
-</style>
-
+const INNER_HTML = `
 <div class="backdrop"></div>
-<div class="menu"></div>
-`
+<div class="menu"></div>`
 
 export default class RadialMenu extends HTMLElement {
     constructor() {
         super()
-        this.attachShadow({ mode: 'open' })
-        this.shadowRoot.appendChild(TEMPLATE.content.cloneNode(true))
+        this._menu = null
+        this._backdrop = null
+    }
 
-        this._menu = this.shadowRoot.querySelector('.menu')
-        this._backdrop = this.shadowRoot.querySelector('.backdrop')
+    connectedCallback() {
+        if (this._menu) return
+
+        this.innerHTML = INNER_HTML
+        this._menu = this.querySelector('.menu')
+        this._backdrop = this.querySelector('.backdrop')
 
         this._backdrop.addEventListener('click', () => this.close())
     }
@@ -265,7 +152,6 @@ export default class RadialMenu extends HTMLElement {
     _emit(detail) {
         this.dispatchEvent(new CustomEvent('hero-action', {
             bubbles: true,
-            composed: true,
             detail
         }))
     }
