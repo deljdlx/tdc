@@ -18,6 +18,7 @@ export default class HomeScreen {
                     <div class="home-buttons">
                         <button class="home-play-btn">Play</button>
                         <button class="home-heroes-btn">Heroes</button>
+                        <button class="home-deck-btn">Deck</button>
                     </div>
                 </div>
             </div>
@@ -27,6 +28,8 @@ export default class HomeScreen {
             .addEventListener('click', () => this._router.navigate('game'))
         root.querySelector('.home-heroes-btn')
             .addEventListener('click', () => this._router.navigate('heroes'))
+        root.querySelector('.home-deck-btn')
+            .addEventListener('click', () => this._router.navigate('deck'))
     }
 
     unmount() {
