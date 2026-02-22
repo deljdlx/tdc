@@ -6,6 +6,7 @@
  */
 
 import { getCardDefinition } from '../definitions/cards.js'
+import { EFFECT_LABELS } from '../definitions/effectLabels.js'
 
 export default class GameRenderer {
     /**
@@ -182,12 +183,7 @@ export default class GameRenderer {
      * Formatte le texte d'effet.
      */
     _formatEffectText(effect, def) {
-        const EFFECT_TEXT = {
-            DEAL_DAMAGE: (v) => `Deal ${v} damage`,
-            RESTORE_HP: (v) => `Restore ${v} HP`
-        }
-
-        const formatter = EFFECT_TEXT[effect]
+        const formatter = EFFECT_LABELS[effect]
         if (!formatter) return effect
 
         const effectValue = def?.effectPayload?.amount ?? def?.effectValue ?? '?'
